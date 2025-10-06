@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "159865980813",
+    "project_id": "kalbaca-3fa08",
+    "storage_bucket": "kalbaca-3fa08.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159865980813:android:1b57278da3f1ba20dedfc4",
+        "android_client_info": {
+          "package_name": "com.example.kalbaca"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbKyf6ubXRdsNmVW8eOfNzXpk380V_QoI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
