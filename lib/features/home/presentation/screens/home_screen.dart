@@ -66,25 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           // App Logo
-          Container(
-            width: AppDimensions.homeIconSize,
-            height: AppDimensions.homeIconSize,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.white,
-                width: AppDimensions.homeIconBorder,
-              ),
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.water_drop_outlined,
-                color: AppColors.primaryBlue,
-                size: 24,
-              ),
-            ),
-          ),
+          Image.asset('assets/logo.png', width: 120, height: 120),
         ],
       ),
     );

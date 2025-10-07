@@ -7,19 +7,21 @@ class AdultFluidCalculationScreen extends StatefulWidget {
   const AdultFluidCalculationScreen({super.key});
 
   @override
-  State<AdultFluidCalculationScreen> createState() => _AdultFluidCalculationScreenState();
+  State<AdultFluidCalculationScreen> createState() =>
+      _AdultFluidCalculationScreenState();
 }
 
-class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScreen> {
+class _AdultFluidCalculationScreenState
+    extends State<AdultFluidCalculationScreen> {
   int _selectedIndex = 0;
   final _formKey = GlobalKey<FormState>();
-  
+
   // Form controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
-  
+
   // Dropdown value for gender
   String? _selectedGender;
   final List<String> _genderOptions = ['Laki-laki', 'Perempuan'];
@@ -42,7 +44,7 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
           children: [
             // Header Section
             _buildHeaderSection(),
-            
+
             // Form Section
             Expanded(
               child: SingleChildScrollView(
@@ -53,7 +55,7 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
                 child: _buildFormSection(),
               ),
             ),
-            
+
             // Next Button
             _buildNextButton(),
           ],
@@ -96,39 +98,21 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
                   ),
                 ),
               ),
-              
+
               // App Logo
-              Container(
-                width: AppDimensions.homeIconSize,
-                height: AppDimensions.homeIconSize,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.white,
-                    width: AppDimensions.homeIconBorder,
-                  ),
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.person,
-                    color: Color(0xFF0047AB),
-                    size: 24,
-                  ),
-                ),
-              ),
+              Image.asset('assets/logo.png', width: 100, height: 100),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // App Title
           Text('KalBaCa', style: AppTextStyles.homeTitle),
           const SizedBox(height: 4),
           Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
-          
+
           const SizedBox(height: 24),
-          
+
           // Page Title with Home Icon
           Row(
             children: [
@@ -144,9 +128,9 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
                   child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Page Title
               Text(
                 'Hitung Kebutuhan Cairan Dewasa',
@@ -167,15 +151,15 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 24),
-          
+
           // Form Title
           Text(
             'Data Pasien',
             style: AppTextStyles.menuText.copyWith(fontWeight: FontWeight.bold),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Name Field
           _buildFormField(
             label: 'Nama Pasien:',
@@ -187,9 +171,9 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Weight Field
           _buildFormField(
             label: 'Berat Badan:',
@@ -204,9 +188,9 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Height Field
           _buildFormField(
             label: 'Tinggi Badan:',
@@ -221,9 +205,9 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Age Field
           _buildFormField(
             label: 'Usia:',
@@ -238,9 +222,9 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
               return null;
             },
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Gender Field (Dropdown)
           _buildGenderDropdown(),
         ],
@@ -272,17 +256,14 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
             ),
           ),
         ),
-        
+
         // Input Field
         Expanded(
           child: TextFormField(
             controller: controller,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-            ),
+            style: const TextStyle(color: Colors.black, fontSize: 16),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
@@ -295,10 +276,7 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
                 borderSide: BorderSide.none,
               ),
               suffixText: suffixText,
-              errorStyle: const TextStyle(
-                color: Colors.yellow,
-                fontSize: 12,
-              ),
+              errorStyle: const TextStyle(color: Colors.yellow, fontSize: 12),
             ),
             validator: validator,
           ),
@@ -324,7 +302,7 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
             ),
           ),
         ),
-        
+
         // Dropdown
         Expanded(
           child: Container(
@@ -337,10 +315,7 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
               value: _selectedGender,
               icon: const Icon(Icons.arrow_drop_down),
               elevation: 16,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-              ),
+              style: const TextStyle(color: Colors.black, fontSize: 16),
               isExpanded: true,
               decoration: const InputDecoration(
                 border: InputBorder.none,
@@ -357,7 +332,9 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
                   _selectedGender = newValue;
                 });
               },
-              items: _genderOptions.map<DropdownMenuItem<String>>((String value) {
+              items: _genderOptions.map<DropdownMenuItem<String>>((
+                String value,
+              ) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -405,11 +382,7 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
               shape: BoxShape.circle,
             ),
             child: const Center(
-              child: Icon(
-                Icons.arrow_forward,
-                color: Colors.white,
-                size: 24,
-              ),
+              child: Icon(Icons.arrow_forward, color: Colors.white, size: 24),
             ),
           ),
         ),

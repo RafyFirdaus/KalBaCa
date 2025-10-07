@@ -65,10 +65,7 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
         children: [
           const Text(
             '[Nama Pengguna]',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.white, fontSize: 14),
           ),
           const SizedBox(height: 8),
           Row(
@@ -87,25 +84,11 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                   ),
                   Text(
                     'Kalkulator Balance Cairan',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
                 ],
               ),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.water_drop,
-                  color: Colors.white,
-                ),
-              ),
+              Image.asset('assets/logo.png', width: 100, height: 100),
             ],
           ),
         ],
@@ -119,10 +102,7 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
       children: [
         Row(
           children: const [
-            Icon(
-              Icons.home,
-              color: Colors.white,
-            ),
+            Icon(Icons.home, color: Colors.white),
             SizedBox(width: 8),
             Text(
               'Hitung Kebutuhan Cairan Dewasa',
@@ -152,13 +132,19 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
   Widget _buildResultSection() {
     return Column(
       children: [
-        _buildResultCard('Target Kebutuhan Cairan', widget.targetKebutuhanCairan.toStringAsFixed(0)),
+        _buildResultCard(
+          'Target Kebutuhan Cairan',
+          widget.targetKebutuhanCairan.toStringAsFixed(0),
+        ),
         const SizedBox(height: 8),
         _buildResultCard('Total Intake', widget.totalIntake.toStringAsFixed(0)),
         const SizedBox(height: 8),
         _buildResultCard('Total Output', widget.totalOutput.toStringAsFixed(0)),
         const SizedBox(height: 8),
-        _buildResultCard('Balance (+/-)', '${balance >= 0 ? '+' : ''}${balance.toStringAsFixed(0)}'),
+        _buildResultCard(
+          'Balance (+/-)',
+          '${balance >= 0 ? '+' : ''}${balance.toStringAsFixed(0)}',
+        ),
       ],
     );
   }
@@ -176,10 +162,7 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           Row(
             children: [
@@ -193,10 +176,7 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
               const SizedBox(width: 4),
               const Text(
                 'mL',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF0047AB),
-                ),
+                style: TextStyle(fontSize: 14, color: Color(0xFF0047AB)),
               ),
             ],
           ),

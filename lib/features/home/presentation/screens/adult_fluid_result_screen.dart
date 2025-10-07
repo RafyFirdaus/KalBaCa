@@ -38,23 +38,37 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
 
   // Fungsi untuk menghitung kebutuhan cairan berdasarkan rumus Watson
   void _calculateFluidRequirements() {
-    _fluidRequirement = calculateFluidRequirement(widget.weightKg, widget.heightCm, widget.age, widget.gender);
+    _fluidRequirement = calculateFluidRequirement(
+      widget.weightKg,
+      widget.heightCm,
+      widget.age,
+      widget.gender,
+    );
     _normalIWL = calculateNormalIWL(_fluidRequirement);
-    _totalFluidRequirement = calculateTotalFluidRequirement(_fluidRequirement, _normalIWL);
+    _totalFluidRequirement = calculateTotalFluidRequirement(
+      _fluidRequirement,
+      _normalIWL,
+    );
   }
 
   // Fungsi untuk menghitung kebutuhan cairan berdasarkan rumus Watson
-  double calculateFluidRequirement(double weightKg, double heightCm, int age, String gender) {
+  double calculateFluidRequirement(
+    double weightKg,
+    double heightCm,
+    int age,
+    String gender,
+  ) {
     double totalBodyWaterLiters = 0;
-    
+
     if (gender == 'Laki-laki') {
       // Rumus Watson untuk Pria: 2,447 - (0,09145 x usia) + (0,1074 x tinggi dalam cm) + (0,3362 x berat dalam kg)
-      totalBodyWaterLiters = 2.447 - (0.09145 * age) + (0.1074 * heightCm) + (0.3362 * weightKg);
+      totalBodyWaterLiters =
+          2.447 - (0.09145 * age) + (0.1074 * heightCm) + (0.3362 * weightKg);
     } else {
       // Rumus Watson untuk Wanita: -2,097 + (0,1069 x tinggi dalam cm) + (0,2466 x berat dalam kg)
       totalBodyWaterLiters = -2.097 + (0.1069 * heightCm) + (0.2466 * weightKg);
     }
-    
+
     // Konversi dari liter ke mililiter
     return totalBodyWaterLiters * 1000;
   }
@@ -65,7 +79,10 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
   }
 
   // Fungsi untuk menghitung total kebutuhan cairan
-  double calculateTotalFluidRequirement(double fluidRequirement, double normalIWL) {
+  double calculateTotalFluidRequirement(
+    double fluidRequirement,
+    double normalIWL,
+  ) {
     return fluidRequirement + normalIWL;
   }
 
@@ -78,7 +95,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
           children: [
             // Header Section
             _buildHeaderSection(),
-            
+
             // Result Section
             Expanded(
               child: SingleChildScrollView(
@@ -89,7 +106,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
                 child: _buildResultSection(),
               ),
             ),
-            
+
             // Next Button
             _buildNextButton(),
           ],
@@ -132,39 +149,21 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
                   ),
                 ),
               ),
-              
+
               // App Logo
-              Container(
-                width: AppDimensions.homeIconSize,
-                height: AppDimensions.homeIconSize,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.white,
-                    width: AppDimensions.homeIconBorder,
-                  ),
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.person,
-                    color: Color(0xFF0047AB),
-                    size: 24,
-                  ),
-                ),
-              ),
+              Image.asset('assets/logo.png', width: 100, height: 100),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // App Title
           Text('KalBaCa', style: AppTextStyles.homeTitle),
           const SizedBox(height: 4),
           Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
-          
+
           const SizedBox(height: 24),
-          
+
           // Page Title with Home Icon
           Row(
             children: [
@@ -180,9 +179,9 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
                   child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Page Title
               Text(
                 'Hitung Kebutuhan Cairan Dewasa',
@@ -201,15 +200,15 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 24),
-        
+
         // Result Title
         Text(
           'Hasil Perhitungan',
           style: AppTextStyles.menuText.copyWith(fontWeight: FontWeight.bold),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Patient Info
         Container(
           padding: const EdgeInsets.all(16),
@@ -237,27 +236,27 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 24),
-        
+
         // Fluid Requirement Field
         _buildResultField(
           label: 'Kebutuhan Cairan:',
           value: _formatter.format(_fluidRequirement),
           unit: 'mL',
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Normal IWL Field
         _buildResultField(
           label: 'IWL Normal:',
           value: _formatter.format(_normalIWL),
           unit: 'mL',
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Total Fluid Requirement Field
         _buildResultField(
           label: 'Total Kebutuhan Cairan:',
@@ -291,7 +290,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
             ),
           ),
         ),
-        
+
         // Result Field
         Expanded(
           child: Container(
@@ -311,15 +310,14 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16,
-                    fontWeight: isHighlighted ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isHighlighted
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
                 Text(
                   unit,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                  ),
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
                 ),
               ],
             ),
@@ -361,10 +359,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
           ),
           icon: const Text(
             'Lanjut',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           label: const Icon(Icons.arrow_forward),
         ),

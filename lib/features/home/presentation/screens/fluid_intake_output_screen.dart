@@ -163,15 +163,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           ),
 
           // App logo
-          Container(
-            width: 40,
-            height: 40,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-            ),
-            child: const Icon(Icons.person, color: Color(0xFF0047AB)),
-          ),
+          Image.asset('assets/logo.png', width: 75, height: 75),
         ],
       ),
     );
@@ -273,7 +265,9 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => HasilBalanceScreen(
-                  targetKebutuhanCairan: widget.normalIWL * 2, // Sesuaikan dengan perhitungan kebutuhan cairan yang sebenarnya
+                  targetKebutuhanCairan:
+                      widget.normalIWL *
+                      2, // Sesuaikan dengan perhitungan kebutuhan cairan yang sebenarnya
                   totalIntake: calculateTotalIntake(),
                   totalOutput: calculateTotalOutput(),
                 ),

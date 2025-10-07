@@ -23,24 +23,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final blueHeight = screenHeight * 0.9; // 70% dari tinggi layar
-
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Stack(
+          child: Column(
             children: [
-              // Blue Section with Logo, Slogan, and Input Fields
+              // Blue Header Section with Logo and Title
               Container(
                 width: double.infinity,
-                height: blueHeight,
                 color: AppColors.primaryBlue,
                 padding: const EdgeInsets.all(AppDimensions.headerPadding),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Logo and Slogan
+                    const SizedBox(height: 40), // Top spacing
+                    // Logo
+                    Image.asset('assets/logo.png', height: 150, width: 150),
+                    const SizedBox(height: AppDimensions.headerSpacing),
+                    // App Title and Slogan
                     Text(
                       'KalBaCa',
                       style: AppTextStyles.appTitle.copyWith(
@@ -54,167 +53,153 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: AppColors.white,
                       ),
                     ),
-                    const SizedBox(height: AppDimensions.inputSpacing * 2),
-
-                    // Input Fields
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          // Email/Phone TextField
-                          TextFormField(
-                            controller: _emailController,
-                            style: AppTextStyles.inputText.copyWith(
-                              color: AppColors.white,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Email or Phone',
-                              hintStyle: AppTextStyles.inputText.copyWith(
-                                color: AppColors.white.withOpacity(0.7),
-                              ),
-                              prefixIcon: Icon(
-                                Icons.person_outline,
-                                color: AppColors.white.withOpacity(0.7),
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.inputBorderRadius,
-                                ),
-                                borderSide: BorderSide(
-                                  color: AppColors.white.withOpacity(0.3),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.inputBorderRadius,
-                                ),
-                                borderSide: BorderSide(
-                                  color: AppColors.white.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.inputBorderRadius,
-                                ),
-                                borderSide: const BorderSide(
-                                  color: AppColors.white,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: AppDimensions.inputVerticalPadding,
-                                horizontal:
-                                    AppDimensions.inputHorizontalPadding,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email or phone';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: AppDimensions.inputSpacing),
-
-                          // Password TextField
-                          TextFormField(
-                            controller: _passwordController,
-                            style: AppTextStyles.inputText.copyWith(
-                              color: AppColors.white,
-                            ),
-                            obscureText: _obscurePassword,
-                            decoration: InputDecoration(
-                              hintText: 'Password',
-                              hintStyle: AppTextStyles.inputText.copyWith(
-                                color: AppColors.white.withOpacity(0.7),
-                              ),
-                              prefixIcon: Icon(
-                                Icons.lock_outline,
-                                color: AppColors.white.withOpacity(0.7),
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_off_outlined
-                                      : Icons.visibility_outlined,
-                                  color: AppColors.white.withOpacity(0.7),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.inputBorderRadius,
-                                ),
-                                borderSide: BorderSide(
-                                  color: AppColors.white.withOpacity(0.3),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.inputBorderRadius,
-                                ),
-                                borderSide: BorderSide(
-                                  color: AppColors.white.withOpacity(0.3),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppDimensions.inputBorderRadius,
-                                ),
-                                borderSide: const BorderSide(
-                                  color: AppColors.white,
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: AppDimensions.inputVerticalPadding,
-                                horizontal:
-                                    AppDimensions.inputHorizontalPadding,
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    const SizedBox(height: 40), // Bottom spacing
                   ],
                 ),
               ),
 
-              // White Section with Action Buttons
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
+              // White Section with Input Fields and Action Buttons
+              Container(
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.1),
+                      blurRadius: 10,
+                      offset: Offset(0, -5),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.1),
-                        blurRadius: 10,
-                        offset: Offset(0, -5),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(
-                    AppDimensions.formContainerPadding,
-                  ),
+                  ],
+                ),
+                transform: Matrix4.translationValues(
+                  0,
+                  -30,
+                  0,
+                ), // Overlap with blue section
+                padding: const EdgeInsets.all(
+                  AppDimensions.formContainerPadding,
+                ),
+                child: Form(
+                  key: _formKey,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      const SizedBox(height: 20), // Top spacing for overlap
+                      // Email/Phone TextField
+                      TextFormField(
+                        controller: _emailController,
+                        style: AppTextStyles.inputText.copyWith(
+                          color: AppColors.textDark,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Email or Phone',
+                          hintStyle: AppTextStyles.inputText.copyWith(
+                            color: AppColors.textGray,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.person_outline,
+                            color: AppColors.textGray,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: BorderSide(color: AppColors.borderGray),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: BorderSide(color: AppColors.borderGray),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: const BorderSide(
+                              color: AppColors.primaryBlue,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: AppDimensions.inputVerticalPadding,
+                            horizontal: AppDimensions.inputHorizontalPadding,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email or phone';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppDimensions.inputSpacing),
+
+                      // Password TextField
+                      TextFormField(
+                        controller: _passwordController,
+                        style: AppTextStyles.inputText.copyWith(
+                          color: AppColors.textDark,
+                        ),
+                        obscureText: _obscurePassword,
+                        decoration: InputDecoration(
+                          hintText: 'Password',
+                          hintStyle: AppTextStyles.inputText.copyWith(
+                            color: AppColors.textGray,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                            color: AppColors.textGray,
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: AppColors.textGray,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: BorderSide(color: AppColors.borderGray),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: BorderSide(color: AppColors.borderGray),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: const BorderSide(
+                              color: AppColors.primaryBlue,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: AppDimensions.inputVerticalPadding,
+                            horizontal: AppDimensions.inputHorizontalPadding,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppDimensions.inputSpacing),
+
                       // Forgot Password Link
                       Align(
                         alignment: Alignment.centerRight,
