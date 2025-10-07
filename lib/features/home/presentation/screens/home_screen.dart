@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
+import 'package:kalbaca/features/home/presentation/screens/adult_fluid_calculation_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,17 +23,15 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             // Header Section
             _buildHeaderSection(),
-            
+
             // Title Section
             _buildTitleSection(),
-            
+
             // Menu Section
             _buildMenuSection(),
-            
+
             // Button Section
-            Expanded(
-              child: _buildButtonSection(),
-            ),
+            Expanded(child: _buildButtonSection()),
           ],
         ),
       ),
@@ -62,13 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                '[Nama Pengguna]',
-                style: AppTextStyles.usernameText,
-              ),
+              Text('[Nama Pengguna]', style: AppTextStyles.usernameText),
             ],
           ),
-          
+
           // App Logo
           Container(
             width: AppDimensions.homeIconSize,
@@ -107,15 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'KalBaCa',
-            style: AppTextStyles.homeTitle,
-          ),
+          Text('KalBaCa', style: AppTextStyles.homeTitle),
           const SizedBox(height: 4),
-          Text(
-            'Kalkulator Balance Cairan',
-            style: AppTextStyles.homeSubtitle,
-          ),
+          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
         ],
       ),
     );
@@ -140,21 +130,14 @@ class _HomeScreenState extends State<HomeScreen> {
               shape: BoxShape.circle,
             ),
             child: const Center(
-              child: Icon(
-                Icons.home,
-                color: AppColors.primaryBlue,
-                size: 24,
-              ),
+              child: Icon(Icons.home, color: AppColors.primaryBlue, size: 24),
             ),
           ),
-          
+
           const SizedBox(width: AppDimensions.homeMenuSpacing),
-          
+
           // Menu Text
-          Text(
-            'Menu Utama',
-            style: AppTextStyles.menuText,
-          ),
+          Text('Menu Utama', style: AppTextStyles.menuText),
         ],
       ),
     );
@@ -170,26 +153,22 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildActionButton(
-            'Hitung Kebutuhan Cairan Dewasa',
-            () {
-              // TODO: Navigate to adult calculation screen
-            },
-          ),
-          const SizedBox(height: AppDimensions.buttonSpacing * 2),
-          _buildActionButton(
-            'Hitung Kebutuhan Cairan Anak',
-            () {
-              // TODO: Navigate to child calculation screen
-            },
-          ),
-          const SizedBox(height: AppDimensions.buttonSpacing * 2),
-          _buildActionButton(
-            'Hitung Kebutuhan Cairan Luka Bakar',
-            () {
-              // TODO: Navigate to burn calculation screen
-            },
-          ),
+          _buildActionButton('Hitung Kebutuhan Cairan Dewasa', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AdultFluidCalculationScreen(),
+              ),
+            );
+          }),
+          const SizedBox(height: AppDimensions.buttonSpacing * 4),
+          _buildActionButton('Hitung Kebutuhan Cairan Anak', () {
+            // TODO: Navigate to child calculation screen
+          }),
+          const SizedBox(height: AppDimensions.buttonSpacing * 4),
+          _buildActionButton('Hitung Kebutuhan Cairan Luka Bakar', () {
+            // TODO: Navigate to burn calculation screen
+          }),
         ],
       ),
     );
@@ -206,9 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
           foregroundColor: AppColors.primaryBlue,
           elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              AppDimensions.homeButtonRadius,
-            ),
+            borderRadius: BorderRadius.circular(AppDimensions.homeButtonRadius),
           ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppDimensions.homeButtonPadding,
@@ -244,12 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
       height: AppDimensions.homeNavBarHeight,
       decoration: const BoxDecoration(
         color: AppColors.white,
-        border: Border(
-          top: BorderSide(
-            color: AppColors.borderGray,
-            width: 1,
-          ),
-        ),
+        border: Border(top: BorderSide(color: AppColors.borderGray, width: 1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -265,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // Navigation Item
   Widget _buildNavItem(int index, IconData icon) {
     final bool isSelected = _selectedIndex == index;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
