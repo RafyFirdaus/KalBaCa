@@ -78,8 +78,24 @@ class _AdultFluidCalculationScreenState extends State<AdultFluidCalculationScree
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // User Information
-              Text('[Nama Pengguna]', style: AppTextStyles.usernameText),
+              // Back Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF0047AB),
+                    size: 24,
+                  ),
+                ),
+              ),
               
               // App Logo
               Container(

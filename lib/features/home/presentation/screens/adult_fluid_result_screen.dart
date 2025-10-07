@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import 'package:intl/intl.dart';
+import 'package:kalbaca/features/home/presentation/screens/fluid_intake_output_screen.dart';
 
 class AdultFluidResultScreen extends StatefulWidget {
   final String patientName;
@@ -58,9 +59,9 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
     return totalBodyWaterLiters * 1000;
   }
 
-  // Fungsi untuk menghitung IWL Normal (15% dari kebutuhan cairan)
+  // Fungsi untuk menghitung IWL Normal (15 x BB (kg) / 24 jam)
   double calculateNormalIWL(double fluidRequirement) {
-    return fluidRequirement * 0.15;
+    return 15 * widget.weightKg;
   }
 
   // Fungsi untuk menghitung total kebutuhan cairan
@@ -113,8 +114,24 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // User Information
-              Text('[Nama Pengguna]', style: AppTextStyles.usernameText),
+              // Back Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF0047AB),
+                    size: 24,
+                  ),
+                ),
+              ),
               
               // App Logo
               Container(
@@ -323,9 +340,15 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
         alignment: Alignment.bottomRight,
         child: ElevatedButton.icon(
           onPressed: () {
-            // TODO: Navigate to next screen or action
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Melanjutkan ke halaman berikutnya')),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FluidIntakeOutputScreen(
+                  patientName: widget.patientName,
+                  weightKg: widget.weightKg,
+                  normalIWL: _normalIWL,
+                ),
+              ),
             );
           },
           style: ElevatedButton.styleFrom(
