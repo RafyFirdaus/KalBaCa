@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import 'package:intl/intl.dart';
-import 'package:kalbaca/features/home/presentation/screens/fluid_intake_output_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_intake_output_screen.dart';
 
 class AdultFluidResultScreen extends StatefulWidget {
   final String patientName;
@@ -341,7 +341,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => FluidIntakeOutputScreen(
+                builder: (context) => AdultFluidIntakeOutputScreen(
                   patientName: widget.patientName,
                   weightKg: widget.weightKg,
                   normalIWL: _normalIWL,

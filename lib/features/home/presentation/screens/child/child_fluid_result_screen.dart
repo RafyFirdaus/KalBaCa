@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import 'package:intl/intl.dart';
-import 'package:kalbaca/features/home/presentation/screens/fluid_intake_output_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/child/fluid_intake_output_screen.dart';
 
 class ChildFluidResultScreen extends StatefulWidget {
   final String patientName;

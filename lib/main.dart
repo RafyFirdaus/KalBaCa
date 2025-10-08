@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/features/auth/presentation/screens/login_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/home_screen.dart';
-import 'package:kalbaca/features/home/presentation/screens/fluid_balance_simulation_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/adult/fluid_balance_simulation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_calculation_screen.dart';
 
 void main() {
