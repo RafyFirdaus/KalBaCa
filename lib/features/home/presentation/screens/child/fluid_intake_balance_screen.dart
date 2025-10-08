@@ -19,7 +19,8 @@ class FluidIntakeBalanceScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FluidIntakeBalanceScreenState createState() => _FluidIntakeBalanceScreenState();
+  _FluidIntakeBalanceScreenState createState() =>
+      _FluidIntakeBalanceScreenState();
 }
 
 class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
@@ -106,6 +107,7 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
   }
 
   // Header Section with Logo and Title
+  // Header Section with Logo and Title
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.only(
@@ -120,73 +122,63 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Logo Section
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'KB',
-                        style: TextStyle(
-                          color: const Color(0xFF0047AB),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+              // Back Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'KalBaCa',
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Kalkulator Balance Cairan',
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF0047AB),
+                    size: 24,
                   ),
-                ],
+                ),
               ),
 
-              // User Icon
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  Icons.person,
-                  color: Color(0xFF0047AB),
-                  size: 20,
-                ),
-              ),
+              // App Logo
+              Image.asset('assets/logo.png', width: 100, height: 100),
             ],
           ),
 
           const SizedBox(height: 16),
 
-          // Page Title
-          Text(
-            'Hitung Kebutuhan Cairan Anak',
-            style: AppTextStyles.menuText,
+          // App Title
+          Text('KalBaCa', style: AppTextStyles.homeTitle),
+          const SizedBox(height: 4),
+          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
+
+          const SizedBox(height: 24),
+
+          // Page Title with Home Icon
+          Row(
+            children: [
+              // Home Icon
+              Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // Page Title
+              Text(
+                'Hitung Kebutuhan Cairan Anak',
+                style: AppTextStyles.menuText,
+              ),
+            ],
           ),
         ],
       ),
@@ -204,10 +196,7 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
         ),
         const SizedBox(height: 16),
 
-        _buildInputField(
-          label: 'Infus:',
-          controller: _infusController,
-        ),
+        _buildInputField(label: 'Infus:', controller: _infusController),
         const SizedBox(height: 16),
 
         _buildInputField(
@@ -216,22 +205,13 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
         ),
         const SizedBox(height: 16),
 
-        _buildInputField(
-          label: 'Makanan:',
-          controller: _makananController,
-        ),
+        _buildInputField(label: 'Makanan:', controller: _makananController),
         const SizedBox(height: 16),
 
-        _buildInputField(
-          label: 'Transfusi:',
-          controller: _transfusiController,
-        ),
+        _buildInputField(label: 'Transfusi:', controller: _transfusiController),
         const SizedBox(height: 16),
 
-        _buildInputField(
-          label: 'Lainnya:',
-          controller: _lainnyaController,
-        ),
+        _buildInputField(label: 'Lainnya:', controller: _lainnyaController),
       ],
     );
   }
@@ -271,18 +251,13 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
                   child: TextField(
                     controller: controller,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: '',
                       contentPadding: EdgeInsets.zero,
                     ),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
                   ),
                 ),
                 const Text(
@@ -306,16 +281,11 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
           backgroundColor: Colors.white,
           foregroundColor: const Color(0xFF0047AB),
           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: const Text(
           'Hitung Balance',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -352,7 +322,10 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
             // Result Field
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -393,9 +366,12 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => ChildHasilBalanceScreen(
-                targetKebutuhanCairan: widget.normalIWL * 2, // Sesuaikan dengan perhitungan yang sebenarnya
+                targetKebutuhanCairan:
+                    widget.normalIWL *
+                    2, // Sesuaikan dengan perhitungan yang sebenarnya
                 totalIntake: _totalIntake,
-                totalOutput: widget.normalIWL, // Menggunakan normalIWL sebagai output
+                totalOutput:
+                    widget.normalIWL, // Menggunakan normalIWL sebagai output
                 patientName: widget.patientName,
                 weightKg: widget.weightKg,
                 age: widget.age,

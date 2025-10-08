@@ -96,6 +96,13 @@ class AppTextStyles {
     color: AppColors.primaryBlue,
     letterSpacing: 0.15,
   );
+
+  static const TextStyle pageTitle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: AppColors.white,
+    letterSpacing: 0.25,
+  );
 }
 
 class AppDimensions {

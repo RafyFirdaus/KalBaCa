@@ -139,34 +139,79 @@ class _AdultFluidIntakeOutputScreenState
     );
   }
 
+  // Header Section with Logo and Title
   Widget _buildHeaderSection() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      color: const Color(0xFF0047AB),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: AppDimensions.homePaddingHorizontal,
+        right: AppDimensions.homePaddingHorizontal,
+        top: AppDimensions.homePaddingTop,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back button and page title
+          // User and Logo Row
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                "Intake dan Output Cairan Dewasa",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+              // Back Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF0047AB),
+                    size: 24,
+                  ),
                 ),
               ),
+
+              // App Logo
+              Image.asset('assets/logo.png', width: 100, height: 100),
             ],
           ),
 
-          // App logo
-          Image.asset('assets/logo.png', width: 75, height: 75),
+          const SizedBox(height: 16),
+
+          // App Title
+          Text('KalBaCa', style: AppTextStyles.homeTitle),
+          const SizedBox(height: 4),
+          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
+
+          const SizedBox(height: 24),
+
+          // Page Title with Home Icon
+          Row(
+            children: [
+              // Home Icon
+              Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // Page Title
+              Text(
+                'Intake dan Output Cairan Dewasa',
+                style: AppTextStyles.menuText,
+              ),
+            ],
+          ),
         ],
       ),
     );

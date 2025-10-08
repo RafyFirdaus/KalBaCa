@@ -108,6 +108,7 @@ class _AdultFluidIntakeBalanceScreenState
   }
 
   // Header Section with Logo and Title
+  // Header Section with Logo and Title
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.only(
@@ -122,68 +123,64 @@ class _AdultFluidIntakeBalanceScreenState
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Logo Section
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'KB',
-                        style: TextStyle(
-                          color: const Color(0xFF0047AB),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+              // Back Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'KalBaCa',
-                        style: TextStyle(
-                          color: AppColors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Kalkulator Balance Cairan',
-                        style: TextStyle(color: AppColors.white, fontSize: 10),
-                      ),
-                    ],
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF0047AB),
+                    size: 24,
                   ),
-                ],
+                ),
               ),
 
-              // User Icon
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  Icons.person,
-                  color: Color(0xFF0047AB),
-                  size: 20,
-                ),
-              ),
+              // App Logo
+              Image.asset('assets/logo.png', width: 100, height: 100),
             ],
           ),
 
           const SizedBox(height: 16),
 
-          // Page Title
-          Text('Hitung Kebutuhan Cairan Dewasa', style: AppTextStyles.menuText),
+          // App Title
+          Text('KalBaCa', style: AppTextStyles.homeTitle),
+          const SizedBox(height: 4),
+          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
+
+          const SizedBox(height: 24),
+
+          // Page Title with Home Icon
+          Row(
+            children: [
+              // Home Icon
+              Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // Page Title
+              Text(
+                'Hitung Kebutuhan Cairan Dewasa',
+                style: AppTextStyles.menuText,
+              ),
+            ],
+          ),
         ],
       ),
     );

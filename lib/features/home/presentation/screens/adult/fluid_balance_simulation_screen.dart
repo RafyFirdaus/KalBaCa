@@ -211,7 +211,6 @@ class _FluidBalanceSimulationScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildPageTitle(),
                       const SizedBox(height: 15),
                       Expanded(child: _buildMainDiagramSection()),
                     ],
@@ -227,100 +226,81 @@ class _FluidBalanceSimulationScreenState
   }
 
   Widget _buildHeaderSection() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: AppDimensions.homePaddingHorizontal,
+        right: AppDimensions.homePaddingHorizontal,
+        top: AppDimensions.homePaddingTop,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '[Nama Pengguna]',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+          // User and Logo Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Back Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF0047AB),
+                    size: 24,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Text(
-                      'KalBaCa',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Image.asset(
-                      'assets/logo.png',
-                      height: 24,
-                      width: 24,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.local_drink,
-                          color: Colors.white,
-                          size: 24,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const Text(
-                  'Kalkulator Balance Cairan',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              ],
-            ),
+              ),
+
+              // App Logo
+              Image.asset('assets/logo.png', width: 80, height: 80),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.person, color: Colors.white, size: 20),
+
+          const SizedBox(height: 5),
+
+          // App Title
+          Text('KalBaCa', style: AppTextStyles.homeTitle),
+          const SizedBox(height: 4),
+          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
+
+          const SizedBox(height: 24),
+
+          // Page Title with Home Icon
+          Row(
+            children: [
+              // Home Icon
+              Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // Page Title
+              Expanded(
+                child: Text(
+                  'Diagram Kebutuhan Cairan Dewasa',
+                  style: AppTextStyles.pageTitle,
+                ),
+              ),
+            ],
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildPageTitle() {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(Icons.home, color: Colors.white, size: 20),
-        ),
-        const SizedBox(width: 12),
-        const Expanded(
-          child: Text(
-            'Diagram Kebutuhan Cairan Dewasa',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
     );
   }
 

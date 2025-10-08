@@ -21,7 +21,8 @@ class ChildHasilBalanceScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ChildHasilBalanceScreen> createState() => _ChildHasilBalanceScreenState();
+  State<ChildHasilBalanceScreen> createState() =>
+      _ChildHasilBalanceScreenState();
 }
 
 class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
@@ -66,76 +67,82 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
     );
   }
 
+  // Header Section with Logo and Title
   Widget _buildHeaderSection() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
+      padding: const EdgeInsets.only(
+        left: AppDimensions.homePaddingHorizontal,
+        right: AppDimensions.homePaddingHorizontal,
+        top: AppDimensions.homePaddingTop,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '[Nama Pengguna]',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+          // User and Logo Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Back Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF0047AB),
+                    size: 24,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Text(
-                      'KalBaCa',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Image.asset(
-                      'assets/logo.png',
-                      height: 24,
-                      width: 24,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(
-                          Icons.water_drop,
-                          color: Colors.white,
-                          size: 24,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Kalkulator Balance Cairan',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
+              ),
+
+              // App Logo
+              Image.asset('assets/logo.png', width: 100, height: 100),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Icon(
-              Icons.person,
-              color: Color(0xFF0047AB),
-              size: 20,
-            ),
+
+          const SizedBox(height: 16),
+
+          // App Title
+          Text('KalBaCa', style: AppTextStyles.homeTitle),
+          const SizedBox(height: 4),
+          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
+
+          const SizedBox(height: 24),
+
+          // Page Title with Home Icon
+          Row(
+            children: [
+              // Home Icon
+              Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // Page Title
+              const Text(
+                'Hasil Balance Cairan Anak',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -143,36 +150,7 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
   }
 
   Widget _buildTitleSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: const [
-            Icon(Icons.child_care, color: Colors.white),
-            SizedBox(width: 8),
-            Text(
-              'Hitung Kebutuhan Cairan Anak',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        const Center(
-          child: Text(
-            'Hasil Balance Cairan Anak',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    );
+    return const SizedBox.shrink(); // No longer needed as title is now in header
   }
 
   Widget _buildPatientInfoSection() {
@@ -220,10 +198,14 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
     );
   }
 
-  Widget _buildResultCard(String label, String value, {bool isBalance = false}) {
+  Widget _buildResultCard(
+    String label,
+    String value, {
+    bool isBalance = false,
+  }) {
     Color cardColor = Colors.white;
     Color textColor = Colors.black;
-    
+
     if (isBalance) {
       if (balance > 0) {
         cardColor = Colors.green.shade100;
@@ -239,7 +221,9 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: isBalance ? Border.all(color: textColor.withOpacity(0.3)) : null,
+        border: isBalance
+            ? Border.all(color: textColor.withOpacity(0.3))
+            : null,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -248,7 +232,7 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
           Text(
             label,
             style: TextStyle(
-              fontSize: 16, 
+              fontSize: 16,
               fontWeight: FontWeight.w500,
               color: textColor,
             ),
@@ -267,7 +251,7 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
               Text(
                 'mL',
                 style: TextStyle(
-                  fontSize: 14, 
+                  fontSize: 14,
                   color: isBalance ? textColor : const Color(0xFF0047AB),
                 ),
               ),
@@ -283,25 +267,6 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Spacer(),
-        ElevatedButton(
-          onPressed: () {
-            // Implementasi fungsi simpan/hapus
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Fitur simpan/hapus akan segera tersedia'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xFF0047AB),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-          child: const Text('Simpan / Hapus'),
-        ),
         const Spacer(),
         ElevatedButton(
           onPressed: () {
