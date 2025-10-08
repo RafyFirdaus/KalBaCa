@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
+import 'fluid_balance_simulation_screen.dart';
 
 class HasilBalanceScreen extends StatefulWidget {
   final double targetKebutuhanCairan;
@@ -206,8 +207,12 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
         const Spacer(),
         ElevatedButton(
           onPressed: () {
-            // Implementasi fungsi simulasi
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FluidBalanceSimulationScreen(),
+              ),
+            );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
