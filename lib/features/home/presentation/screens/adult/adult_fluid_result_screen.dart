@@ -345,6 +345,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
                   patientName: widget.patientName,
                   weightKg: widget.weightKg,
                   normalIWL: _normalIWL,
+                  age: widget.age,
                 ),
               ),
             );

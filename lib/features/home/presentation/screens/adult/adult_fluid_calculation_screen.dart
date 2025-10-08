@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalbaca/core/constants/constants.dart';
-import 'package:kalbaca/features/home/presentation/screens/adult_fluid_result_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_result_screen.dart';
 
 class AdultFluidCalculationScreen extends StatefulWidget {
   const AdultFluidCalculationScreen({super.key});

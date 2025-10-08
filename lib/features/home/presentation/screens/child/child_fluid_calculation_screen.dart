@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalbaca/core/constants/constants.dart';
-// import 'package:kalbaca/features/home/presentation/screens/child_fluid_result_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_result_screen.dart';
 
 class ChildFluidCalculationScreen extends StatefulWidget {
   const ChildFluidCalculationScreen({super.key});
@@ -24,10 +24,7 @@ class _ChildFluidCalculationScreenState
 
   // Dropdown values
   String? _selectedGender;
-  String _selectedAgeUnit = 'tahun';
-
   final List<String> _genderOptions = ['Laki-laki', 'Perempuan'];
-  final List<String> _ageUnitOptions = ['tahun', 'bulan'];
 
   @override
   void dispose() {
@@ -232,7 +229,7 @@ class _ChildFluidCalculationScreenState
             const SizedBox(height: 16),
 
             // Age Field with Unit Selector
-            _buildAgeFieldWithUnit(),
+            _buildAgeField(),
 
             const SizedBox(height: 16),
 
@@ -297,100 +294,27 @@ class _ChildFluidCalculationScreenState
     );
   }
 
-  // Age Field with Unit Selector
-  Widget _buildAgeFieldWithUnit() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Label
-        const SizedBox(
-          width: 120,
-          child: Text(
-            'Usia:',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-
-        // Age Input Field
-        Expanded(
-          flex: 2,
-          child: TextFormField(
-            controller: _ageController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: const TextStyle(color: Colors.black, fontSize: 16),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
-              errorStyle: const TextStyle(color: Colors.yellow, fontSize: 12),
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Usia harus diisi';
-              }
-              int age = int.tryParse(value) ?? 0;
-              if (_selectedAgeUnit == 'bulan' && age > 24) {
-                return 'Usia maksimal 24 bulan';
-              }
-              if (_selectedAgeUnit == 'tahun' && age > 18) {
-                return 'Usia maksimal 18 tahun';
-              }
-              return null;
-            },
-          ),
-        ),
-
-        const SizedBox(width: 20),
-
-        // Age Unit Dropdown
-        Expanded(
-          flex: 2,
-          child: DropdownButtonFormField<String>(
-            value: _selectedAgeUnit,
-            isExpanded: true,
-            style: const TextStyle(color: Colors.black, fontSize: 14),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedAgeUnit = newValue!;
-                // Clear age field when unit changes for revalidation
-                _ageController.clear();
-              });
-            },
-            items: _ageUnitOptions.map<DropdownMenuItem<String>>((
-              String value,
-            ) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value, style: const TextStyle(fontSize: 12)),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
+  // Age Field
+  Widget _buildAgeField() {
+    return _buildFormField(
+      label: 'Usia:',
+      controller: _ageController,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      suffixText: 'tahun',
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Usia harus diisi';
+        }
+        int age = int.tryParse(value) ?? 0;
+        if (age <= 0) {
+          return 'Usia harus lebih dari 0';
+        }
+        if (age > 18) {
+          return 'Usia maksimal 18 tahun';
+        }
+        return null;
+      },
     );
   }
 
@@ -460,23 +384,18 @@ class _ChildFluidCalculationScreenState
       child: GestureDetector(
         onTap: () {
           if (_formKey.currentState!.validate()) {
-            // TODO: Navigate to ChildFluidResultScreen when it's created
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Form valid! Halaman hasil akan dibuat selanjutnya.',
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChildFluidResultScreen(
+                  patientName: _nameController.text,
+                  weightKg: double.parse(_weightController.text),
+                  heightCm: double.parse(_heightController.text),
+                  age: int.parse(_ageController.text),
+                  gender: _selectedGender!,
                 ),
-                backgroundColor: Colors.green,
               ),
             );
-
-            // For now, just print the data
-            print('Patient Data:');
-            print('Name: ${_nameController.text}');
-            print('Weight: ${_weightController.text} kg');
-            print('Height: ${_heightController.text} cm');
-            print('Age: ${_ageController.text} $_selectedAgeUnit');
-            print('Gender: $_selectedGender');
           }
         },
         child: Container(

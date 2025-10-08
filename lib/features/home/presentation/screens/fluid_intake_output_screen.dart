@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalbaca/core/constants/constants.dart';
-import 'package:kalbaca/features/home/presentation/screens/hasil_balance_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/child/fluid_intake_balance_screen.dart';
 
 class FluidIntakeOutputScreen extends StatefulWidget {
   final String patientName;
   final double weightKg;
   final double normalIWL;
+  final int age;
 
   const FluidIntakeOutputScreen({
     super.key,
     required this.patientName,
     required this.weightKg,
     required this.normalIWL,
+    required this.age,
   });
 
   @override
@@ -260,16 +262,15 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
       child: ElevatedButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            // Navigate to balance result screen
+            // Navigate to fluid intake balance screen
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => HasilBalanceScreen(
-                  targetKebutuhanCairan:
-                      widget.normalIWL *
-                      2, // Sesuaikan dengan perhitungan kebutuhan cairan yang sebenarnya
-                  totalIntake: calculateTotalIntake(),
-                  totalOutput: calculateTotalOutput(),
+                builder: (context) => FluidIntakeBalanceScreen(
+                  patientName: widget.patientName,
+                  weightKg: widget.weightKg,
+                  age: widget.age,
+                  normalIWL: widget.normalIWL,
                 ),
               ),
             );
