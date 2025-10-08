@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import 'package:kalbaca/features/home/presentation/screens/adult_fluid_calculation_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/child_fluid_calculation_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -145,7 +146,12 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
           const SizedBox(height: AppDimensions.buttonSpacing * 4),
           _buildActionButton('Hitung Kebutuhan Cairan Anak', () {
-            // TODO: Navigate to child calculation screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ChildFluidCalculationScreen(),
+              ),
+            );
           }),
           const SizedBox(height: AppDimensions.buttonSpacing * 4),
           _buildActionButton('Hitung Kebutuhan Cairan Luka Bakar', () {
