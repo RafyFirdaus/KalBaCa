@@ -466,10 +466,10 @@ class _FluidBalanceSimulationScreenState
     const tooltipHeight = 85.0;
 
     // Perfect center positioning - horizontally and vertically centered
-    double left = (screenSize.width - tooltipWidth) / 2;
-    double top =
-        (screenSize.height - tooltipHeight) / 2 -
-        100; // Slightly above center to avoid overlap
+    double left =
+        (screenSize.width - tooltipWidth) / 2 -
+        30; // Sedikit ke kiri untuk lebih centered
+    double top = (screenSize.height - tooltipHeight) / 2 - 500; // Lebih ke atas
 
     // Ensure tooltip stays within screen bounds
     if (left < 10) left = 20;
@@ -556,46 +556,53 @@ class _FluidBalanceSimulationScreenState
     int totalCount,
     Size screenSize,
   ) {
-    const tooltipWidth = 170.0;
+    const tooltipWidth = 160.0;
     const tooltipHeight = 100.0;
-    const spacing = 40.0;
+    const spacing = 10.0;
+
+    // Parameter untuk mengatur batas posisi tooltip - EDIT NILAI INI UNTUK MENGATUR POSISI
+    const leftBoundary =
+        5.0; // Bisa diubah untuk mengatur seberapa jauh ke kiri tooltip bisa bergerak (negatif = keluar layar)
+    const rightBoundary = 80.0; // Batas kanan dari tepi layar
+    const topBoundary = 160.0; // Batas atas (untuk menghindari header)
+    const bottomBoundary = 20.0; // Batas bawah dari tepi layar
 
     // Improved positioning to avoid header overlap
     double left, top;
     final centerX = screenSize.width / 2;
-    final centerY = screenSize.height / 2;
+    final centerY = screenSize.height / 2; // Move down to avoid header overlap
 
     if (totalCount == 1) {
       // Single tooltip: center below header with more space
-      left = centerX - (tooltipWidth / 2);
-      top = centerY + 80; // Well below header
+      left = centerX - (tooltipWidth / 1.5);
+      top = centerY - (tooltipHeight / 0.4);
     } else if (totalCount == 2) {
       // Two tooltips: left and right of center, positioned lower
       if (index == 0) {
-        left = centerX - tooltipWidth - spacing;
-        top = centerY + 20; // Below header level
+        left = centerX - tooltipWidth + spacing - 100;
+        top = centerY - (tooltipHeight / 0.4);
       } else {
-        left = centerX + spacing;
-        top = centerY + 20; // Below header level
+        left = centerX + tooltipWidth + spacing - 100;
+        top = centerY - (tooltipHeight / 0.4);
       }
     } else if (totalCount == 4) {
       // Four tooltips: arranged around center but avoiding header area
       switch (index) {
         case 0: // Left
-          left = centerX - tooltipWidth - spacing - 100;
-          top = centerY - (tooltipHeight / 2);
+          left = centerX - tooltipWidth + spacing - 100;
+          top = centerY - (tooltipHeight / 0.4);
           break;
         case 1: // Right
           left = centerX + spacing + 20;
-          top = centerY - (tooltipHeight / 2);
+          top = centerY - (tooltipHeight / 0.4);
           break;
         case 2: // Bottom-left
-          left = centerX - tooltipWidth - spacing;
-          top = centerY + spacing + 20;
+          left = centerX - tooltipWidth + spacing - 100;
+          top = centerY - spacing - tooltipHeight / 1;
           break;
         case 3: // Bottom-right
-          left = centerX + spacing;
-          top = centerY + spacing + 20;
+          left = centerX + spacing + 20;
+          top = centerY - spacing - tooltipHeight / 1;
           break;
         default:
           left = centerX - (tooltipWidth / 2);
@@ -614,15 +621,19 @@ class _FluidBalanceSimulationScreenState
       }
     }
 
-    // Enhanced boundary checking
-    if (left < 20) left = 20;
-    if (left + tooltipWidth > screenSize.width - 20) {
-      left = screenSize.width - tooltipWidth - 20;
+    // Enhanced boundary checking dengan parameter yang bisa disesuaikan
+    if (left < leftBoundary)
+      left = leftBoundary; // Sekarang bisa negatif untuk keluar dari layar
+    if (left + tooltipWidth > screenSize.width - rightBoundary) {
+      left = screenSize.width - tooltipWidth - rightBoundary;
     }
-    if (top < 160) top = 160; // Leave more space for header tooltip
-    if (top + tooltipHeight > screenSize.height - 150) {
+    if (top < topBoundary)
+      top = topBoundary; // Menggunakan parameter topBoundary
+    if (top + tooltipHeight > screenSize.height - bottomBoundary) {
       top =
-          screenSize.height - tooltipHeight - 150; // Leave space for bottom nav
+          screenSize.height -
+          tooltipHeight -
+          bottomBoundary; // Menggunakan parameter bottomBoundary
     }
 
     return Positioned(
