@@ -71,7 +71,7 @@ class _ChildFluidCalculationScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: 1),
 
           // Top Row with Back Button and Logo
           Row(
@@ -97,7 +97,7 @@ class _ChildFluidCalculationScreenState
               ),
 
               // App Logo
-              Image.asset('assets/logo.png', width: 120, height: 120),
+              Image.asset('assets/logo.png', width: 100, height: 100),
             ],
           ),
 
@@ -110,7 +110,7 @@ class _ChildFluidCalculationScreenState
               Text(
                 'KalBaCa',
                 style: AppTextStyles.menuText.copyWith(
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -125,7 +125,7 @@ class _ChildFluidCalculationScreenState
             ],
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Page Title with Home Icon
           Row(

@@ -263,14 +263,7 @@ class _FluidBalanceSimulationScreenState
             ],
           ),
 
-          const SizedBox(height: 5),
-
-          // App Title
-          Text('KalBaCa', style: AppTextStyles.homeTitle),
-          const SizedBox(height: 4),
-          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
-
-          const SizedBox(height: 24),
+          const SizedBox(height: 1),
 
           // Page Title with Home Icon
           Row(
@@ -288,7 +281,7 @@ class _FluidBalanceSimulationScreenState
                 ),
               ),
 
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
 
               // Page Title
               Expanded(
@@ -442,7 +435,7 @@ class _FluidBalanceSimulationScreenState
   }
 
   Widget _buildHeaderTooltip(Size screenSize) {
-    const tooltipWidth = 180.0;
+    const tooltipWidth = 140.0;
     const tooltipHeight = 85.0;
 
     // Perfect center positioning - horizontally and vertically centered
@@ -505,7 +498,7 @@ class _FluidBalanceSimulationScreenState
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(width: 2),
                   GestureDetector(
                     onTap: _hideTooltip,
                     child: Container(
@@ -536,7 +529,7 @@ class _FluidBalanceSimulationScreenState
     int totalCount,
     Size screenSize,
   ) {
-    const tooltipWidth = 160.0;
+    const tooltipWidth = 120.0;
     const tooltipHeight = 100.0;
     const spacing = 10.0;
 
@@ -544,8 +537,8 @@ class _FluidBalanceSimulationScreenState
     const leftBoundary =
         5.0; // Bisa diubah untuk mengatur seberapa jauh ke kiri tooltip bisa bergerak (negatif = keluar layar)
     const rightBoundary = 80.0; // Batas kanan dari tepi layar
-    const topBoundary = 160.0; // Batas atas (untuk menghindari header)
-    const bottomBoundary = 20.0; // Batas bawah dari tepi layar
+    const topBoundary = 170.0; // Batas atas (untuk menghindari header)
+    const bottomBoundary = 10.0; // Batas bawah dari tepi layar
 
     // Improved positioning to avoid header overlap
     double left, top;
@@ -578,11 +571,11 @@ class _FluidBalanceSimulationScreenState
           break;
         case 2: // Bottom-left
           left = centerX - tooltipWidth + spacing - 100;
-          top = centerY - spacing - tooltipHeight / 1;
+          top = centerY - spacing - tooltipHeight / 1.1;
           break;
         case 3: // Bottom-right
           left = centerX + spacing + 20;
-          top = centerY - spacing - tooltipHeight / 1;
+          top = centerY - spacing - tooltipHeight / 1.1;
           break;
         default:
           left = centerX - (tooltipWidth / 2);
@@ -602,13 +595,15 @@ class _FluidBalanceSimulationScreenState
     }
 
     // Enhanced boundary checking dengan parameter yang bisa disesuaikan
-    if (left < leftBoundary)
+    if (left < leftBoundary) {
       left = leftBoundary; // Sekarang bisa negatif untuk keluar dari layar
+    }
     if (left + tooltipWidth > screenSize.width - rightBoundary) {
       left = screenSize.width - tooltipWidth - rightBoundary;
     }
-    if (top < topBoundary)
+    if (top < topBoundary) {
       top = topBoundary; // Menggunakan parameter topBoundary
+    }
     if (top + tooltipHeight > screenSize.height - bottomBoundary) {
       top =
           screenSize.height -
@@ -661,12 +656,12 @@ class _FluidBalanceSimulationScreenState
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 5),
                       Expanded(
                         child: Text(
                           distribution.area,
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
                             color: AppColors.textDark,
                             fontWeight: FontWeight.w600,
                             height: 1.3,
@@ -681,7 +676,7 @@ class _FluidBalanceSimulationScreenState
                     alignment: Alignment.centerRight,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
+                        horizontal: 5,
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
@@ -691,7 +686,7 @@ class _FluidBalanceSimulationScreenState
                       child: Text(
                         '${distribution.percentage}%',
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryBlue,
                           letterSpacing: 0.5,

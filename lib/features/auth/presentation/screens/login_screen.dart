@@ -35,9 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(AppDimensions.headerPadding),
                 child: Column(
                   children: [
-                    const SizedBox(height: 40), // Top spacing
+                    const SizedBox(height: 10), // Top spacing
                     // Logo
-                    Image.asset('assets/logo.png', height: 150, width: 150),
+                    Image.asset('assets/logo.png', height: 120, width: 120),
                     const SizedBox(height: AppDimensions.headerSpacing),
                     // App Title and Slogan
                     Text(
@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: AppColors.white,
                       ),
                     ),
-                    const SizedBox(height: 40), // Bottom spacing
+                    const SizedBox(height: 30), // Bottom spacing
                   ],
                 ),
               ),

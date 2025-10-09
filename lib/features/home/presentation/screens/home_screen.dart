@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text('[Nama Pengguna]', style: AppTextStyles.usernameText),
             ],
           ),
@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('KalBaCa', style: AppTextStyles.homeTitle),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
         ],
       ),
