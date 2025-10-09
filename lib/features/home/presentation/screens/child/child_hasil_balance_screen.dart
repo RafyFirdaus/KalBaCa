@@ -108,11 +108,6 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
 
           const SizedBox(height: 16),
 
-          // App Title
-          Text('KalBaCa', style: AppTextStyles.homeTitle),
-          const SizedBox(height: 4),
-          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
-
           const SizedBox(height: 24),
 
           // Page Title with Home Icon

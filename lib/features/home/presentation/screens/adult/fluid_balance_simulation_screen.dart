@@ -547,7 +547,7 @@ class _FluidBalanceSimulationScreenState
 
     if (totalCount == 1) {
       // Single tooltip: center below header with more space
-      left = centerX - (tooltipWidth / 1.5);
+      left = centerX - (tooltipWidth / 1.3);
       top = centerY - (tooltipHeight / 0.4);
     } else if (totalCount == 2) {
       // Two tooltips: left and right of center, positioned lower

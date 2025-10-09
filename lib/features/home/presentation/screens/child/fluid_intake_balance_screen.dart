@@ -240,7 +240,7 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
         // Input Field
         Expanded(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 1),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),

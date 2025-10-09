@@ -271,11 +271,6 @@ class _ChildFluidBalanceSimulationScreenState
 
           const SizedBox(height: 1),
 
-          // App Title
-          Text('KalBaCa', style: AppTextStyles.homeTitle),
-          const SizedBox(height: 4),
-          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
-
           const SizedBox(height: 24),
 
           // Page Title with Home Icon
@@ -441,7 +436,7 @@ class _ChildFluidBalanceSimulationScreenState
 
   Widget _buildHeaderTooltip(Size screenSize) {
     final centerX = screenSize.width / 2.40;
-    final centerY = screenSize.height / 3.1;
+    final centerY = screenSize.height / 3.5;
 
     return Positioned(
       left: centerX - 100,
@@ -510,8 +505,8 @@ class _ChildFluidBalanceSimulationScreenState
     Size screenSize,
   ) {
     final centerX = screenSize.width / 2;
-    final centerY = screenSize.height / 2.7;
-    final tooltipWidth = 160.0;
+    final centerY = screenSize.height / 3.3;
+    final tooltipWidth = 120.0;
     final tooltipHeight = 70.0;
     final spacing = 40.0;
 
@@ -520,7 +515,7 @@ class _ChildFluidBalanceSimulationScreenState
     // Enhanced positioning logic
     final leftBoundary = 10.0;
     final rightBoundary = 80.0;
-    final topBoundary = 50.0;
+    final topBoundary = 60.0;
     final bottomBoundary = 100.0;
 
     if (totalCount == 1) {
@@ -554,11 +549,11 @@ class _ChildFluidBalanceSimulationScreenState
           break;
         case 2: // Bottom-left
           left = centerX - tooltipWidth + spacing - 100;
-          top = centerY + (tooltipHeight * 0.5);
+          top = centerY + (tooltipHeight / 5);
           break;
         case 3: // Bottom-right
           left = centerX + spacing + 20;
-          top = centerY + (tooltipHeight * 0.5);
+          top = centerY + (tooltipHeight / 6);
           break;
         default:
           left = centerX - (tooltipWidth / 2);
@@ -627,7 +622,7 @@ class _ChildFluidBalanceSimulationScreenState
                     child: Text(
                       distribution.area,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 10,
                         color: AppColors.textDark,
                         fontWeight: FontWeight.w600,
                         height: 1.3,
@@ -642,17 +637,17 @@ class _ChildFluidBalanceSimulationScreenState
                 alignment: Alignment.centerRight,
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
+                    horizontal: 6,
+                    vertical: 5,
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.primaryBlue,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     '${distribution.percentage}%',
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 10,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
