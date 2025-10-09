@@ -360,14 +360,6 @@ class _ChildFluidBalanceSimulationScreenState
                       ),
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.child_care, size: 48, color: Colors.grey),
-                          SizedBox(height: 8),
-                          Text(
-                            'Diagram Anak',
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                        ],
                       ),
                     );
                   },

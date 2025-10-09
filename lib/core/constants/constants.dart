@@ -15,9 +15,6 @@ class AppColors {
   // Pure white for backgrounds and text - Putih murni untuk background dan teks
   static const Color white = Color(0xFFFFFFFF);
 
-  // Light gray for subtle backgrounds - Abu-abu terang untuk background halus
-  static const Color lightGray = Color(0xFFF5F5F5);
-
   // Border color for input fields and dividers - Warna border untuk input dan pembatas
   static const Color borderGray = Color(0xFFE0E0E0);
 
@@ -26,9 +23,6 @@ class AppColors {
 
   // Gray text color for secondary content - Warna teks abu-abu untuk konten sekunder
   static const Color textGray = Color(0xFF666666);
-
-  // Shadow color with 10% opacity - Warna bayangan dengan opacity 10%
-  static const Color shadowColor = Color(0x1A000000);
 
   // Inactive state color for disabled elements - Warna untuk elemen yang tidak aktif
   static const Color inactiveGray = Color(0xFF9E9E9E);
@@ -155,10 +149,6 @@ class AppDimensions {
       24.0; // Rounded corners for form container - Sudut melengkung untuk kontainer form
   static const double formContainerPadding =
       24.0; // Internal padding inside form container - Padding internal dalam kontainer form
-  static const double formContainerMargin =
-      24.0; // External margin around form container - Margin eksternal di sekitar kontainer form
-  static const double formContainerElevation =
-      4.0; // Shadow elevation for form container - Elevasi bayangan untuk kontainer form
 
   // Input Fields - Field input
   static const double inputBorderRadius =
@@ -179,8 +169,6 @@ class AppDimensions {
       16.0; // Vertical spacing between buttons - Spasi vertikal antar tombol
 
   // Other Elements - Elemen lainnya
-  static const double forgotPasswordSpacing =
-      16.0; // Spacing above forgot password link - Spasi di atas link lupa password
   static const double dividerSpacing =
       24.0; // Vertical spacing around dividers - Spasi vertikal di sekitar pembatas
   static const double dividerPadding =
@@ -191,8 +179,6 @@ class AppDimensions {
       18.0; // Left and right padding for home page content - Padding kiri dan kanan untuk konten beranda
   static const double homePaddingTop =
       20.0; // Top padding for home page content - Padding atas untuk konten beranda
-  static const double homeMarginBottom =
-      16.0; // Bottom margin for home page sections - Margin bawah untuk bagian beranda
   static const double homeMarginTop =
       5.0; // Small top margin for home page elements - Margin atas kecil untuk elemen beranda
   static const double homeMarginSection =
@@ -201,8 +187,6 @@ class AppDimensions {
   // Home Page Icons - Ikon halaman beranda
   static const double homeIconSize =
       40.0; // Size for home page icons - Ukuran untuk ikon beranda
-  static const double homeIconBorder =
-      2.0; // Border width for home page icons - Lebar border untuk ikon beranda
 
   // Home Page Menu - Menu halaman beranda
   static const double homeMenuSpacing =

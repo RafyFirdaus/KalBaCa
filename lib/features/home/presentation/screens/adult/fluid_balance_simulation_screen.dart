@@ -355,11 +355,6 @@ class _FluidBalanceSimulationScreenState
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.image_not_supported,
-                            size: 48,
-                            color: Colors.grey,
-                          ),
                           SizedBox(height: 8),
                           Text(
                             'Diagram Tubuh Manusia',
