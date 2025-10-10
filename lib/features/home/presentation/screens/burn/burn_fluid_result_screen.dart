@@ -138,11 +138,6 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
 
           const SizedBox(height: 16),
 
-          // App Title
-          Text('KalBaCa', style: AppTextStyles.homeTitle),
-          const SizedBox(height: 4),
-          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
-
           const SizedBox(height: 24),
 
           // Page Title with Home Icon
@@ -376,12 +371,13 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
             // Calculate normal IWL based on age and weight
             final double weightKg = double.parse(widget.weight);
             final int age = int.parse(widget.age);
-            
+
             // Calculate normal IWL based on age and weight
-            final double normalIWL = age > 18 
-                ? weightKg * 15 // Adult: 15 mL/kg/day
+            final double normalIWL = age > 18
+                ? weightKg *
+                      15 // Adult: 15 mL/kg/day
                 : weightKg * 20; // Child: 20 mL/kg/day
-            
+
             // Navigate to intake/output screen
             Navigator.push(
               context,

@@ -38,28 +38,29 @@ class _ChildFluidCalculationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF0052CC), Color(0xFF003A8C)],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHeader(),
-                _buildFormSection(),
-                const SizedBox(height: 130), // Space for floating button
-              ],
+      backgroundColor: const Color(0xFF0047AB), // Primary Blue as specified
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header Section
+            _buildHeader(),
+
+            // Form Section
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.homePaddingHorizontal,
+                  vertical: AppDimensions.homeMarginSection,
+                ),
+                child: _buildFormSection(),
+              ),
             ),
-          ),
+
+            // Next Button
+            _buildNextButton(),
+          ],
         ),
       ),
-      floatingActionButton: _buildNextButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
@@ -104,27 +105,6 @@ class _ChildFluidCalculationScreenState
           const SizedBox(height: 20),
 
           // App Name and Slogan
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'KalBaCa',
-                style: AppTextStyles.menuText.copyWith(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Kalkulator Balance Cairan',
-                style: AppTextStyles.menuText.copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ],
-          ),
-
           const SizedBox(height: 20),
 
           // Page Title with Home Icon
@@ -159,84 +139,77 @@ class _ChildFluidCalculationScreenState
 
   // Form Section
   Widget _buildFormSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.homePaddingHorizontal,
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 24),
 
-            // Form Title
-            Text(
-              'Data Pasien',
-              style: AppTextStyles.menuText.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+          // Form Title
+          Text(
+            'Data Pasien',
+            style: AppTextStyles.menuText.copyWith(fontWeight: FontWeight.bold),
+          ),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-            // Name Field
-            _buildFormField(
-              label: 'Nama Pasien:',
-              controller: _nameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Nama pasien harus diisi';
-                }
-                return null;
-              },
-            ),
+          // Name Field
+          _buildFormField(
+            label: 'Nama Pasien:',
+            controller: _nameController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Nama pasien harus diisi';
+              }
+              return null;
+            },
+          ),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-            // Weight Field
-            _buildFormField(
-              label: 'Berat Badan:',
-              controller: _weightController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              suffixText: 'kg',
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Berat badan harus diisi';
-                }
-                return null;
-              },
-            ),
+          // Weight Field
+          _buildFormField(
+            label: 'Berat Badan:',
+            controller: _weightController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            suffixText: 'kg',
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Berat badan harus diisi';
+              }
+              return null;
+            },
+          ),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-            // Height Field
-            _buildFormField(
-              label: 'Tinggi Badan:',
-              controller: _heightController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              suffixText: 'cm',
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Tinggi badan harus diisi';
-                }
-                return null;
-              },
-            ),
+          // Height Field
+          _buildFormField(
+            label: 'Tinggi Badan:',
+            controller: _heightController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            suffixText: 'cm',
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Tinggi badan harus diisi';
+              }
+              return null;
+            },
+          ),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-            // Age Field with Unit Selector
-            _buildAgeField(),
+          // Age Field with Unit Selector
+          _buildAgeField(),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-            // Gender Field (Dropdown)
-            _buildGenderDropdown(),
-          ],
-        ),
+          // Gender Field (Dropdown)
+          _buildGenderDropdown(),
+        ],
       ),
     );
   }
@@ -381,32 +354,35 @@ class _ChildFluidCalculationScreenState
         right: AppDimensions.homePaddingHorizontal,
         bottom: 16,
       ),
-      child: GestureDetector(
-        onTap: () {
-          if (_formKey.currentState!.validate()) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChildFluidResultScreen(
-                  patientName: _nameController.text,
-                  weightKg: double.parse(_weightController.text),
-                  heightCm: double.parse(_heightController.text),
-                  age: int.parse(_ageController.text),
-                  gender: _selectedGender!,
+      child: Align(
+        alignment: Alignment.bottomRight,
+        child: GestureDetector(
+          onTap: () {
+            if (_formKey.currentState!.validate()) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChildFluidResultScreen(
+                    patientName: _nameController.text,
+                    weightKg: double.parse(_weightController.text),
+                    heightCm: double.parse(_heightController.text),
+                    age: int.parse(_ageController.text),
+                    gender: _selectedGender!,
+                  ),
                 ),
-              ),
-            );
-          }
-        },
-        child: Container(
-          width: 50,
-          height: 50,
-          decoration: const BoxDecoration(
-            color: Color(0xFF003A8C), // Darker blue for next button
-            shape: BoxShape.circle,
-          ),
-          child: const Center(
-            child: Icon(Icons.arrow_forward, color: Colors.white, size: 24),
+              );
+            }
+          },
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+              color: Color(0xFF003A8C), // Darker blue for next button
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(Icons.arrow_forward, color: Colors.white, size: 24),
+            ),
           ),
         ),
       ),

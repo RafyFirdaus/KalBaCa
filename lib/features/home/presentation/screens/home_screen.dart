@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_calculation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_calculation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/burn/data_pasien_screen.dart';
+import 'package:kalbaca/features/auth/data/services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +66,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 2),
-              Text('[Nama Pengguna]', style: AppTextStyles.usernameText),
+              StreamBuilder<User?>(
+                stream: _authService.authStateChanges,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data != null) {
+                    final user = snapshot.data!;
+                    final displayName = user.displayName ?? 'Pengguna';
+                    return Text(displayName, style: AppTextStyles.usernameText);
+                  }
+                  return Text('Pengguna', style: AppTextStyles.usernameText);
+                },
+              ),
             ],
           ),
 

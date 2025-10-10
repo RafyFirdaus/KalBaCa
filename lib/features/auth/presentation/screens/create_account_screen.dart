@@ -1,25 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:kalbaca/core/constants/constants.dart';
-import 'package:kalbaca/features/auth/presentation/screens/create_account_screen.dart';
-import 'package:kalbaca/features/auth/data/repositories/auth_repository.dart';
-import 'package:kalbaca/features/auth/data/models/auth_result.dart';
+import '../../../../core/constants/constants.dart';
+import '../../data/repositories/auth_repository.dart';
+import '../../data/models/auth_result.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class CreateAccountScreen extends StatefulWidget {
+  const CreateAccountScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<CreateAccountScreen> createState() => _CreateAccountScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
+class _CreateAccountScreenState extends State<CreateAccountScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _repeatPasswordController =
+      TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthRepository _authRepository = AuthRepository();
-  bool _obscurePassword = true;
-  bool _isLoading = false;
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
 
-  Future<void> _handleLogin() async {
+  bool _isPasswordVisible = false;
+  bool _isRepeatPasswordVisible = false;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _repeatPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleCreateAccount() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -29,8 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      AuthResult result = await _authRepository.loginUser(
+      AuthResult result = await _authRepository.registerUser(
         email: _emailController.text.trim(),
+        username: _usernameController.text.trim(),
         password: _passwordController.text,
       );
 
@@ -38,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Berhasil masuk!'),
+              content: Text('Akun berhasil dibuat!'),
               backgroundColor: Colors.green,
             ),
           );
@@ -48,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(result.errorMessage ?? 'Gagal masuk'),
+              content: Text(result.errorMessage ?? 'Gagal membuat akun'),
               backgroundColor: Colors.red,
             ),
           );
@@ -70,13 +84,6 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     }
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 
   @override
@@ -146,14 +153,79 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const SizedBox(height: 20), // Top spacing for overlap
-                      // Email/Phone TextField
+                      // Page Title
+                      Text(
+                        'Create Account',
+                        style: AppTextStyles.homeTitle.copyWith(
+                          color: AppColors.textDark,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppDimensions.inputSpacing),
+
+                      // Email TextField
                       TextFormField(
                         controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
                         style: AppTextStyles.inputText.copyWith(
                           color: AppColors.textDark,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Email or Phone',
+                          hintText: 'Email',
+                          hintStyle: AppTextStyles.inputText.copyWith(
+                            color: AppColors.textGray,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: AppColors.textGray,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: BorderSide(color: AppColors.borderGray),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: BorderSide(color: AppColors.borderGray),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: const BorderSide(
+                              color: AppColors.primaryBlue,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: AppDimensions.inputVerticalPadding,
+                            horizontal: AppDimensions.inputHorizontalPadding,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Silakan masukkan email Anda';
+                          }
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
+                            return 'Silakan masukkan alamat email yang valid';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: AppDimensions.inputSpacing),
+
+                      // Username TextField
+                      TextFormField(
+                        controller: _usernameController,
+                        style: AppTextStyles.inputText.copyWith(
+                          color: AppColors.textDark,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Username',
                           hintStyle: AppTextStyles.inputText.copyWith(
                             color: AppColors.textGray,
                           ),
@@ -188,7 +260,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Silakan masukkan email atau nomor telepon Anda';
+                            return 'Silakan masukkan nama pengguna Anda';
+                          }
+                          if (value.length < 3) {
+                            return 'Nama pengguna harus minimal 3 karakter';
                           }
                           return null;
                         },
@@ -201,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: AppTextStyles.inputText.copyWith(
                           color: AppColors.textDark,
                         ),
-                        obscureText: _obscurePassword,
+                        obscureText: !_isPasswordVisible,
                         decoration: InputDecoration(
                           hintText: 'Password',
                           hintStyle: AppTextStyles.inputText.copyWith(
@@ -213,14 +288,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                               color: AppColors.textGray,
                             ),
                             onPressed: () {
                               setState(() {
-                                _obscurePassword = !_obscurePassword;
+                                _isPasswordVisible = !_isPasswordVisible;
                               });
                             },
                           ),
@@ -253,36 +328,86 @@ class _LoginScreenState extends State<LoginScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Silakan masukkan kata sandi Anda';
                           }
+                          if (value.length < 6) {
+                            return 'Kata sandi harus minimal 6 karakter';
+                          }
                           return null;
                         },
                       ),
                       const SizedBox(height: AppDimensions.inputSpacing),
 
-                      // Forgot Password Link
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            // TODO: Implement forgot password
-                          },
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      // Repeat Password TextField
+                      TextFormField(
+                        controller: _repeatPasswordController,
+                        style: AppTextStyles.inputText.copyWith(
+                          color: AppColors.textDark,
+                        ),
+                        obscureText: !_isRepeatPasswordVisible,
+                        decoration: InputDecoration(
+                          hintText: 'Repeat Password',
+                          hintStyle: AppTextStyles.inputText.copyWith(
+                            color: AppColors.textGray,
                           ),
-                          child: Text(
-                            'Forgot Password?',
-                            style: AppTextStyles.forgotPasswordText,
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                            color: AppColors.textGray,
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isRepeatPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: AppColors.textGray,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isRepeatPasswordVisible =
+                                    !_isRepeatPasswordVisible;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: BorderSide(color: AppColors.borderGray),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: BorderSide(color: AppColors.borderGray),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppDimensions.inputBorderRadius,
+                            ),
+                            borderSide: const BorderSide(
+                              color: AppColors.primaryBlue,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: AppDimensions.inputVerticalPadding,
+                            horizontal: AppDimensions.inputHorizontalPadding,
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Silakan ulangi kata sandi Anda';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Kata sandi tidak cocok';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: AppDimensions.buttonSpacing),
 
-                      // Login Button
+                      // Create Account Button
                       SizedBox(
                         height: AppDimensions.buttonHeight,
                         child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleLogin,
+                          onPressed: _isLoading ? null : _handleCreateAccount,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.actionBlue,
                             foregroundColor: AppColors.white,
@@ -303,7 +428,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 )
                               : const Text(
-                                  'Login',
+                                  'Create Account',
                                   style: AppTextStyles.buttonText,
                                 ),
                         ),
@@ -335,17 +460,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      // Create Account Button
+                      // Back to Login Button
                       SizedBox(
                         height: AppDimensions.buttonHeight,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const CreateAccountScreen(),
-                              ),
-                            );
+                            Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.lightCyan,
@@ -358,7 +478,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             elevation: 2,
                           ),
                           child: const Text(
-                            'Create an account',
+                            'Back to Login',
                             style: AppTextStyles.buttonText,
                           ),
                         ),

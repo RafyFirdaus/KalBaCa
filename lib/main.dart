@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:kalbaca/firebase_options.dart';
 import 'package:kalbaca/features/auth/presentation/screens/login_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/home_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_calculation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_calculation_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

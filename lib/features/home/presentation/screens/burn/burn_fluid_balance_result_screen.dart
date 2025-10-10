@@ -15,10 +15,12 @@ class BurnFluidBalanceResultScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<BurnFluidBalanceResultScreen> createState() => _BurnFluidBalanceResultScreenState();
+  State<BurnFluidBalanceResultScreen> createState() =>
+      _BurnFluidBalanceResultScreenState();
 }
 
-class _BurnFluidBalanceResultScreenState extends State<BurnFluidBalanceResultScreen> {
+class _BurnFluidBalanceResultScreenState
+    extends State<BurnFluidBalanceResultScreen> {
   late double balance;
   int _selectedIndex = 0;
 
@@ -98,11 +100,6 @@ class _BurnFluidBalanceResultScreenState extends State<BurnFluidBalanceResultScr
           ),
 
           const SizedBox(height: 16),
-
-          // App Title
-          Text('KalBaCa', style: AppTextStyles.homeTitle),
-          const SizedBox(height: 4),
-          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
 
           const SizedBox(height: 24),
 
