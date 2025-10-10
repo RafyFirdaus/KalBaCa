@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/features/auth/presentation/screens/login_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/home_screen.dart';
-import 'package:kalbaca/features/home/presentation/screens/adult/fluid_balance_simulation_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_calculation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_calculation_screen.dart';
 
 void main() {
@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
-        '/diagram': (context) => const FluidBalanceSimulationScreen(),
-        '/child-fluid': (context) => const ChildFluidCalculationScreen(),
+        '/adult-fluid-calculation': (context) => const AdultFluidCalculationScreen(),
+        '/child-fluid-calculation': (context) => const ChildFluidCalculationScreen(),
       },
     );
   }

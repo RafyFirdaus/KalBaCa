@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_calculation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_calculation_screen.dart';
+import 'package:kalbaca/features/luka_bakar/presentation/screens/data_pasien_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -155,7 +156,12 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
           const SizedBox(height: AppDimensions.buttonSpacing * 4),
           _buildActionButton('Hitung Kebutuhan Cairan Luka Bakar', () {
-            // TODO: Navigate to burn calculation screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const DataPasienScreen(),
+              ),
+            );
           }),
         ],
       ),
