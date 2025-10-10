@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/constants.dart';
+import '../../../../../core/constants/constants.dart';
+import 'burn_fluid_intake_output_screen.dart';
 
 class BurnFluidResultScreen extends StatefulWidget {
   final String patientName;
@@ -372,11 +373,24 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
         alignment: Alignment.bottomRight,
         child: ElevatedButton.icon(
           onPressed: () {
-            // TODO: Navigate to intake/output screen for burn patients
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Fitur monitoring intake/output akan segera tersedia',
+            // Calculate normal IWL based on age and weight
+            final double weightKg = double.parse(widget.weight);
+            final int age = int.parse(widget.age);
+            
+            // Calculate normal IWL based on age and weight
+            final double normalIWL = age > 18 
+                ? weightKg * 15 // Adult: 15 mL/kg/day
+                : weightKg * 20; // Child: 20 mL/kg/day
+            
+            // Navigate to intake/output screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BurnFluidIntakeOutputScreen(
+                  patientName: widget.patientName,
+                  weightKg: weightKg,
+                  normalIWL: normalIWL,
+                  age: age,
                 ),
               ),
             );

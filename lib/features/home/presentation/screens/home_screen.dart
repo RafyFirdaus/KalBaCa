@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_calculation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_calculation_screen.dart';
-import 'package:kalbaca/features/luka_bakar/presentation/screens/data_pasien_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/burn/data_pasien_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

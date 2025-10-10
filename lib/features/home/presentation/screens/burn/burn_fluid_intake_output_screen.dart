@@ -1,0 +1,439 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:kalbaca/core/constants/constants.dart';
+import 'package:kalbaca/features/home/presentation/screens/burn/burn_fluid_balance_calculation_screen.dart';
+
+class BurnFluidIntakeOutputScreen extends StatefulWidget {
+  final String patientName;
+  final double weightKg;
+  final double normalIWL;
+  final int age;
+
+  const BurnFluidIntakeOutputScreen({
+    super.key,
+    required this.patientName,
+    required this.weightKg,
+    required this.normalIWL,
+    required this.age,
+  });
+
+  @override
+  State<BurnFluidIntakeOutputScreen> createState() =>
+      _BurnFluidIntakeOutputScreenState();
+}
+
+class _BurnFluidIntakeOutputScreenState
+    extends State<BurnFluidIntakeOutputScreen> {
+  int _selectedIndex = 0;
+  final _formKey = GlobalKey<FormState>();
+
+  // Intake controllers
+  final TextEditingController _infusionController = TextEditingController();
+  final TextEditingController _oralController = TextEditingController();
+  final TextEditingController _foodController = TextEditingController();
+  final TextEditingController _transfusionController = TextEditingController();
+  final TextEditingController _otherIntakeController = TextEditingController();
+
+  // Output controllers
+  final TextEditingController _urineController = TextEditingController();
+  final TextEditingController _drainageController = TextEditingController();
+  final TextEditingController _diarrheaController = TextEditingController();
+  final TextEditingController _iwlController = TextEditingController();
+  final TextEditingController _otherOutputController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Set IWL value automatically based on the value from previous screen
+    _iwlController.text = widget.normalIWL.toStringAsFixed(0);
+  }
+
+  @override
+  void dispose() {
+    // Dispose all controllers
+    _infusionController.dispose();
+    _oralController.dispose();
+    _foodController.dispose();
+    _transfusionController.dispose();
+    _otherIntakeController.dispose();
+    _urineController.dispose();
+    _drainageController.dispose();
+    _diarrheaController.dispose();
+    _iwlController.dispose();
+    _otherOutputController.dispose();
+    super.dispose();
+  }
+
+  // Calculate total intake
+  double calculateTotalIntake() {
+    double infusion = double.tryParse(_infusionController.text) ?? 0;
+    double oral = double.tryParse(_oralController.text) ?? 0;
+    double food = double.tryParse(_foodController.text) ?? 0;
+    double transfusion = double.tryParse(_transfusionController.text) ?? 0;
+    double otherIntake = double.tryParse(_otherIntakeController.text) ?? 0;
+
+    return infusion + oral + food + transfusion + otherIntake;
+  }
+
+  // Calculate total output
+  double calculateTotalOutput() {
+    double urine = double.tryParse(_urineController.text) ?? 0;
+    double drainage = double.tryParse(_drainageController.text) ?? 0;
+    double diarrhea = double.tryParse(_diarrheaController.text) ?? 0;
+    double iwl = double.tryParse(_iwlController.text) ?? 0;
+    double otherOutput = double.tryParse(_otherOutputController.text) ?? 0;
+
+    return urine + drainage + diarrhea + iwl + otherOutput;
+  }
+
+  // Calculate fluid balance
+  double calculateFluidBalance() {
+    return calculateTotalIntake() - calculateTotalOutput();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0047AB), // Primary Blue
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header Section
+            _buildHeaderSection(),
+
+            // Form Section
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppDimensions.homePaddingHorizontal,
+                  vertical: 20,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Intake Section
+                      _buildIntakeSection(),
+
+                      const SizedBox(height: 24),
+
+                      // Output Section
+                      _buildOutputSection(),
+
+                      const SizedBox(height: 32),
+
+                      // Next Button
+                      _buildNextButton(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Bottom Navigation Bar
+            _buildBottomNavigationBar(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Header Section with Logo and Title
+  Widget _buildHeaderSection() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: AppDimensions.homePaddingHorizontal,
+        right: AppDimensions.homePaddingHorizontal,
+        top: AppDimensions.homePaddingTop,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // User and Logo Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Back Button
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Color(0xFF0047AB),
+                    size: 24,
+                  ),
+                ),
+              ),
+
+              // App Logo
+              Image.asset('assets/logo.png', width: 100, height: 100),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // App Title
+          Text('KalBaCa', style: AppTextStyles.homeTitle),
+          const SizedBox(height: 4),
+          Text('Kalkulator Balance Cairan', style: AppTextStyles.homeSubtitle),
+
+          const SizedBox(height: 24),
+
+          // Page Title with Home Icon
+          Row(
+            children: [
+              // Home Icon
+              Container(
+                width: 36,
+                height: 36,
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              // Page Title
+              Text(
+                'Intake dan Output Cairan Luka Bakar',
+                style: AppTextStyles.menuText,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIntakeSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Intake",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        BurnFluidInputField(
+          label: "Infus: ",
+          unit: "mL",
+          controller: _infusionController,
+        ),
+        BurnFluidInputField(
+          label: "Cairan Oral: ",
+          unit: "mL",
+          controller: _oralController,
+        ),
+        BurnFluidInputField(
+          label: "Makanan: ",
+          unit: "mL",
+          controller: _foodController,
+        ),
+        BurnFluidInputField(
+          label: "Tranfusi: ",
+          unit: "mL",
+          controller: _transfusionController,
+        ),
+        BurnFluidInputField(
+          label: "Lainnya: ",
+          unit: "mL",
+          controller: _otherIntakeController,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOutputSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Output",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        BurnFluidInputField(
+          label: "Urine: ",
+          unit: "mL",
+          controller: _urineController,
+        ),
+        BurnFluidInputField(
+          label: "Drainage: ",
+          unit: "mL",
+          controller: _drainageController,
+        ),
+        BurnFluidInputField(
+          label: "Diare: ",
+          unit: "mL",
+          controller: _diarrheaController,
+        ),
+        BurnFluidInputField(
+          label: "IWL: ",
+          unit: "mL",
+          controller: _iwlController,
+          readOnly: true,
+        ),
+        BurnFluidInputField(
+          label: "Lainnya: ",
+          unit: "mL",
+          controller: _otherOutputController,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNextButton() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: ElevatedButton(
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            // Navigate to burn fluid balance calculation screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BurnFluidBalanceCalculationScreen(
+                  patientName: widget.patientName,
+                  weightKg: widget.weightKg,
+                  age: widget.age,
+                  normalIWL: widget.normalIWL,
+                ),
+              ),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: const Color(0xFF0047AB),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+        child: const Text(
+          "Lanjut, Hitung Balance",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return Container(
+      height: AppDimensions.homeNavBarHeight,
+      decoration: const BoxDecoration(
+        color: AppColors.white,
+        border: Border(top: BorderSide(color: AppColors.borderGray, width: 1)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavItem(0, Icons.home),
+          _buildNavItem(1, Icons.calculate),
+          _buildNavItem(2, Icons.person),
+        ],
+      ),
+    );
+  }
+
+  // Navigation Item
+  Widget _buildNavItem(int index, IconData icon) {
+    final bool isSelected = _selectedIndex == index;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Icon(
+          icon,
+          color: isSelected ? AppColors.activeBlack : AppColors.inactiveGray,
+          size: 28,
+        ),
+      ),
+    );
+  }
+}
+
+// Custom BurnFluidInputField component
+class BurnFluidInputField extends StatelessWidget {
+  final String label;
+  final String unit;
+  final TextEditingController controller;
+  final bool readOnly;
+
+  const BurnFluidInputField({
+    Key? key,
+    required this.label,
+    required this.unit,
+    required this.controller,
+    this.readOnly = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100, // Fixed width for all labels
+            child: Text(
+              label,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+          Expanded(
+            child: TextFormField(
+              controller: controller,
+              readOnly: readOnly,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              validator: (value) {
+                if (!readOnly && (value == null || value.isEmpty)) {
+                  return 'Masukkan nilai';
+                }
+                return null;
+              },
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                suffixText: unit,
+              ),
+              style: const TextStyle(color: Colors.black, fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
