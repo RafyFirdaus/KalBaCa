@@ -370,6 +370,7 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
                 patientName: widget.patientName,
                 weightKg: widget.weightKg,
                 age: widget.age,
+                normalIWL: widget.normalIWL,
               ),
             ),
           );

@@ -368,6 +368,10 @@ class _AdultFluidIntakeBalanceScreenState
                 totalIntake: _totalIntake,
                 totalOutput:
                     widget.normalIWL, // Menggunakan normalIWL sebagai output
+                patientName: widget.patientName,
+                weightKg: widget.weightKg,
+                age: widget.age,
+                normalIWL: widget.normalIWL,
               ),
             ),
           );
@@ -392,18 +396,12 @@ class _AdultFluidIntakeBalanceScreenState
   Widget _buildBottomNavigationBar() {
     return Container(
       height: AppDimensions.homeNavBarHeight,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
+      decoration: const BoxDecoration(color: Colors.white),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildNavItem(Icons.home, false),
-          _buildNavItem(Icons.calculate, true),
+          _buildNavItem(Icons.home, true),
+          _buildNavItem(Icons.save, false),
           _buildNavItem(Icons.person, false),
         ],
       ),
@@ -417,7 +415,7 @@ class _AdultFluidIntakeBalanceScreenState
       child: Icon(
         icon,
         color: isActive ? const Color(0xFF0047AB) : Colors.grey,
-        size: 24,
+        size: 26,
       ),
     );
   }

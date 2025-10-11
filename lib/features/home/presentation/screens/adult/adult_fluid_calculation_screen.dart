@@ -397,7 +397,7 @@ class _AdultFluidCalculationScreenState
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.home),
-          _buildNavItem(1, Icons.calculate),
+          _buildNavItem(1, Icons.save),
           _buildNavItem(2, Icons.person),
         ],
       ),

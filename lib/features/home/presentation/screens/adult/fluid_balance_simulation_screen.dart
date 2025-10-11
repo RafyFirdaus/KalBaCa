@@ -715,7 +715,7 @@ class _FluidBalanceSimulationScreenState
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildNavItem(Icons.home, 0),
-          _buildNavItem(Icons.calculate, 1),
+          _buildNavItem(Icons.save, 1),
           _buildNavItem(Icons.person, 2),
         ],
       ),

@@ -58,19 +58,9 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
     int age,
     String gender,
   ) {
-    double totalBodyWaterLiters = 0;
-
-    if (gender == 'Laki-laki') {
-      // Rumus Watson untuk Pria: 2,447 - (0,09145 x usia) + (0,1074 x tinggi dalam cm) + (0,3362 x berat dalam kg)
-      totalBodyWaterLiters =
-          2.447 - (0.09145 * age) + (0.1074 * heightCm) + (0.3362 * weightKg);
-    } else {
-      // Rumus Watson untuk Wanita: -2,097 + (0,1069 x tinggi dalam cm) + (0,2466 x berat dalam kg)
-      totalBodyWaterLiters = -2.097 + (0.1069 * heightCm) + (0.2466 * weightKg);
-    }
-
-    // Konversi dari liter ke mililiter
-    return totalBodyWaterLiters * 1000;
+    // Rumus disatukan: berat badan (kg) × 30 mL/kg/hari
+    // Param heightCm, age, gender tidak digunakan lagi sesuai revisi
+    return weightKg * 30;
   }
 
   // Fungsi untuk menghitung IWL Normal (15 x BB (kg) / 24 jam)
@@ -375,7 +365,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.home),
-          _buildNavItem(1, Icons.calculate),
+          _buildNavItem(1, Icons.save),
           _buildNavItem(2, Icons.person),
         ],
       ),

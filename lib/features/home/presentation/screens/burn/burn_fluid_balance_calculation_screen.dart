@@ -367,6 +367,10 @@ class _BurnFluidBalanceCalculationScreenState
                 totalIntake: _totalIntake,
                 totalOutput:
                     widget.normalIWL, // Menggunakan normalIWL sebagai output
+                patientName: widget.patientName,
+                weightKg: widget.weightKg,
+                age: widget.age,
+                normalIWL: widget.normalIWL,
               ),
             ),
           );

@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import '../adult/fluid_balance_simulation_screen.dart';
+import 'burn_fluid_balance_calculation_screen.dart';
 
 class BurnFluidBalanceResultScreen extends StatefulWidget {
   final double targetKebutuhanCairan;
   final double totalIntake;
   final double totalOutput;
+  final String? patientName;
+  final double? weightKg;
+  final int? age;
+  final double? normalIWL;
 
   const BurnFluidBalanceResultScreen({
     Key? key,
     required this.targetKebutuhanCairan,
     required this.totalIntake,
     required this.totalOutput,
+    this.patientName,
+    this.weightKg,
+    this.age,
+    this.normalIWL,
   }) : super(key: key);
 
   @override
@@ -227,28 +236,115 @@ class _BurnFluidBalanceResultScreenState
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        const Spacer(),
-        const Spacer(),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const FluidBalanceSimulationScreen(),
+        // Hapus and Simpan buttons row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Show confirmation dialog for delete
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Hapus Data'),
+                      content: const Text('Apakah Anda yakin ingin menghapus semua data?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Batal'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            // Navigate back to previous screen or clear data
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Hapus'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xFF0047AB),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              child: const Text('Hapus'),
             ),
-          ),
-          child: const Text('Simulasi'),
+            ElevatedButton(
+              onPressed: () {
+                // Show save confirmation
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Data berhasil disimpan'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              child: const Text('Simpan'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        // Simulasi button
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Navigate back to burn balance calculation screen if parameters are available
+                if (widget.patientName != null && 
+                    widget.weightKg != null && 
+                    widget.age != null && 
+                    widget.normalIWL != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BurnFluidBalanceCalculationScreen(
+                        patientName: widget.patientName!,
+                        weightKg: widget.weightKg!,
+                        age: widget.age!,
+                        normalIWL: widget.normalIWL!,
+                      ),
+                    ),
+                  );
+                } else {
+                  // Fallback to simulation screen if parameters are not available
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FluidBalanceSimulationScreen(),
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF0047AB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              child: const Text('Simulasi'),
+            ),
+          ],
         ),
       ],
     );

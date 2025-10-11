@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalbaca/core/constants/constants.dart';
-import 'package:kalbaca/features/home/presentation/screens/child/fluid_intake_balance_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/child/child_hasil_balance_screen.dart';
 
 class FluidIntakeOutputScreen extends StatefulWidget {
   final String patientName;
@@ -24,70 +24,202 @@ class FluidIntakeOutputScreen extends StatefulWidget {
 
 class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
   int _selectedIndex = 0;
-  final _formKey = GlobalKey<FormState>();
 
-  // Intake controllers
-  final TextEditingController _infusionController = TextEditingController();
-  final TextEditingController _oralController = TextEditingController();
-  final TextEditingController _foodController = TextEditingController();
-  final TextEditingController _transfusionController = TextEditingController();
-  final TextEditingController _otherIntakeController = TextEditingController();
+  // Dynamic intake and output items
+  List<Map<String, dynamic>> _intakeItems = [];
+  List<Map<String, dynamic>> _outputItems = [];
 
-  // Output controllers
-  final TextEditingController _urineController = TextEditingController();
-  final TextEditingController _drainageController = TextEditingController();
-  final TextEditingController _diarrheaController = TextEditingController();
-  final TextEditingController _iwlController = TextEditingController();
-  final TextEditingController _otherOutputController = TextEditingController();
+  // Dropdown selections
+  String _selectedIntakeType = 'Infus';
+  String _selectedOutputType = 'Urine';
+
+  // Text controllers for input values
+  final TextEditingController _intakeValueController = TextEditingController();
+  final TextEditingController _outputValueController = TextEditingController();
+  final TextEditingController _customIntakeController = TextEditingController();
+  final TextEditingController _customOutputController = TextEditingController();
+
+  // Predefined options
+  final List<String> _intakeOptions = [
+    'Infus',
+    'Cairan Oral',
+    'Makanan',
+    'Transfusi',
+    'Lainnya',
+  ];
+  final List<String> _outputOptions = [
+    'Urine',
+    'Drainage',
+    'Diare',
+    'IWL',
+    'Lainnya',
+  ];
 
   @override
   void initState() {
     super.initState();
-    // Set IWL value automatically based on the value from previous screen
-    _iwlController.text = widget.normalIWL.toStringAsFixed(0);
+    // Automatically add IWL to output items
+    _outputItems.add({
+      'type': 'IWL',
+      'value': widget.normalIWL,
+      'isReadOnly': true,
+    });
   }
 
   @override
   void dispose() {
-    // Dispose all controllers
-    _infusionController.dispose();
-    _oralController.dispose();
-    _foodController.dispose();
-    _transfusionController.dispose();
-    _otherIntakeController.dispose();
-    _urineController.dispose();
-    _drainageController.dispose();
-    _diarrheaController.dispose();
-    _iwlController.dispose();
-    _otherOutputController.dispose();
+    _intakeValueController.dispose();
+    _outputValueController.dispose();
+    _customIntakeController.dispose();
+    _customOutputController.dispose();
     super.dispose();
   }
 
   // Calculate total intake
   double calculateTotalIntake() {
-    double infusion = double.tryParse(_infusionController.text) ?? 0;
-    double oral = double.tryParse(_oralController.text) ?? 0;
-    double food = double.tryParse(_foodController.text) ?? 0;
-    double transfusion = double.tryParse(_transfusionController.text) ?? 0;
-    double otherIntake = double.tryParse(_otherIntakeController.text) ?? 0;
-
-    return infusion + oral + food + transfusion + otherIntake;
+    return _intakeItems.fold(
+      0.0,
+      (sum, item) => sum + (item['value'] as double),
+    );
   }
 
   // Calculate total output
   double calculateTotalOutput() {
-    double urine = double.tryParse(_urineController.text) ?? 0;
-    double drainage = double.tryParse(_drainageController.text) ?? 0;
-    double diarrhea = double.tryParse(_diarrheaController.text) ?? 0;
-    double iwl = double.tryParse(_iwlController.text) ?? 0;
-    double otherOutput = double.tryParse(_otherOutputController.text) ?? 0;
-
-    return urine + drainage + diarrhea + iwl + otherOutput;
+    return _outputItems.fold(
+      0.0,
+      (sum, item) => sum + (item['value'] as double),
+    );
   }
 
   // Calculate fluid balance
   double calculateFluidBalance() {
     return calculateTotalIntake() - calculateTotalOutput();
+  }
+
+  // Add intake item
+  void _addIntakeItem() {
+    if (_selectedIntakeType == 'Lainnya') {
+      if (_customIntakeController.text.trim().isNotEmpty &&
+          _intakeValueController.text.trim().isNotEmpty) {
+        final value = double.tryParse(_intakeValueController.text.trim());
+        if (value != null && value > 0) {
+          setState(() {
+            _intakeItems.add({
+              'type': _customIntakeController.text.trim(),
+              'value': value,
+              'isReadOnly': false,
+            });
+            _customIntakeController.clear();
+            _intakeValueController.clear();
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Masukkan nilai yang valid (lebih dari 0)'),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Lengkapi nama dan nilai intake')),
+        );
+      }
+    } else {
+      if (_intakeValueController.text.trim().isNotEmpty) {
+        final value = double.tryParse(_intakeValueController.text.trim());
+        if (value != null && value > 0) {
+          setState(() {
+            _intakeItems.add({
+              'type': _selectedIntakeType,
+              'value': value,
+              'isReadOnly': false,
+            });
+            _intakeValueController.clear();
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Masukkan nilai yang valid (lebih dari 0)'),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Masukkan nilai intake')));
+      }
+    }
+  }
+
+  // Add output item
+  void _addOutputItem() {
+    if (_selectedOutputType == 'Lainnya') {
+      if (_customOutputController.text.trim().isNotEmpty &&
+          _outputValueController.text.trim().isNotEmpty) {
+        final value = double.tryParse(_outputValueController.text.trim());
+        if (value != null && value > 0) {
+          setState(() {
+            _outputItems.add({
+              'type': _customOutputController.text.trim(),
+              'value': value,
+              'isReadOnly': false,
+            });
+            _customOutputController.clear();
+            _outputValueController.clear();
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Masukkan nilai yang valid (lebih dari 0)'),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Lengkapi nama dan nilai output')),
+        );
+      }
+    } else {
+      if (_outputValueController.text.trim().isNotEmpty) {
+        final value = double.tryParse(_outputValueController.text.trim());
+        if (value != null && value > 0) {
+          setState(() {
+            _outputItems.add({
+              'type': _selectedOutputType,
+              'value': value,
+              'isReadOnly': false,
+            });
+            _outputValueController.clear();
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Masukkan nilai yang valid (lebih dari 0)'),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Masukkan nilai output')));
+      }
+    }
+  }
+
+  // Remove intake item
+  void _removeIntakeItem(int index) {
+    setState(() {
+      _intakeItems.removeAt(index);
+    });
+  }
+
+  // Remove output item
+  void _removeOutputItem(int index) {
+    if (!_outputItems[index]['isReadOnly']) {
+      setState(() {
+        _outputItems.removeAt(index);
+      });
+    }
   }
 
   @override
@@ -107,25 +239,22 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
                   horizontal: AppDimensions.homePaddingHorizontal,
                   vertical: 20,
                 ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Intake Section
-                      _buildIntakeSection(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Intake Section
+                    _buildIntakeSection(),
 
-                      const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                      // Output Section
-                      _buildOutputSection(),
+                    // Output Section
+                    _buildOutputSection(),
 
-                      const SizedBox(height: 32),
+                    const SizedBox(height: 32),
 
-                      // Next Button
-                      _buildNextButton(),
-                    ],
-                  ),
+                    // Next Button
+                    _buildNextButton(),
+                  ],
                 ),
               ),
             ),
@@ -221,31 +350,120 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        FluidInputField(
-          label: "Infus: ",
-          unit: "mL",
-          controller: _infusionController,
+
+        // Dropdown for intake type
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedIntakeType,
+              isExpanded: true,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedIntakeType = newValue!;
+                });
+              },
+              items: _intakeOptions.map<DropdownMenuItem<String>>((
+                String value,
+              ) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
         ),
-        FluidInputField(
-          label: "Cairan Oral: ",
-          unit: "mL",
-          controller: _oralController,
+
+        const SizedBox(height: 12),
+
+        // Custom input for "Lainnya"
+        if (_selectedIntakeType == 'Lainnya')
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: TextFormField(
+              controller: _customIntakeController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan jenis intake',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+            ),
+          ),
+
+        // Value input
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _intakeValueController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  hintText: 'Nilai (mL)',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton(
+              onPressed: _addIntakeItem,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF0047AB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: const Text('Tambah'),
+            ),
+          ],
         ),
-        FluidInputField(
-          label: "Makanan: ",
-          unit: "mL",
-          controller: _foodController,
-        ),
-        FluidInputField(
-          label: "Tranfusi: ",
-          unit: "mL",
-          controller: _transfusionController,
-        ),
-        FluidInputField(
-          label: "Lainnya: ",
-          unit: "mL",
-          controller: _otherIntakeController,
-        ),
+
+        const SizedBox(height: 16),
+
+        // Display added intake items
+        ..._intakeItems.asMap().entries.map((entry) {
+          int index = entry.key;
+          Map<String, dynamic> item = entry.value;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${item['type']}: ${item['value'].toStringAsFixed(0)} mL',
+                  style: const TextStyle(color: Colors.black),
+                ),
+                if (!item['isReadOnly'])
+                  IconButton(
+                    onPressed: () => _removeIntakeItem(index),
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                  ),
+              ],
+            ),
+          );
+        }).toList(),
       ],
     );
   }
@@ -263,32 +481,120 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        FluidInputField(
-          label: "Urine: ",
-          unit: "mL",
-          controller: _urineController,
+
+        // Dropdown for output type
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedOutputType,
+              isExpanded: true,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedOutputType = newValue!;
+                });
+              },
+              items: _outputOptions.map<DropdownMenuItem<String>>((
+                String value,
+              ) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
         ),
-        FluidInputField(
-          label: "Drainage: ",
-          unit: "mL",
-          controller: _drainageController,
+
+        const SizedBox(height: 12),
+
+        // Custom input for "Lainnya"
+        if (_selectedOutputType == 'Lainnya')
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: TextFormField(
+              controller: _customOutputController,
+              decoration: InputDecoration(
+                hintText: 'Masukkan jenis output',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+            ),
+          ),
+
+        // Value input
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _outputValueController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  hintText: 'Nilai (mL)',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton(
+              onPressed: _addOutputItem,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF0047AB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: const Text('Tambah'),
+            ),
+          ],
         ),
-        FluidInputField(
-          label: "Diare: ",
-          unit: "mL",
-          controller: _diarrheaController,
-        ),
-        FluidInputField(
-          label: "IWL: ",
-          unit: "mL",
-          controller: _iwlController,
-          readOnly: true,
-        ),
-        FluidInputField(
-          label: "Lainnya: ",
-          unit: "mL",
-          controller: _otherOutputController,
-        ),
+
+        const SizedBox(height: 16),
+
+        // Display added output items
+        ..._outputItems.asMap().entries.map((entry) {
+          int index = entry.key;
+          Map<String, dynamic> item = entry.value;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${item['type']}: ${item['value'].toStringAsFixed(0)} mL',
+                  style: const TextStyle(color: Colors.black),
+                ),
+                if (!item['isReadOnly'])
+                  IconButton(
+                    onPressed: () => _removeOutputItem(index),
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                  ),
+              ],
+            ),
+          );
+        }).toList(),
       ],
     );
   }
@@ -298,20 +604,27 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
       alignment: Alignment.centerRight,
       child: ElevatedButton(
         onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            // Navigate to fluid intake balance screen
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FluidIntakeBalanceScreen(
-                  patientName: widget.patientName,
-                  weightKg: widget.weightKg,
-                  age: widget.age,
-                  normalIWL: widget.normalIWL,
-                ),
+          // Calculate totals for direct navigation to hasil balance
+          double totalIntake = calculateTotalIntake();
+          double totalOutput = calculateTotalOutput();
+          double targetKebutuhanCairan =
+              widget.normalIWL * 2; // Adjust calculation as needed
+
+          // Navigate directly to child hasil balance screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChildHasilBalanceScreen(
+                targetKebutuhanCairan: targetKebutuhanCairan,
+                totalIntake: totalIntake,
+                totalOutput: totalOutput,
+                patientName: widget.patientName,
+                weightKg: widget.weightKg,
+                age: widget.age,
+                normalIWL: widget.normalIWL,
               ),
-            );
-          }
+            ),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -322,7 +635,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         child: const Text(
-          "Lanjut, Hitung Balance",
+          "Lanjut, Hasil Balance",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
@@ -365,65 +678,6 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           color: isSelected ? AppColors.activeBlack : AppColors.inactiveGray,
           size: 28,
         ),
-      ),
-    );
-  }
-}
-
-// Custom FluidInputField component
-class FluidInputField extends StatelessWidget {
-  final String label;
-  final String unit;
-  final TextEditingController controller;
-  final bool readOnly;
-
-  const FluidInputField({
-    Key? key,
-    required this.label,
-    required this.unit,
-    required this.controller,
-    this.readOnly = false,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 100, // Fixed width for all labels
-            child: Text(
-              label,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-          Expanded(
-            child: TextFormField(
-              controller: controller,
-              readOnly: readOnly,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              validator: (value) {
-                if (!readOnly && (value == null || value.isEmpty)) {
-                  return 'Masukkan nilai';
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                suffixText: unit,
-              ),
-              style: const TextStyle(color: Colors.black, fontSize: 16),
-            ),
-          ),
-        ],
       ),
     );
   }
