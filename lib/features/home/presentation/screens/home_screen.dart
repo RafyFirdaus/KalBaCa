@@ -5,6 +5,8 @@ import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_cal
 import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_calculation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/burn/data_pasien_screen.dart';
 import 'package:kalbaca/features/auth/data/services/auth_service.dart';
+import 'package:kalbaca/features/home/presentation/screens/data_hasil_balance_screen.dart';
+import 'package:kalbaca/features/home/presentation/screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,27 +22,44 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryBlue,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Header Section
-            _buildHeaderSection(),
-
-            // Title Section
-            _buildTitleSection(),
-
-            // Menu Section
-            _buildMenuSection(),
-
-            // Button Section
-            Expanded(child: _buildButtonSection()),
-          ],
-        ),
-      ),
+      backgroundColor: _selectedIndex == 0 ? AppColors.primaryBlue : AppColors.white,
+      body: _buildCurrentPage(),
       bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildCurrentPage() {
+    switch (_selectedIndex) {
+      case 0:
+        return _buildHomePage();
+      case 1:
+        return const DataHasilBalanceScreen();
+      case 2:
+        return const ProfileScreen();
+      default:
+        return _buildHomePage();
+    }
+  }
+
+  Widget _buildHomePage() {
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Header Section
+          _buildHeaderSection(),
+
+          // Title Section
+          _buildTitleSection(),
+
+          // Menu Section
+          _buildMenuSection(),
+
+          // Button Section
+          Expanded(child: _buildButtonSection()),
+        ],
+      ),
     );
   }
 
@@ -171,9 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildActionButton('Hitung Kebutuhan Cairan Luka Bakar', () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const DataPasienScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const DataPasienScreen()),
             );
           }),
         ],
@@ -234,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.home),
-          _buildNavItem(1, Icons.calculate),
+          _buildNavItem(1, Icons.assignment),
           _buildNavItem(2, Icons.person),
         ],
       ),

@@ -27,43 +27,49 @@ class BurnFluidResultScreen extends StatefulWidget {
 class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
   int _selectedIndex = 0;
 
-  // Calculate burn fluid requirements using Parkland formula
+  // Calculate burn fluid requirements using separate adult and child formulas
   Map<String, dynamic> _calculateBurnFluid() {
     final double weightKg = double.parse(widget.weight);
-    final double burnPercent = double.parse(widget.burnPercentage);
+    double.parse(widget.height);
     final int age = int.parse(widget.age);
 
-    // Determine multiplier based on age
-    final double multiplier = age > 18 ? 4.0 : 3.0;
-    final String ageCategory = age > 18
-        ? 'Dewasa (>18 tahun)'
-        : 'Anak (≤18 tahun)';
+    // Calculate base fluid requirement based on age
+    double kebutuhanCairan;
+    double iwl;
+    String ageCategory;
 
-    // Calculate total fluid for 24 hours (Parkland formula)
-    final double totalFluid24h = multiplier * weightKg * burnPercent;
-    final double totalFluid24hLiters = totalFluid24h / 1000;
+    if (age > 18) {
+      // Adult formula (Watson formula)
+      ageCategory = 'Dewasa (>18 tahun)';
+      kebutuhanCairan = weightKg * 30; // Watson formula: weight * 30 mL/kg/day
+      iwl = 15 * weightKg; // Adult IWL: 15 mL/kg/day
+    } else {
+      // Child formula (Holliday-Segar formula)
+      ageCategory = 'Anak (≤18 tahun)';
 
-    // First 8 hours (50% of total)
-    final double first8Hours = totalFluid24h * 0.5;
-    final double first8HoursLiters = first8Hours / 1000;
-    final double hourlyRateFirst8 = first8Hours / 8;
+      // Holliday-Segar formula for fluid requirement
+      if (weightKg < 10) {
+        kebutuhanCairan = weightKg * 100;
+      } else if (weightKg <= 20) {
+        kebutuhanCairan = 1000 + (weightKg - 10) * 50;
+      } else {
+        kebutuhanCairan = 1500 + (weightKg - 20) * 20;
+      }
 
-    // Next 16 hours (remaining 50%)
-    final double next16Hours = totalFluid24h * 0.5;
-    final double next16HoursLiters = next16Hours / 1000;
-    final double hourlyRateNext16 = next16Hours / 16;
+      // Child IWL formula: (30 - age) * weight
+      iwl = (30 - age) * weightKg;
+    }
+
+    // Calculate total fluid requirement
+    final double totalKebutuhanCairan = kebutuhanCairan + iwl;
 
     return {
-      'totalFluid24h': totalFluid24h,
-      'totalFluid24hLiters': totalFluid24hLiters,
-      'first8Hours': first8Hours,
-      'first8HoursLiters': first8HoursLiters,
-      'hourlyRateFirst8': hourlyRateFirst8,
-      'next16Hours': next16Hours,
-      'next16HoursLiters': next16HoursLiters,
-      'hourlyRateNext16': hourlyRateNext16,
-      'multiplier': multiplier,
+      'kebutuhanCairan': kebutuhanCairan,
+      'iwl': iwl,
+      'totalKebutuhanCairan': totalKebutuhanCairan,
       'ageCategory': ageCategory,
+      'weightKg': weightKg,
+      'age': age,
     };
   }
 
@@ -218,79 +224,58 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
 
         const SizedBox(height: 24),
 
-        // Total Fluid Requirement (24 hours)
-        _buildResultField(
-          label: 'Total Kebutuhan Cairan (24 jam):',
-          value: '${burnFluidData['totalFluid24hLiters'].toStringAsFixed(2)} L',
-          subValue: '(${burnFluidData['totalFluid24h'].toStringAsFixed(0)} mL)',
-          isHighlighted: true,
-        ),
-
-        const SizedBox(height: 16),
-
-        // First 8 hours
-        _buildResultField(
-          label: '8 Jam Pertama (50%):',
-          value: '${burnFluidData['first8HoursLiters'].toStringAsFixed(2)} L',
-          subValue:
-              '(${burnFluidData['hourlyRateFirst8'].toStringAsFixed(0)} mL/jam)',
-        ),
-
-        const SizedBox(height: 16),
-
-        // Next 16 hours
-        _buildResultField(
-          label: '16 Jam Berikutnya (50%):',
-          value: '${burnFluidData['next16HoursLiters'].toStringAsFixed(2)} L',
-          subValue:
-              '(${burnFluidData['hourlyRateNext16'].toStringAsFixed(0)} mL/jam)',
-        ),
-
-        const SizedBox(height: 24),
-
-        // Information about Parkland Formula
+        // Age Category Info
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.yellow.withValues(alpha: 0.2),
+            color: Colors.blue.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.yellow, width: 1),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              const Text(
-                'Informasi Rumus Parkland:',
-                style: TextStyle(
+              const Icon(Icons.info, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                'Formula: ${burnFluidData['ageCategory']}',
+                style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '• Kategori: ${burnFluidData['ageCategory']}',
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
-              Text(
-                '• Rumus: ${burnFluidData['multiplier'].toStringAsFixed(0)} mL × ${widget.weight} kg × ${widget.burnPercentage}%',
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
-              const Text(
-                '• 50% diberikan dalam 8 jam pertama',
-                style: TextStyle(color: Colors.white, fontSize: 14),
-              ),
-              const Text(
-                '• 50% sisanya diberikan dalam 16 jam berikutnya',
-                style: TextStyle(color: Colors.white, fontSize: 14),
-              ),
-              const Text(
-                '• Cairan: Ringer Laktat (kristaloid)',
-                style: TextStyle(color: Colors.white, fontSize: 14),
               ),
             ],
           ),
         ),
+
+        const SizedBox(height: 16),
+
+        // Kebutuhan Cairan
+        _buildResultField(
+          label: 'Kebutuhan Cairan:',
+          value: '${burnFluidData['kebutuhanCairan'].round()}',
+          subValue: 'mL',
+        ),
+
+        const SizedBox(height: 16),
+
+        // IWL (Insensible Water Loss)
+        _buildResultField(
+          label: 'IWL Normal:',
+          value: '${burnFluidData['iwl'].round()}',
+          subValue: 'mL',
+        ),
+
+        const SizedBox(height: 16),
+
+        // Total Kebutuhan Cairan
+        _buildResultField(
+          label: 'Total Kebutuhan Cairan:',
+          value: '${burnFluidData['totalKebutuhanCairan'].round()}',
+          subValue: 'mL',
+          isHighlighted: true,
+        ),
+
+        const SizedBox(height: 24),
       ],
     );
   }
@@ -359,6 +344,8 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
 
   // Next Button
   Widget _buildNextButton() {
+    final burnFluidData = _calculateBurnFluid();
+
     return Padding(
       padding: const EdgeInsets.only(
         right: AppDimensions.homePaddingHorizontal,
@@ -368,25 +355,15 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
         alignment: Alignment.bottomRight,
         child: ElevatedButton.icon(
           onPressed: () {
-            // Calculate normal IWL based on age and weight
-            final double weightKg = double.parse(widget.weight);
-            final int age = int.parse(widget.age);
-
-            // Calculate normal IWL based on age and weight
-            final double normalIWL = age > 18
-                ? weightKg *
-                      15 // Adult: 15 mL/kg/day
-                : weightKg * 20; // Child: 20 mL/kg/day
-
             // Navigate to intake/output screen
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => BurnFluidIntakeOutputScreen(
                   patientName: widget.patientName,
-                  weightKg: weightKg,
-                  normalIWL: normalIWL,
-                  age: age,
+                  weightKg: burnFluidData['weightKg'],
+                  normalIWL: burnFluidData['iwl'],
+                  age: burnFluidData['age'],
                 ),
               ),
             );

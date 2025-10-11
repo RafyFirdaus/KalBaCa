@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalbaca/core/constants/constants.dart';
-import 'package:kalbaca/features/home/presentation/screens/burn/burn_fluid_balance_calculation_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/burn/burn_fluid_balance_result_screen.dart';
 
 class BurnFluidIntakeOutputScreen extends StatefulWidget {

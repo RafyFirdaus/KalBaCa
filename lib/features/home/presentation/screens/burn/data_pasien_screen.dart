@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../../core/constants/constants.dart';
 import 'burn_fluid_result_screen.dart';
+import '../adult/fluid_balance_simulation_screen.dart';
+import '../child/child_fluid_balance_simulation_screen.dart';
 
 class DataPasienScreen extends StatefulWidget {
   const DataPasienScreen({super.key});
@@ -117,10 +119,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Tinggi badan harus diisi';
                             }
-                            final height = int.tryParse(value);
-                            if (height == null || height < 30 || height > 250) {
-                              return 'Tinggi badan harus antara 30-250 cm';
-                            }
+                            int.tryParse(value);
                             return null;
                           },
                         ),
@@ -477,10 +476,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          // TODO: Implement diagram functionality
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Fitur diagram akan segera tersedia')),
-          );
+          _showDiagramPopup();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
@@ -493,6 +489,124 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
+    );
+  }
+
+  void _showDiagramPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Pilih Diagram',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1565C0),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close, color: Color(0xFF1565C0)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // Dewasa Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const FluidBalanceSimulationScreen(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1565C0),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text(
+                      'Dewasa',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Anak Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const ChildFluidBalanceSimulationScreen(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF1565C0),
+                      side: const BorderSide(
+                        color: Color(0xFF1565C0),
+                        width: 2,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text(
+                      'Anak',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

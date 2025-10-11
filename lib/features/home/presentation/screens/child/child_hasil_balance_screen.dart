@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
-import 'child_fluid_balance_simulation_screen.dart';
 import 'fluid_intake_balance_screen.dart';
 
 class ChildHasilBalanceScreen extends StatefulWidget {
@@ -275,7 +274,9 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Hapus Data'),
-                      content: const Text('Apakah Anda yakin ingin menghapus semua data?'),
+                      content: const Text(
+                        'Apakah Anda yakin ingin menghapus semua data?',
+                      ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -300,7 +301,10 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Hapus'),
             ),
@@ -320,7 +324,10 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Simpan'),
             ),
@@ -352,7 +359,10 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Simulasi'),
             ),

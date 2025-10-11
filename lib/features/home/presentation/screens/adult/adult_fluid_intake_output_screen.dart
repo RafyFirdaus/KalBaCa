@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalbaca/core/constants/constants.dart';
-import 'package:kalbaca/features/home/presentation/screens/adult/adult_fluid_intake_balance_screen.dart';
 import 'package:kalbaca/features/home/presentation/screens/adult/hasil_balance_screen.dart';
 
 class AdultFluidIntakeOutputScreen extends StatefulWidget {
