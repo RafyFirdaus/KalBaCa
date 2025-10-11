@@ -314,6 +314,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
                   weightKg: widget.weightKg,
                   normalIWL: _normalIWL,
                   age: widget.age,
+                  gender: widget.gender,
                 ),
               ),
             );

@@ -8,6 +8,7 @@ class BurnFluidIntakeOutputScreen extends StatefulWidget {
   final double weightKg;
   final double normalIWL;
   final int age;
+  final String gender;
 
   const BurnFluidIntakeOutputScreen({
     super.key,
@@ -15,6 +16,7 @@ class BurnFluidIntakeOutputScreen extends StatefulWidget {
     required this.weightKg,
     required this.normalIWL,
     required this.age,
+    required this.gender,
   });
 
   @override
@@ -668,6 +670,7 @@ class _BurnFluidIntakeOutputScreenState
                   weightKg: widget.weightKg,
                   age: widget.age,
                   normalIWL: widget.normalIWL,
+                  gender: widget.gender,
                 ),
               ),
             );

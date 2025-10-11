@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
+import '../../data/models/patient_balance_result.dart';
+import '../../data/repositories/balance_repository.dart';
+import 'package:intl/intl.dart';
 
 class DataHasilBalanceScreen extends StatefulWidget {
   const DataHasilBalanceScreen({super.key});
@@ -10,14 +13,17 @@ class DataHasilBalanceScreen extends StatefulWidget {
 
 class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<PatientData> _allPatients = [];
-  List<PatientData> _filteredPatients = [];
+  final BalanceRepository _balanceRepository = BalanceRepository();
+  List<PatientBalanceResult> _allPatients = [];
+  List<PatientBalanceResult> _filteredPatients = [];
+  bool _isLoading = true;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _loadDummyData();
-    _filteredPatients = _allPatients;
+    _loadPatientData();
+    _searchController.addListener(_filterPatients);
   }
 
   @override
@@ -26,88 +32,38 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
     super.dispose();
   }
 
-  void _loadDummyData() {
-    // Data dummy untuk tampilan UI
-    _allPatients = [
-      PatientData(
-        name: 'Ahmad Rizki',
-        age: 35,
-        weight: 70.0,
-        height: 170.0,
-        gender: 'Laki-laki',
-        targetFluid: 2100.0,
-        totalIntake: 1800.0,
-        totalOutput: 1500.0,
-        balance: 300.0,
-        date: '15 Jan 2024',
-      ),
-      PatientData(
-        name: 'Siti Nurhaliza',
-        age: 28,
-        weight: 55.0,
-        height: 160.0,
-        gender: 'Perempuan',
-        targetFluid: 1650.0,
-        totalIntake: 1700.0,
-        totalOutput: 1400.0,
-        balance: 300.0,
-        date: '14 Jan 2024',
-      ),
-      PatientData(
-        name: 'Budi Santoso',
-        age: 42,
-        weight: 80.0,
-        height: 175.0,
-        gender: 'Laki-laki',
-        targetFluid: 2400.0,
-        totalIntake: 2200.0,
-        totalOutput: 1800.0,
-        balance: 400.0,
-        date: '13 Jan 2024',
-      ),
-      PatientData(
-        name: 'Dewi Sartika',
-        age: 31,
-        weight: 60.0,
-        height: 165.0,
-        gender: 'Perempuan',
-        targetFluid: 1800.0,
-        totalIntake: 1600.0,
-        totalOutput: 1700.0,
-        balance: -100.0,
-        date: '12 Jan 2024',
-      ),
-      PatientData(
-        name: 'Andi Wijaya',
-        age: 25,
-        weight: 65.0,
-        height: 168.0,
-        gender: 'Laki-laki',
-        targetFluid: 1950.0,
-        totalIntake: 2000.0,
-        totalOutput: 1600.0,
-        balance: 400.0,
-        date: '11 Jan 2024',
-      ),
-    ];
+  Future<void> _loadPatientData() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+
+      final patients = await _balanceRepository.getBalanceResults();
+      
+      setState(() {
+        _allPatients = patients;
+        _filteredPatients = patients;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Gagal memuat data: $e';
+        _isLoading = false;
+      });
+    }
   }
 
-  void _filterPatients(String query) {
+  void _filterPatients() {
+    final query = _searchController.text.toLowerCase();
     setState(() {
-      if (query.isEmpty) {
-        _filteredPatients = _allPatients;
-      } else {
-        _filteredPatients = _allPatients
-            .where(
-              (patient) =>
-                  patient.name.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList();
-      }
+      _filteredPatients = _allPatients.where((patient) {
+        return patient.patientName.toLowerCase().contains(query);
+      }).toList();
     });
   }
 
-  void _showPatientDetail(PatientData patient) {
+  void _showPatientDetail(PatientBalanceResult patient) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -133,23 +89,60 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
         centerTitle: true,
         elevation: 0,
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: AppColors.white),
+            onPressed: _loadPatientData,
+          ),
+        ],
       ),
       body: Column(
         children: [
           _buildSearchSection(),
-          Expanded(child: _buildPatientList()),
+          Expanded(child: _buildContent()),
         ],
       ),
     );
+  }
+
+  Widget _buildContent() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              _errorMessage!,
+              style: const TextStyle(fontSize: 16, color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadPatientData,
+              child: const Text('Coba Lagi'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return _buildPatientList();
   }
 
   Widget _buildSearchSection() {
     return Container(
       padding: const EdgeInsets.all(20),
       child: TextField(
-        controller: _searchController,
-        onChanged: _filterPatients,
-        decoration: InputDecoration(
+          controller: _searchController,
+          decoration: InputDecoration(
           hintText: 'Cari nama pasien...',
           prefixIcon: const Icon(Icons.search, color: Colors.grey),
           filled: true,
@@ -194,7 +187,10 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
     );
   }
 
-  Widget _buildPatientCard(PatientData patient) {
+  Widget _buildPatientCard(PatientBalanceResult patient) {
+    final dateFormat = DateFormat('dd MMM yyyy');
+    final balance = patient.balanceData['balance'] ?? 0.0;
+    
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -204,7 +200,7 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
         leading: CircleAvatar(
           backgroundColor: AppColors.primaryBlue,
           child: Text(
-            patient.name[0].toUpperCase(),
+            patient.patientName[0].toUpperCase(),
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -212,12 +208,46 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
           ),
         ),
         title: Text(
-          patient.name,
+          patient.patientName,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        subtitle: Text(
-          patient.date,
-          style: TextStyle(color: Colors.grey[600], fontSize: 14),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              dateFormat.format(patient.createdAt),
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: _getBalanceTypeColor(patient.balanceType),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _getBalanceTypeLabel(patient.balanceType),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Balance: ${balance.toStringAsFixed(0)} ml',
+                  style: TextStyle(
+                    color: balance >= 0 ? Colors.green : Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
         trailing: const Icon(
           Icons.arrow_forward_ios,
@@ -228,21 +258,51 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
       ),
     );
   }
+
+  Color _getBalanceTypeColor(String balanceType) {
+    switch (balanceType) {
+      case 'adult':
+        return Colors.blue;
+      case 'child':
+        return Colors.green;
+      case 'burn':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getBalanceTypeLabel(String balanceType) {
+    switch (balanceType) {
+      case 'adult':
+        return 'Dewasa';
+      case 'child':
+        return 'Anak';
+      case 'burn':
+        return 'Luka Bakar';
+      default:
+        return 'Unknown';
+    }
+  }
 }
 
 // Dialog untuk menampilkan detail pasien
 class PatientDetailDialog extends StatelessWidget {
-  final PatientData patient;
+  final PatientBalanceResult patient;
 
   const PatientDetailDialog({super.key, required this.patient});
 
   @override
   Widget build(BuildContext context) {
+    final dateFormat = DateFormat('dd MMM yyyy HH:mm');
+    final balanceData = patient.balanceData;
+    final balance = balanceData['balance'] ?? 0.0;
+    
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        height: MediaQuery.of(context).size.height * 0.7,
+        height: MediaQuery.of(context).size.height * 0.8,
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,36 +327,54 @@ class PatientDetailDialog extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Data Pasien Section
-            _buildSectionTitle('Data Pasien'),
-            const SizedBox(height: 12),
-            _buildDataRow('Nama', patient.name),
-            _buildDataRow('Usia', '${patient.age} tahun'),
-            _buildDataRow('Berat Badan', '${patient.weight} kg'),
-            _buildDataRow('Tinggi Badan', '${patient.height} cm'),
-            _buildDataRow('Jenis Kelamin', patient.gender),
-            _buildDataRow('Tanggal', patient.date),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Data Pasien Section
+                    _buildSectionTitle('Data Pasien'),
+                    const SizedBox(height: 12),
+                    _buildDataRow('Nama', patient.patientName),
+                    _buildDataRow('Usia', '${patient.age} tahun'),
+                    _buildDataRow('Berat Badan', '${patient.weight} kg'),
+                    _buildDataRow('Jenis Kelamin', patient.gender),
+                    _buildDataRow('Tipe Balance', _getBalanceTypeLabel(patient.balanceType)),
+                    _buildDataRow('Tanggal Dibuat', dateFormat.format(patient.createdAt)),
 
-            const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-            // Hasil Balance Section
-            _buildSectionTitle('Hasil Balance'),
-            const SizedBox(height: 12),
-            _buildDataRow(
-              'Target Kebutuhan Cairan',
-              '${patient.targetFluid.toStringAsFixed(0)} ml',
+                    // Hasil Balance Section
+                    _buildSectionTitle('Hasil Balance'),
+                    const SizedBox(height: 12),
+                    if (balanceData['targetKebutuhanCairan'] != null)
+                      _buildDataRow(
+                        'Target Kebutuhan Cairan',
+                        '${balanceData['targetKebutuhanCairan'].toStringAsFixed(0)} ml',
+                      ),
+                    if (balanceData['totalIntake'] != null)
+                      _buildDataRow(
+                        'Total Intake',
+                        '${balanceData['totalIntake'].toStringAsFixed(0)} ml',
+                      ),
+                    if (balanceData['totalOutput'] != null)
+                      _buildDataRow(
+                        'Total Output',
+                        '${balanceData['totalOutput'].toStringAsFixed(0)} ml',
+                      ),
+                    _buildBalanceRow('Balance (+/-)', balance),
+                    
+                    if (balanceData['normalIWL'] != null)
+                      _buildDataRow(
+                        'Normal IWL',
+                        '${balanceData['normalIWL'].toStringAsFixed(0)} ml',
+                      ),
+                  ],
+                ),
+              ),
             ),
-            _buildDataRow(
-              'Total Intake',
-              '${patient.totalIntake.toStringAsFixed(0)} ml',
-            ),
-            _buildDataRow(
-              'Total Output',
-              '${patient.totalOutput.toStringAsFixed(0)} ml',
-            ),
-            _buildBalanceRow('Balance (+/-)', patient.balance),
 
-            const Spacer(),
+            const SizedBox(height: 16),
 
             // Close Button
             SizedBox(
@@ -321,6 +399,19 @@ class PatientDetailDialog extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getBalanceTypeLabel(String balanceType) {
+    switch (balanceType) {
+      case 'adult':
+        return 'Balance Cairan Dewasa';
+      case 'child':
+        return 'Balance Cairan Anak';
+      case 'burn':
+        return 'Balance Cairan Luka Bakar';
+      default:
+        return 'Unknown';
+    }
   }
 
   Widget _buildSectionTitle(String title) {
@@ -396,31 +487,4 @@ class PatientDetailDialog extends StatelessWidget {
       ),
     );
   }
-}
-
-// Model data pasien
-class PatientData {
-  final String name;
-  final int age;
-  final double weight;
-  final double height;
-  final String gender;
-  final double targetFluid;
-  final double totalIntake;
-  final double totalOutput;
-  final double balance;
-  final String date;
-
-  PatientData({
-    required this.name,
-    required this.age,
-    required this.weight,
-    required this.height,
-    required this.gender,
-    required this.targetFluid,
-    required this.totalIntake,
-    required this.totalOutput,
-    required this.balance,
-    required this.date,
-  });
 }

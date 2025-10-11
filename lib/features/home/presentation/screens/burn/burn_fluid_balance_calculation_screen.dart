@@ -9,6 +9,7 @@ class BurnFluidBalanceCalculationScreen extends StatefulWidget {
   final double weightKg;
   final int age;
   final double normalIWL;
+  final String gender;
 
   const BurnFluidBalanceCalculationScreen({
     Key? key,
@@ -16,6 +17,7 @@ class BurnFluidBalanceCalculationScreen extends StatefulWidget {
     required this.weightKg,
     required this.age,
     required this.normalIWL,
+    required this.gender,
   }) : super(key: key);
 
   @override
@@ -371,6 +373,7 @@ class _BurnFluidBalanceCalculationScreenState
                 weightKg: widget.weightKg,
                 age: widget.age,
                 normalIWL: widget.normalIWL,
+                gender: widget.gender,
               ),
             ),
           );

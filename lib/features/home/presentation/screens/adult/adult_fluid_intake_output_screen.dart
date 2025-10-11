@@ -8,6 +8,7 @@ class AdultFluidIntakeOutputScreen extends StatefulWidget {
   final double weightKg;
   final double normalIWL;
   final int age;
+  final String gender;
 
   const AdultFluidIntakeOutputScreen({
     super.key,
@@ -15,6 +16,7 @@ class AdultFluidIntakeOutputScreen extends StatefulWidget {
     required this.weightKg,
     required this.normalIWL,
     required this.age,
+    required this.gender,
   });
 
   @override
@@ -668,6 +670,7 @@ class _AdultFluidIntakeOutputScreenState
                   weightKg: widget.weightKg,
                   age: widget.age,
                   normalIWL: widget.normalIWL,
+                  gender: widget.gender,
                 ),
               ),
             );

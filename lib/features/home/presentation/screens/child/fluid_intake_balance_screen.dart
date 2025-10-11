@@ -9,6 +9,7 @@ class FluidIntakeBalanceScreen extends StatefulWidget {
   final double weightKg;
   final int age;
   final double normalIWL;
+  final String gender;
 
   const FluidIntakeBalanceScreen({
     Key? key,
@@ -16,6 +17,7 @@ class FluidIntakeBalanceScreen extends StatefulWidget {
     required this.weightKg,
     required this.age,
     required this.normalIWL,
+    required this.gender,
   }) : super(key: key);
 
   @override
@@ -371,6 +373,7 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
                 weightKg: widget.weightKg,
                 age: widget.age,
                 normalIWL: widget.normalIWL,
+                gender: widget.gender,
               ),
             ),
           );

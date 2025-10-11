@@ -364,6 +364,7 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
                   weightKg: burnFluidData['weightKg'],
                   normalIWL: burnFluidData['iwl'],
                   age: burnFluidData['age'],
+                  gender: widget.gender,
                 ),
               ),
             );
