@@ -91,25 +91,25 @@ class _ChildFluidBalanceSimulationScreenState
         distributions: [
           ChildFluidDistribution(
             area: 'Dada (toraks anterior)',
-            percentage: 6.5,
+            percentage: 9.0,
           ),
           ChildFluidDistribution(
             area: 'Abdomen (perut anterior)',
-            percentage: 6.5,
+            percentage: 9.0,
           ),
           ChildFluidDistribution(
             area: 'Punggung atas (toraks posterior)',
-            percentage: 6.5,
+            percentage: 9.0,
           ),
           ChildFluidDistribution(
             area: 'Punggung bawah (lumbal posterior)',
-            percentage: 6.5,
+            percentage: 9.0,
           ),
         ],
         clickableArea: const Rect.fromLTWH(
           0.3,
           0.25,
-          0.4,
+          0.35,
           0.25,
         ), // Torso anak proporsi berbeda
       ),
@@ -117,11 +117,8 @@ class _ChildFluidBalanceSimulationScreenState
       ChildBodyPart(
         name: 'Lengan Kiri',
         distributions: [
-          ChildFluidDistribution(area: 'Lengan kiri depan', percentage: 2.25),
-          ChildFluidDistribution(
-            area: 'Lengan kiri belakang',
-            percentage: 2.25,
-          ),
+          ChildFluidDistribution(area: 'Lengan kiri depan', percentage: 4.5),
+          ChildFluidDistribution(area: 'Lengan kiri belakang', percentage: 4.5),
         ],
         clickableArea: const Rect.fromLTWH(
           0.05,
@@ -134,10 +131,10 @@ class _ChildFluidBalanceSimulationScreenState
       ChildBodyPart(
         name: 'Lengan Kanan',
         distributions: [
-          ChildFluidDistribution(area: 'Lengan kanan depan', percentage: 2.25),
+          ChildFluidDistribution(area: 'Lengan kanan depan', percentage: 4.5),
           ChildFluidDistribution(
             area: 'Lengan kanan belakang',
-            percentage: 2.25,
+            percentage: 4.5,
           ),
         ],
         clickableArea: const Rect.fromLTWH(
@@ -151,8 +148,8 @@ class _ChildFluidBalanceSimulationScreenState
       ChildBodyPart(
         name: 'Kaki Kiri',
         distributions: [
-          ChildFluidDistribution(area: 'Kaki kiri depan', percentage: 6.75),
-          ChildFluidDistribution(area: 'Kaki kiri belakang', percentage: 6.75),
+          ChildFluidDistribution(area: 'Kaki kiri depan', percentage: 7.0),
+          ChildFluidDistribution(area: 'Kaki kiri belakang', percentage: 7.0),
         ],
         clickableArea: const Rect.fromLTWH(
           0.25,
@@ -165,8 +162,8 @@ class _ChildFluidBalanceSimulationScreenState
       ChildBodyPart(
         name: 'Kaki Kanan',
         distributions: [
-          ChildFluidDistribution(area: 'Kaki kanan depan', percentage: 6.75),
-          ChildFluidDistribution(area: 'Kaki kanan belakang', percentage: 6.75),
+          ChildFluidDistribution(area: 'Kaki kanan depan', percentage: 7.0),
+          ChildFluidDistribution(area: 'Kaki kanan belakang', percentage: 7.0),
         ],
         clickableArea: const Rect.fromLTWH(
           0.55,
@@ -664,7 +661,7 @@ class _ChildFluidBalanceSimulationScreenState
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.home),
-          _buildNavItem(1, Icons.calculate),
+          _buildNavItem(1, Icons.assignment),
           _buildNavItem(2, Icons.person),
         ],
       ),
@@ -678,6 +675,24 @@ class _ChildFluidBalanceSimulationScreenState
         setState(() {
           _selectedIndex = index;
         });
+        
+        // Navigate based on selected index
+        switch (index) {
+          case 0:
+            // Navigate to Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            break;
+          case 1:
+            // Navigate to Data Hasil Balance via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing DataHasilBalanceScreen when index is 1
+            break;
+          case 2:
+            // Navigate to Profile via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing ProfileScreen when index is 2
+            break;
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),

@@ -44,7 +44,9 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
   }
 
   Future<void> _saveBalanceResult() async {
-    if (widget.patientName == null || widget.weightKg == null || widget.age == null) {
+    if (widget.patientName == null ||
+        widget.weightKg == null ||
+        widget.age == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Data pasien tidak lengkap'),
@@ -317,7 +319,9 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Hapus Data'),
-                      content: const Text('Apakah Anda yakin ingin menghapus semua data?'),
+                      content: const Text(
+                        'Apakah Anda yakin ingin menghapus semua data?',
+                      ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -342,7 +346,10 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Hapus'),
             ),
@@ -354,18 +361,21 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
-              child: _isSaving 
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Text('Simpan'),
+              child: _isSaving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text('Simpan'),
             ),
           ],
         ),
@@ -377,9 +387,9 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
             ElevatedButton(
               onPressed: () {
                 // Navigate back to balance calculation screen if parameters are available
-                if (widget.patientName != null && 
-                    widget.weightKg != null && 
-                    widget.age != null && 
+                if (widget.patientName != null &&
+                    widget.weightKg != null &&
+                    widget.age != null &&
                     widget.normalIWL != null) {
                   Navigator.push(
                     context,
@@ -397,7 +407,8 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const FluidBalanceSimulationScreen(),
+                      builder: (context) =>
+                          const FluidBalanceSimulationScreen(),
                     ),
                   );
                 }
@@ -408,7 +419,10 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Simulasi'),
             ),
@@ -429,7 +443,7 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.home),
-          _buildNavItem(1, Icons.save),
+          _buildNavItem(1, Icons.assignment),
           _buildNavItem(2, Icons.person),
         ],
       ),
@@ -444,6 +458,24 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
         setState(() {
           _selectedIndex = index;
         });
+
+        // Navigate based on selected index
+        switch (index) {
+          case 0:
+            // Navigate to Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            break;
+          case 1:
+            // Navigate to Data Hasil Balance via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing DataHasilBalanceScreen when index is 1
+            break;
+          case 2:
+            // Navigate to Profile via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing ProfileScreen when index is 2
+            break;
+        }
       },
       child: Container(
         color: Colors.transparent,

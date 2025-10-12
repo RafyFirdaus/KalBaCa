@@ -400,22 +400,43 @@ class _AdultFluidIntakeBalanceScreenState
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildNavItem(Icons.home, true),
-          _buildNavItem(Icons.save, false),
-          _buildNavItem(Icons.person, false),
+          _buildNavItem(Icons.home, 0),
+          _buildNavItem(Icons.assignment, 1),
+          _buildNavItem(Icons.person, 2),
         ],
       ),
     );
   }
 
   // Navigation Item Builder
-  Widget _buildNavItem(IconData icon, bool isActive) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      child: Icon(
-        icon,
-        color: isActive ? const Color(0xFF0047AB) : Colors.grey,
-        size: 26,
+  Widget _buildNavItem(IconData icon, int index) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate based on selected index
+        switch (index) {
+          case 0:
+            // Navigate to Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            break;
+          case 1:
+            // Navigate to Data Hasil Balance via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing DataHasilBalanceScreen when index is 1
+            break;
+          case 2:
+            // Navigate to Profile via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing ProfileScreen when index is 2
+            break;
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          icon,
+          color: index == 0 ? const Color(0xFF0047AB) : Colors.grey,
+          size: 26,
+        ),
       ),
     );
   }

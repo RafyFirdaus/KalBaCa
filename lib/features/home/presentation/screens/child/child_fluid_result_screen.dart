@@ -349,7 +349,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.home),
-          _buildNavItem(1, Icons.calculate),
+          _buildNavItem(1, Icons.assignment),
           _buildNavItem(2, Icons.person),
         ],
       ),
@@ -365,6 +365,24 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
         setState(() {
           _selectedIndex = index;
         });
+        
+        // Navigate based on selected index
+        switch (index) {
+          case 0:
+            // Navigate to Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            break;
+          case 1:
+            // Navigate to Data Hasil Balance via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing DataHasilBalanceScreen when index is 1
+            break;
+          case 2:
+            // Navigate to Profile via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing ProfileScreen when index is 2
+            break;
+        }
       },
       child: Container(
         color: Colors.transparent,

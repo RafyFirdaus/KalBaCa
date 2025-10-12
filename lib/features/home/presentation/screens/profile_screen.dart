@@ -26,10 +26,7 @@ class ProfileScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Batal',
-                style: TextStyle(color: Colors.grey),
-              ),
+              child: const Text('Batal', style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -61,11 +58,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           title: Row(
             children: [
-              Image.asset(
-                'assets/logo.png',
-                width: 40,
-                height: 40,
-              ),
+              Image.asset('assets/logo.png', width: 40, height: 40),
               const SizedBox(width: 12),
               const Text(
                 'Tentang KalBaCa',
@@ -87,10 +80,7 @@ class ProfileScreen extends StatelessWidget {
               SizedBox(height: 16),
               Text(
                 'Fitur Utama:',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               SizedBox(height: 8),
               Text('• Perhitungan cairan untuk dewasa'),
@@ -218,11 +208,7 @@ class ProfileScreen extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Image.asset(
-              'assets/logo.png',
-              width: 50,
-              height: 50,
-            ),
+            child: Image.asset('assets/logo.png', width: 50, height: 50),
           ),
         ),
         const SizedBox(height: 16),
@@ -237,10 +223,7 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: 4),
         const Text(
           'Kalkulator Balance Cairan',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-          ),
+          style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
       ],
     );
@@ -276,15 +259,13 @@ class ProfileScreen extends StatelessWidget {
   }) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: Container(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: isDestructive 
+            color: isDestructive
                 ? Colors.red.withOpacity(0.1)
                 : const Color(0xFF0047AB).withOpacity(0.1),
             shape: BoxShape.circle,
@@ -330,16 +311,11 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '© 2024 - Kalkulator Balance Cairan',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            '© 2025 - Kalkulator Balance Cairan',
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),
     );
   }
-
-
 }

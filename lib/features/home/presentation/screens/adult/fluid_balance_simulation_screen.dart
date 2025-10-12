@@ -715,7 +715,7 @@ class _FluidBalanceSimulationScreenState
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildNavItem(Icons.home, 0),
-          _buildNavItem(Icons.save, 1),
+          _buildNavItem(Icons.assignment, 1),
           _buildNavItem(Icons.person, 2),
         ],
       ),
@@ -736,11 +736,14 @@ class _FluidBalanceSimulationScreenState
             Navigator.popUntil(context, (route) => route.isFirst);
             break;
           case 1:
-            // Navigate to calculation
-            Navigator.pop(context);
+            // Navigate to Data Hasil Balance via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing DataHasilBalanceScreen when index is 1
             break;
           case 2:
-            // Navigate to profile
+            // Navigate to Profile via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing ProfileScreen when index is 2
             break;
         }
       },

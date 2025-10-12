@@ -26,6 +26,7 @@ class FluidIntakeOutputScreen extends StatefulWidget {
 
 class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
   int _selectedIndex = 0;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Dynamic intake and output items
   List<Map<String, dynamic>> _intakeItems = [];
@@ -241,22 +242,25 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
                   horizontal: AppDimensions.homePaddingHorizontal,
                   vertical: 20,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Intake Section
-                    _buildIntakeSection(),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Intake Section
+                      _buildIntakeSection(),
 
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                    // Output Section
-                    _buildOutputSection(),
+                      // Output Section
+                      _buildOutputSection(),
 
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
-                    // Next Button
-                    _buildNextButton(),
-                  ],
+                      // Next Button
+                      _buildNextButton(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -352,85 +356,107 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           ),
         ),
         const SizedBox(height: 16),
-
-        // Dropdown for intake type
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedIntakeType,
-              isExpanded: true,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedIntakeType = newValue!;
-                });
-              },
-              items: _intakeOptions.map<DropdownMenuItem<String>>((
-                String value,
-              ) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        // Custom input for "Lainnya"
-        if (_selectedIntakeType == 'Lainnya')
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: TextFormField(
-              controller: _customIntakeController,
-              decoration: InputDecoration(
-                hintText: 'Masukkan jenis intake',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-            ),
-          ),
-
-        // Value input
+        
+        // Dropdown and input row
         Row(
           children: [
+            // Dropdown
             Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF0047AB), width: 1),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedIntakeType,
+                    isExpanded: true,
+                    items: _intakeOptions.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value, style: const TextStyle(color: Colors.black)),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedIntakeType = newValue!;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            
+            // Value input
+            Expanded(
+              flex: 1,
               child: TextFormField(
                 controller: _intakeValueController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(
-                  hintText: 'Nilai (mL)',
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF0047AB)),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF0047AB)),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  hintText: "mL",
+                  hintStyle: const TextStyle(color: Colors.grey),
                 ),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
-            const SizedBox(width: 12),
+          ],
+        ),
+        
+        // Custom input for "Lainnya"
+        if (_selectedIntakeType == 'Lainnya') ...[
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _customIntakeController,
+            decoration: InputDecoration(
+              hintText: 'Masukkan jenis intake',
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Color(0xFF0047AB)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Color(0xFF0047AB)),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+            ),
+            style: const TextStyle(color: Colors.black),
+          ),
+        ],
+
+        const SizedBox(height: 12),
+
+        // Add button
+        Row(
+          children: [
+            const Spacer(),
             ElevatedButton(
               onPressed: _addIntakeItem,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF0047AB),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
               child: const Text('Tambah'),
             ),
@@ -483,85 +509,107 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           ),
         ),
         const SizedBox(height: 16),
-
-        // Dropdown for output type
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedOutputType,
-              isExpanded: true,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedOutputType = newValue!;
-                });
-              },
-              items: _outputOptions.map<DropdownMenuItem<String>>((
-                String value,
-              ) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        // Custom input for "Lainnya"
-        if (_selectedOutputType == 'Lainnya')
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: TextFormField(
-              controller: _customOutputController,
-              decoration: InputDecoration(
-                hintText: 'Masukkan jenis output',
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              ),
-            ),
-          ),
-
-        // Value input
+        
+        // Dropdown and input row
         Row(
           children: [
+            // Dropdown
             Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF0047AB), width: 1),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedOutputType,
+                    isExpanded: true,
+                    items: _outputOptions.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value, style: const TextStyle(color: Colors.black)),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedOutputType = newValue!;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            
+            // Value input
+            Expanded(
+              flex: 1,
               child: TextFormField(
                 controller: _outputValueController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(
-                  hintText: 'Nilai (mL)',
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF0047AB)),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF0047AB)),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  hintText: "mL",
+                  hintStyle: const TextStyle(color: Colors.grey),
                 ),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
-            const SizedBox(width: 12),
+          ],
+        ),
+        
+        // Custom input for "Lainnya"
+        if (_selectedOutputType == 'Lainnya') ...[
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _customOutputController,
+            decoration: InputDecoration(
+              hintText: 'Masukkan jenis output',
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Color(0xFF0047AB)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Color(0xFF0047AB)),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+            ),
+            style: const TextStyle(color: Colors.black),
+          ),
+        ],
+
+        const SizedBox(height: 12),
+
+        // Add button
+        Row(
+          children: [
+            const Spacer(),
             ElevatedButton(
               onPressed: _addOutputItem,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF0047AB),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
               child: const Text('Tambah'),
             ),
@@ -656,7 +704,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.home),
-          _buildNavItem(1, Icons.calculate),
+          _buildNavItem(1, Icons.assignment),
           _buildNavItem(2, Icons.person),
         ],
       ),
@@ -672,6 +720,24 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
         setState(() {
           _selectedIndex = index;
         });
+        
+        // Navigate based on selected index
+        switch (index) {
+          case 0:
+            // Navigate to Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            break;
+          case 1:
+            // Navigate to Data Hasil Balance via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing DataHasilBalanceScreen when index is 1
+            break;
+          case 2:
+            // Navigate to Profile via Home
+            Navigator.popUntil(context, (route) => route.isFirst);
+            // The HomeScreen will handle showing ProfileScreen when index is 2
+            break;
+        }
       },
       child: Container(
         color: Colors.transparent,

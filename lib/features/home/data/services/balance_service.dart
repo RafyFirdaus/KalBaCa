@@ -10,7 +10,7 @@ class BalanceService {
   // Mendapatkan user ID saat ini atau membuat anonymous user
   static Future<String> _getCurrentUserId() async {
     User? user = _auth.currentUser;
-    
+
     if (user == null) {
       // Jika user belum login, buat anonymous user
       try {
@@ -22,7 +22,7 @@ class BalanceService {
         throw Exception('Gagal membuat sesi anonymous: $e');
       }
     }
-    
+
     return user!.uid;
   }
 
@@ -67,10 +67,10 @@ class BalanceService {
       List<PatientBalanceResult> results = querySnapshot.docs
           .map((doc) => PatientBalanceResult.fromFirestore(doc))
           .toList();
-      
+
       // Sort berdasarkan createdAt descending di client
       results.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      
+
       return results;
     } catch (e) {
       print('Error getting balance results: $e');
@@ -130,7 +130,7 @@ class BalanceService {
   static Future<void> deleteBalanceResult(String id) async {
     try {
       // Pastikan user terautentikasi (atau buat anonymous)
-      String userId = await _getCurrentUserId();
+      await _getCurrentUserId();
 
       // Pastikan data milik user saat ini sebelum menghapus
       PatientBalanceResult? result = await getBalanceResultById(id);
@@ -170,7 +170,7 @@ class BalanceService {
               List<PatientBalanceResult> results = snapshot.docs
                   .map((doc) => PatientBalanceResult.fromFirestore(doc))
                   .toList();
-              
+
               // Sort di client side
               results.sort((a, b) => b.createdAt.compareTo(a.createdAt));
               return results;
@@ -182,7 +182,9 @@ class BalanceService {
   }
 
   // Mencari data balance berdasarkan nama pasien
-  static Future<List<PatientBalanceResult>> searchBalanceResults(String patientName) async {
+  static Future<List<PatientBalanceResult>> searchBalanceResults(
+    String patientName,
+  ) async {
     try {
       // Pastikan user terautentikasi (atau buat anonymous)
       String userId = await _getCurrentUserId();
@@ -196,16 +198,20 @@ class BalanceService {
       // Filter dan sort di client side
       List<PatientBalanceResult> results = querySnapshot.docs
           .map((doc) => PatientBalanceResult.fromFirestore(doc))
-          .where((result) => result.patientName.toLowerCase().contains(patientName.toLowerCase()))
+          .where(
+            (result) => result.patientName.toLowerCase().contains(
+              patientName.toLowerCase(),
+            ),
+          )
           .toList();
-      
+
       // Sort berdasarkan nama pasien dan tanggal
       results.sort((a, b) {
         int nameComparison = a.patientName.compareTo(b.patientName);
         if (nameComparison != 0) return nameComparison;
         return b.createdAt.compareTo(a.createdAt);
       });
-      
+
       return results;
     } catch (e) {
       print('Error searching balance results: $e');
