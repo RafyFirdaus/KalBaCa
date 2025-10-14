@@ -356,7 +356,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Dropdown and input row
         Row(
           children: [
@@ -377,7 +377,10 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
                     items: _intakeOptions.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value, style: const TextStyle(color: Colors.black)),
+                        child: Text(
+                          value,
+                          style: const TextStyle(color: Colors.black),
+                        ),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
@@ -390,7 +393,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            
+
             // Value input
             Expanded(
               flex: 1,
@@ -418,7 +421,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
             ),
           ],
         ),
-        
+
         // Custom input for "Lainnya"
         if (_selectedIntakeType == 'Lainnya') ...[
           const SizedBox(height: 8),
@@ -456,7 +459,10 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Tambah'),
             ),
@@ -509,7 +515,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Dropdown and input row
         Row(
           children: [
@@ -530,7 +536,10 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
                     items: _outputOptions.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value, style: const TextStyle(color: Colors.black)),
+                        child: Text(
+                          value,
+                          style: const TextStyle(color: Colors.black),
+                        ),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
@@ -543,7 +552,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
               ),
             ),
             const SizedBox(width: 8),
-            
+
             // Value input
             Expanded(
               flex: 1,
@@ -571,7 +580,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
             ),
           ],
         ),
-        
+
         // Custom input for "Lainnya"
         if (_selectedOutputType == 'Lainnya') ...[
           const SizedBox(height: 8),
@@ -609,7 +618,10 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Tambah'),
             ),
@@ -720,7 +732,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
         setState(() {
           _selectedIndex = index;
         });
-        
+
         // Navigate based on selected index
         switch (index) {
           case 0:

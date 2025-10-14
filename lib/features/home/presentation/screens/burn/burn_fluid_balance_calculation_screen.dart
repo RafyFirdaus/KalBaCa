@@ -27,12 +27,18 @@ class BurnFluidBalanceCalculationScreen extends StatefulWidget {
 
 class _BurnFluidBalanceCalculationScreenState
     extends State<BurnFluidBalanceCalculationScreen> {
-  // TextEditingControllers untuk setiap input field
-  final TextEditingController _infusController = TextEditingController();
-  final TextEditingController _cairanOralController = TextEditingController();
-  final TextEditingController _makananController = TextEditingController();
-  final TextEditingController _transfusiController = TextEditingController();
-  final TextEditingController _lainnyaController = TextEditingController();
+  // Dropdown-related variables
+  final List<String> _intakeOptions = [
+    'Infus',
+    'Cairan Oral',
+    'Makanan',
+    'Transfusi',
+    'Lainnya'
+  ];
+  String _selectedIntakeType = 'Infus';
+  final TextEditingController _intakeValueController = TextEditingController();
+  final TextEditingController _customIntakeController = TextEditingController();
+  List<Map<String, dynamic>> _intakeItems = [];
 
   // Variables untuk calculation results
   double _totalIntake = 0.0;
@@ -44,24 +50,51 @@ class _BurnFluidBalanceCalculationScreenState
 
   @override
   void dispose() {
-    _infusController.dispose();
-    _cairanOralController.dispose();
-    _makananController.dispose();
-    _transfusiController.dispose();
-    _lainnyaController.dispose();
+    _intakeValueController.dispose();
+    _customIntakeController.dispose();
     super.dispose();
+  }
+
+  // Function to add intake item
+  void _addIntakeItem() {
+    if (_intakeValueController.text.isEmpty) return;
+
+    double value = double.tryParse(_intakeValueController.text) ?? 0.0;
+    if (value <= 0) return;
+
+    String type = _selectedIntakeType;
+    if (_selectedIntakeType == 'Lainnya' && _customIntakeController.text.isNotEmpty) {
+      type = _customIntakeController.text;
+    }
+
+    setState(() {
+      _intakeItems.add({
+        'type': type,
+        'value': value,
+      });
+      _intakeValueController.clear();
+      if (_selectedIntakeType == 'Lainnya') {
+        _customIntakeController.clear();
+      }
+    });
+  }
+
+  // Function to remove intake item
+  void _removeIntakeItem(int index) {
+    setState(() {
+      _intakeItems.removeAt(index);
+    });
+  }
+
+  // Function to calculate total intake from items
+  double _calculateTotalIntake() {
+    return _intakeItems.fold(0.0, (sum, item) => sum + item['value']);
   }
 
   // Fungsi untuk menghitung balance
   void _calculateBalance() {
-    double infus = double.tryParse(_infusController.text) ?? 0.0;
-    double cairanOral = double.tryParse(_cairanOralController.text) ?? 0.0;
-    double makanan = double.tryParse(_makananController.text) ?? 0.0;
-    double transfusi = double.tryParse(_transfusiController.text) ?? 0.0;
-    double lainnya = double.tryParse(_lainnyaController.text) ?? 0.0;
-
     setState(() {
-      _totalIntake = infus + cairanOral + makanan + transfusi + lainnya;
+      _totalIntake = _calculateTotalIntake();
       _balance = _totalIntake - widget.normalIWL;
       _isCalculated = true;
     });
@@ -193,78 +226,146 @@ class _BurnFluidBalanceCalculationScreenState
         ),
         const SizedBox(height: 16),
 
-        _buildInputField(label: 'Infus:', controller: _infusController),
-        const SizedBox(height: 16),
-
-        _buildInputField(
-          label: 'Cairan Oral:',
-          controller: _cairanOralController,
-        ),
-        const SizedBox(height: 16),
-
-        _buildInputField(label: 'Makanan:', controller: _makananController),
-        const SizedBox(height: 16),
-
-        _buildInputField(label: 'Transfusi:', controller: _transfusiController),
-        const SizedBox(height: 16),
-
-        _buildInputField(label: 'Lainnya:', controller: _lainnyaController),
-      ],
-    );
-  }
-
-  // Input Field Builder
-  Widget _buildInputField({
-    required String label,
-    required TextEditingController controller,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // Label
-        SizedBox(
-          width: 120,
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+        // Dropdown and input row
+        Row(
+          children: [
+            // Dropdown
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFF0047AB), width: 1),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedIntakeType,
+                    isExpanded: true,
+                    items: _intakeOptions.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedIntakeType = newValue!;
+                      });
+                    },
+                  ),
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 8),
+
+            // Value input
+            Expanded(
+              flex: 1,
+              child: TextFormField(
+                controller: _intakeValueController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF0047AB)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF0047AB)),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  hintText: "mL",
+                  hintStyle: const TextStyle(color: Colors.grey),
+                ),
+                style: const TextStyle(color: Colors.black),
+              ),
+            ),
+          ],
         ),
 
-        // Input Field
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+        // Custom input for "Lainnya"
+        if (_selectedIntakeType == 'Lainnya') ...[
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _customIntakeController,
+            decoration: InputDecoration(
+              hintText: 'Masukkan jenis intake',
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Color(0xFF0047AB)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(color: Color(0xFF0047AB)),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+            ),
+            style: const TextStyle(color: Colors.black),
+          ),
+        ],
+
+        const SizedBox(height: 12),
+
+        // Add button
+        Row(
+          children: [
+            const Spacer(),
+            ElevatedButton(
+              onPressed: _addIntakeItem,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF0047AB),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+              child: const Text('Tambah'),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+        // Display added intake items
+        ..._intakeItems.asMap().entries.map((entry) {
+          int index = entry.key;
+          Map<String, dynamic> item = entry.value;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.white.withOpacity(0.9),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: '',
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    style: const TextStyle(color: Colors.black, fontSize: 16),
-                  ),
+                Text(
+                  '${item['type']}: ${item['value'].toStringAsFixed(0)} mL',
+                  style: const TextStyle(color: Colors.black),
                 ),
-                const Text(
-                  'mL',
-                  style: TextStyle(color: Colors.black, fontSize: 16),
+                IconButton(
+                  onPressed: () => _removeIntakeItem(index),
+                  icon: const Icon(Icons.delete, color: Colors.red),
                 ),
               ],
             ),
-          ),
-        ),
+          );
+        }).toList(),
       ],
     );
   }
