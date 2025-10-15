@@ -5,6 +5,28 @@ import 'burn_fluid_result_screen.dart';
 import '../adult/fluid_balance_simulation_screen.dart';
 import '../child/child_fluid_balance_simulation_screen.dart';
 
+// Custom input formatter untuk angka desimal dengan koma
+class DecimalTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Hanya izinkan angka dan satu koma
+    final regExp = RegExp(r'^\d*,?\d*$');
+    
+    if (regExp.hasMatch(newValue.text)) {
+      // Pastikan hanya ada satu koma
+      final commaCount = newValue.text.split(',').length - 1;
+      if (commaCount <= 1) {
+        return newValue;
+      }
+    }
+    
+    return oldValue;
+  }
+}
+
 class DataPasienScreen extends StatefulWidget {
   const DataPasienScreen({super.key});
 
@@ -424,16 +446,18 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _persentaseController,
-                      keyboardType: TextInputType.number,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(3),
+                        DecimalTextInputFormatter(),
+                        LengthLimitingTextInputFormatter(6), // Increased to allow decimals like 99,99
                       ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Persentase luka bakar harus diisi';
                         }
-                        final percentage = int.tryParse(value);
+                        // Convert comma to dot for parsing
+                        final normalizedValue = value.replaceAll(',', '.');
+                        final percentage = double.tryParse(normalizedValue);
                         if (percentage == null ||
                             percentage < 0 ||
                             percentage > 100) {
@@ -538,15 +562,30 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
+                    onPressed: () async {
+                      Navigator.of(context).pop(); // Tutup popup
+                      
+                      // Navigasi ke simulasi dewasa dengan callback
+                      final result = await Navigator.push<double>(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const FluidBalanceSimulationScreen(),
+                          builder: (context) => FluidBalanceSimulationScreen(
+                            onPercentageSelected: (percentage) {
+                              // Set nilai ke field %TBSA dengan format koma untuk desimal
+                              setState(() {
+                                _persentaseController.text = percentage.toString().replaceAll('.', ',');
+                              });
+                            },
+                          ),
                         ),
                       );
+                      
+                      // Jika ada result dari Navigator.pop, update field
+                      if (result != null) {
+                        setState(() {
+                          _persentaseController.text = result.toString().replaceAll('.', ',');
+                        });
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1565C0),
@@ -571,15 +610,30 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
+                    onPressed: () async {
+                      Navigator.of(context).pop(); // Tutup popup
+                      
+                      // Navigasi ke simulasi anak dengan callback
+                      final result = await Navigator.push<double>(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const ChildFluidBalanceSimulationScreen(),
+                          builder: (context) => ChildFluidBalanceSimulationScreen(
+                            onPercentageSelected: (percentage) {
+                              // Set nilai ke field %TBSA dengan format koma untuk desimal
+                              setState(() {
+                                _persentaseController.text = percentage.toString().replaceAll('.', ',');
+                              });
+                            },
+                          ),
                         ),
                       );
+                      
+                      // Jika ada result dari Navigator.pop, update field
+                      if (result != null) {
+                        setState(() {
+                          _persentaseController.text = result.toString().replaceAll('.', ',');
+                        });
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,

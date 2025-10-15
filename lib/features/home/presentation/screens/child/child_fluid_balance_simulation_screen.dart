@@ -19,12 +19,22 @@ class ChildBodyPart {
 class ChildFluidDistribution {
   final String area;
   final double percentage;
+  final double tbsaPercentage; // Tambahan untuk persentase TBSA anak
 
-  ChildFluidDistribution({required this.area, required this.percentage});
+  ChildFluidDistribution({
+    required this.area, 
+    required this.percentage,
+    required this.tbsaPercentage, // Parameter baru
+  });
 }
 
 class ChildFluidBalanceSimulationScreen extends StatefulWidget {
-  const ChildFluidBalanceSimulationScreen({Key? key}) : super(key: key);
+  final Function(double)? onPercentageSelected; // Callback parameter
+
+  const ChildFluidBalanceSimulationScreen({
+    Key? key,
+    this.onPercentageSelected, // Optional callback
+  }) : super(key: key);
 
   @override
   State<ChildFluidBalanceSimulationScreen> createState() =>
@@ -65,17 +75,19 @@ class _ChildFluidBalanceSimulationScreenState
 
   void _initializeChildBodyParts() {
     _childBodyParts = [
-      // Kepala dan Leher - persentase untuk anak lebih besar
+      // Kepala dan Leher - persentase untuk anak lebih besar (18% total untuk anak)
       ChildBodyPart(
         name: 'Kepala dan Leher',
         distributions: [
           ChildFluidDistribution(
             area: 'Kepala dan leher depan',
             percentage: 9.0,
+            tbsaPercentage: 9.0, // Anak: kepala 18% total
           ),
           ChildFluidDistribution(
             area: 'Kepala dan leher belakang',
             percentage: 9.0,
+            tbsaPercentage: 9.0,
           ),
         ],
         clickableArea: const Rect.fromLTWH(
@@ -85,25 +97,29 @@ class _ChildFluidBalanceSimulationScreenState
           0.15,
         ), // Area kepala lebih besar untuk anak
       ),
-      // Torso - disesuaikan untuk proporsi anak
+      // Torso - disesuaikan untuk proporsi anak (36% total)
       ChildBodyPart(
         name: 'Torso',
         distributions: [
           ChildFluidDistribution(
             area: 'Dada (toraks anterior)',
             percentage: 9.0,
+            tbsaPercentage: 9.0,
           ),
           ChildFluidDistribution(
             area: 'Abdomen (perut anterior)',
             percentage: 9.0,
+            tbsaPercentage: 9.0,
           ),
           ChildFluidDistribution(
             area: 'Punggung atas (toraks posterior)',
             percentage: 9.0,
+            tbsaPercentage: 9.0,
           ),
           ChildFluidDistribution(
             area: 'Punggung bawah (lumbal posterior)',
             percentage: 9.0,
+            tbsaPercentage: 9.0,
           ),
         ],
         clickableArea: const Rect.fromLTWH(
@@ -113,12 +129,12 @@ class _ChildFluidBalanceSimulationScreenState
           0.25,
         ), // Torso anak proporsi berbeda
       ),
-      // Lengan Kiri - persentase lebih kecil untuk anak
+      // Lengan Kiri - persentase lebih kecil untuk anak (9% total)
       ChildBodyPart(
         name: 'Lengan Kiri',
         distributions: [
-          ChildFluidDistribution(area: 'Lengan kiri depan', percentage: 4.5),
-          ChildFluidDistribution(area: 'Lengan kiri belakang', percentage: 4.5),
+          ChildFluidDistribution(area: 'Lengan kiri depan', percentage: 4.5, tbsaPercentage: 4.5),
+          ChildFluidDistribution(area: 'Lengan kiri belakang', percentage: 4.5, tbsaPercentage: 4.5),
         ],
         clickableArea: const Rect.fromLTWH(
           0.05,
@@ -127,14 +143,15 @@ class _ChildFluidBalanceSimulationScreenState
           0.35,
         ), // Lengan kiri anak
       ),
-      // Lengan Kanan - persentase lebih kecil untuk anak
+      // Lengan Kanan - persentase lebih kecil untuk anak (9% total)
       ChildBodyPart(
         name: 'Lengan Kanan',
         distributions: [
-          ChildFluidDistribution(area: 'Lengan kanan depan', percentage: 4.5),
+          ChildFluidDistribution(area: 'Lengan kanan depan', percentage: 4.5, tbsaPercentage: 4.5),
           ChildFluidDistribution(
             area: 'Lengan kanan belakang',
             percentage: 4.5,
+            tbsaPercentage: 4.5,
           ),
         ],
         clickableArea: const Rect.fromLTWH(
@@ -144,12 +161,12 @@ class _ChildFluidBalanceSimulationScreenState
           0.35,
         ), // Lengan kanan anak
       ),
-      // Kaki Kiri - persentase disesuaikan untuk anak
+      // Kaki Kiri - persentase disesuaikan untuk anak (14% total)
       ChildBodyPart(
         name: 'Kaki Kiri',
         distributions: [
-          ChildFluidDistribution(area: 'Kaki kiri depan', percentage: 7.0),
-          ChildFluidDistribution(area: 'Kaki kiri belakang', percentage: 7.0),
+          ChildFluidDistribution(area: 'Kaki kiri depan', percentage: 7.0, tbsaPercentage: 7.0),
+          ChildFluidDistribution(area: 'Kaki kiri belakang', percentage: 7.0, tbsaPercentage: 7.0),
         ],
         clickableArea: const Rect.fromLTWH(
           0.25,
@@ -158,12 +175,12 @@ class _ChildFluidBalanceSimulationScreenState
           0.5,
         ), // Kaki kiri anak
       ),
-      // Kaki Kanan - persentase disesuaikan untuk anak
+      // Kaki Kanan - persentase disesuaikan untuk anak (14% total)
       ChildBodyPart(
         name: 'Kaki Kanan',
         distributions: [
-          ChildFluidDistribution(area: 'Kaki kanan depan', percentage: 7.0),
-          ChildFluidDistribution(area: 'Kaki kanan belakang', percentage: 7.0),
+          ChildFluidDistribution(area: 'Kaki kanan depan', percentage: 7.0, tbsaPercentage: 7.0),
+          ChildFluidDistribution(area: 'Kaki kanan belakang', percentage: 7.0, tbsaPercentage: 7.0),
         ],
         clickableArea: const Rect.fromLTWH(
           0.55,
@@ -575,77 +592,86 @@ class _ChildFluidBalanceSimulationScreenState
       top: top,
       child: Transform.scale(
         scale: _tooltipAnimation.value,
-        child: Container(
-          width: tooltipWidth,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
+        child: GestureDetector(
+            onTap: () {
+              // Jika ada callback, panggil dengan nilai TBSA dan tutup halaman
+              if (widget.onPercentageSelected != null) {
+                widget.onPercentageSelected!(distribution.tbsaPercentage);
+                Navigator.pop(context, distribution.tbsaPercentage);
+              }
+            },
+            child: Container(
+              width: tooltipWidth,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.primaryBlue.withOpacity(0.3)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    margin: const EdgeInsets.only(top: 3),
-                    decoration: const BoxDecoration(
-                      color: AppColors.primaryBlue,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      distribution.area,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: AppColors.textDark,
-                        fontWeight: FontWeight.w600,
-                        height: 1.3,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        margin: const EdgeInsets.only(top: 3),
+                        decoration: const BoxDecoration(
+                          color: AppColors.primaryBlue,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          distribution.area,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: AppColors.textDark,
+                            fontWeight: FontWeight.w600,
+                            height: 1.3,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBlue,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        '${distribution.percentage}%',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryBlue,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Text(
-                    '${distribution.percentage}%',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
       ),
     );
   }

@@ -27,49 +27,50 @@ class BurnFluidResultScreen extends StatefulWidget {
 class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
   int _selectedIndex = 0;
 
-  // Calculate burn fluid requirements using separate adult and child formulas
+  // Calculate burn fluid requirements using Parkland formula
   Map<String, dynamic> _calculateBurnFluid() {
     final double weightKg = double.parse(widget.weight);
     double.parse(widget.height);
     final int age = int.parse(widget.age);
+    
+    // Parse burn percentage, handle comma as decimal separator
+    final String burnPercentageStr = widget.burnPercentage.replaceAll(',', '.');
+    final double burnPercentage = double.parse(burnPercentageStr);
 
-    // Calculate base fluid requirement based on age
-    double kebutuhanCairan;
+    // Calculate burn fluid requirement using Parkland formula
+    double kebutuhanCairanLukaBakar;
     double iwl;
     String ageCategory;
+    String formula;
 
     if (age > 18) {
-      // Adult formula (Watson formula)
+      // Adult Parkland formula: 4 mL x weight (kg) x % TBSA
       ageCategory = 'Dewasa (>18 tahun)';
-      kebutuhanCairan = weightKg * 30; // Watson formula: weight * 30 mL/kg/day
+      formula = 'Parkland: 4 mL × BB × % TBSA';
+      kebutuhanCairanLukaBakar = 4 * weightKg * burnPercentage;
       iwl = 15 * weightKg; // Adult IWL: 15 mL/kg/day
     } else {
-      // Child formula (Holliday-Segar formula)
+      // Child Parkland formula: 3 mL x weight (kg) x % TBSA
       ageCategory = 'Anak (≤18 tahun)';
-
-      // Holliday-Segar formula for fluid requirement
-      if (weightKg < 10) {
-        kebutuhanCairan = weightKg * 100;
-      } else if (weightKg <= 20) {
-        kebutuhanCairan = 1000 + (weightKg - 10) * 50;
-      } else {
-        kebutuhanCairan = 1500 + (weightKg - 20) * 20;
-      }
-
+      formula = 'Parkland: 3 mL × BB × % TBSA';
+      kebutuhanCairanLukaBakar = 3 * weightKg * burnPercentage;
+      
       // Child IWL formula: (30 - age) * weight
       iwl = (30 - age) * weightKg;
     }
 
     // Calculate total fluid requirement
-    final double totalKebutuhanCairan = kebutuhanCairan + iwl;
+    final double totalKebutuhanCairan = kebutuhanCairanLukaBakar + iwl;
 
     return {
-      'kebutuhanCairan': kebutuhanCairan,
+      'kebutuhanCairan': kebutuhanCairanLukaBakar,
       'iwl': iwl,
       'totalKebutuhanCairan': totalKebutuhanCairan,
       'ageCategory': ageCategory,
+      'formula': formula,
       'weightKg': weightKg,
       'age': age,
+      'burnPercentage': burnPercentage,
     };
   }
 
@@ -224,23 +225,36 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
 
         const SizedBox(height: 24),
 
-        // Age Category Info
+        // Formula Info
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Colors.blue.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.info, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
+              Row(
+                children: [
+                  const Icon(Icons.info, color: Colors.white, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Formula: ${burnFluidData['formula']}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
               Text(
-                'Formula: ${burnFluidData['ageCategory']}',
+                'Kategori: ${burnFluidData['ageCategory']}',
                 style: const TextStyle(
                   color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
                 ),
               ),
             ],
@@ -249,9 +263,9 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
 
         const SizedBox(height: 16),
 
-        // Kebutuhan Cairan
+        // Kebutuhan Cairan Luka Bakar
         _buildResultField(
-          label: 'Kebutuhan Cairan:',
+          label: 'Kebutuhan Cairan Luka Bakar:',
           value: '${burnFluidData['kebutuhanCairan'].round()}',
           subValue: 'mL',
         ),
