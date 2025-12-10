@@ -14,7 +14,7 @@ class DecimalTextInputFormatter extends TextInputFormatter {
   ) {
     // Hanya izinkan angka dan satu koma
     final regExp = RegExp(r'^\d*,?\d*$');
-    
+
     if (regExp.hasMatch(newValue.text)) {
       // Pastikan hanya ada satu koma
       final commaCount = newValue.text.split(',').length - 1;
@@ -22,7 +22,7 @@ class DecimalTextInputFormatter extends TextInputFormatter {
         return newValue;
       }
     }
-    
+
     return oldValue;
   }
 }
@@ -42,6 +42,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
   final _usiaController = TextEditingController();
   final _persentaseController = TextEditingController();
   String? _jenisKelamin;
+  bool _isEWLMode = false;
 
   @override
   void dispose() {
@@ -175,6 +176,11 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                         const SizedBox(height: 16),
 
                         _buildPercentageField(),
+
+                        const SizedBox(height: 16),
+
+                        // EWL Switch
+                        _buildEWLSwitch(),
 
                         const SizedBox(height: 24),
 
@@ -446,10 +452,14 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _persentaseController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       inputFormatters: [
                         DecimalTextInputFormatter(),
-                        LengthLimitingTextInputFormatter(6), // Increased to allow decimals like 99,99
+                        LengthLimitingTextInputFormatter(
+                          6,
+                        ), // Increased to allow decimals like 99,99
                       ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -490,6 +500,38 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEWLSwitch() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Hitung EWL (Post 24 Jam)?',
+            style: TextStyle(
+              color: Color(0xFF1565C0),
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Switch(
+            value: _isEWLMode,
+            onChanged: (value) {
+              setState(() {
+                _isEWLMode = value;
+              });
+            },
+            activeColor: const Color(0xFF1565C0),
           ),
         ],
       ),
@@ -564,7 +606,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       Navigator.of(context).pop(); // Tutup popup
-                      
+
                       // Navigasi ke simulasi dewasa dengan callback
                       final result = await Navigator.push<double>(
                         context,
@@ -573,17 +615,21 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                             onPercentageSelected: (percentage) {
                               // Set nilai ke field %TBSA dengan format koma untuk desimal
                               setState(() {
-                                _persentaseController.text = percentage.toString().replaceAll('.', ',');
+                                _persentaseController.text = percentage
+                                    .toString()
+                                    .replaceAll('.', ',');
                               });
                             },
                           ),
                         ),
                       );
-                      
+
                       // Jika ada result dari Navigator.pop, update field
                       if (result != null) {
                         setState(() {
-                          _persentaseController.text = result.toString().replaceAll('.', ',');
+                          _persentaseController.text = result
+                              .toString()
+                              .replaceAll('.', ',');
                         });
                       }
                     },
@@ -612,7 +658,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                   child: ElevatedButton(
                     onPressed: () async {
                       Navigator.of(context).pop(); // Tutup popup
-                      
+
                       // Navigasi ke simulasi anak dengan callback
                       final result = await Navigator.push<double>(
                         context,
@@ -621,17 +667,21 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                             onPercentageSelected: (percentage) {
                               // Set nilai ke field %TBSA dengan format koma untuk desimal
                               setState(() {
-                                _persentaseController.text = percentage.toString().replaceAll('.', ',');
+                                _persentaseController.text = percentage
+                                    .toString()
+                                    .replaceAll('.', ',');
                               });
                             },
                           ),
                         ),
                       );
-                      
+
                       // Jika ada result dari Navigator.pop, update field
                       if (result != null) {
                         setState(() {
-                          _persentaseController.text = result.toString().replaceAll('.', ',');
+                          _persentaseController.text = result
+                              .toString()
+                              .replaceAll('.', ',');
                         });
                       }
                     },
@@ -685,6 +735,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                             age: _usiaController.text,
                             gender: _jenisKelamin ?? '',
                             burnPercentage: _persentaseController.text,
+                            isEWLMode: _isEWLMode,
                           ),
                         ),
                       );

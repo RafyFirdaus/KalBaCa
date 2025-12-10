@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as dart_math;
 import '../../../../../core/constants/constants.dart';
 import 'burn_fluid_intake_output_screen.dart';
 
@@ -9,6 +10,7 @@ class BurnFluidResultScreen extends StatefulWidget {
   final String age;
   final String gender;
   final String burnPercentage;
+  final bool isEWLMode;
 
   const BurnFluidResultScreen({
     super.key,
@@ -18,6 +20,7 @@ class BurnFluidResultScreen extends StatefulWidget {
     required this.age,
     required this.gender,
     required this.burnPercentage,
+    required this.isEWLMode,
   });
 
   @override
@@ -27,50 +30,99 @@ class BurnFluidResultScreen extends StatefulWidget {
 class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
   int _selectedIndex = 0;
 
-  // Calculate burn fluid requirements using Parkland formula
+  // Calculate burn fluid requirements
   Map<String, dynamic> _calculateBurnFluid() {
     final double weightKg = double.parse(widget.weight);
-    double.parse(widget.height);
+    final double heightCm = double.parse(widget.height);
     final int age = int.parse(widget.age);
-    
+
     // Parse burn percentage, handle comma as decimal separator
     final String burnPercentageStr = widget.burnPercentage.replaceAll(',', '.');
     final double burnPercentage = double.parse(burnPercentageStr);
 
-    // Calculate burn fluid requirement using Parkland formula
-    double kebutuhanCairanLukaBakar;
-    double iwl;
-    String ageCategory;
-    String formula;
+    double totalFluid = 0;
+    String phaseTitle = '';
+    String formula = '';
+    Map<String, dynamic> breakdown = {};
 
-    if (age > 18) {
-      // Adult Parkland formula: 4 mL x weight (kg) x % TBSA
-      ageCategory = 'Dewasa (>18 tahun)';
-      formula = 'Parkland: 4 mL × BB × % TBSA';
-      kebutuhanCairanLukaBakar = 4 * weightKg * burnPercentage;
-      iwl = 15 * weightKg; // Adult IWL: 15 mL/kg/day
+    if (widget.isEWLMode) {
+      // CASE 2: Maintenance + EWL Phase (Fase 2)
+      phaseTitle = 'Fase Maintenance + EWL (Post 24 Jam)';
+
+      // Step 1: Calculate BSA (Mosteller Formula)
+      // BSA = sqrt((Weight_kg * Height_cm) / 3600)
+      final double bsa = dart_math.sqrt((weightKg * heightCm) / 3600);
+
+      // Step 2: Calculate EWL (Evaporative Water Loss)
+      // EWL_Rate = (25 + BurnPercentage) * BSA (mL/hour)
+      final double ewlRate = (25 + burnPercentage) * bsa;
+      final double ewlTotal24h = ewlRate * 24;
+
+      // Step 3: Calculate Maintenance Fluid
+      double maintenanceTotal = 0;
+      if (age >= 18) {
+        // Adult Maintenance: Weight * 30 (Based on standard maintenance for adults)
+        maintenanceTotal = weightKg * 30;
+      } else {
+        // Child Maintenance: Holliday-Segar Formula
+        if (weightKg <= 10) {
+          maintenanceTotal = weightKg * 100;
+        } else if (weightKg <= 20) {
+          maintenanceTotal = 1000 + (weightKg - 10) * 50;
+        } else {
+          maintenanceTotal = 1500 + (weightKg - 20) * 20;
+        }
+      }
+
+      // Step 4: Final Calculation
+      totalFluid = maintenanceTotal + ewlTotal24h;
+
+      formula =
+          'Total = Maintenance + EWL\n'
+          'BSA = √((BB × TB)/3600)\n'
+          'EWL = (25 + %LB) × BSA × 24\n'
+          'Maintenance = ${age >= 18 ? 'BB × 30' : 'Holliday-Segar'}';
+
+      breakdown = {
+        'maintenance': maintenanceTotal,
+        'ewl': ewlTotal24h,
+        'bsa': bsa,
+      };
     } else {
-      // Child Parkland formula: 3 mL x weight (kg) x % TBSA
-      ageCategory = 'Anak (≤18 tahun)';
-      formula = 'Parkland: 3 mL × BB × % TBSA';
-      kebutuhanCairanLukaBakar = 3 * weightKg * burnPercentage;
-      
-      // Child IWL formula: (30 - age) * weight
-      iwl = (30 - age) * weightKg;
+      // CASE 1: Resuscitation Phase (Fase 1) - Default
+      phaseTitle = 'Fase Resusitasi (Parkland)';
+
+      // Formula (Parkland):
+      // ADULT (>= 18): 4 * Weight * BurnPercentage
+      // CHILD (< 18): 3 * Weight * BurnPercentage
+
+      double multiplier;
+      String formulaText;
+
+      if (age >= 18) {
+        multiplier = 4.0;
+        formulaText = 'Parkland (Dewasa): 4 mL × BB × % TBSA';
+      } else {
+        multiplier = 3.0;
+        formulaText = 'Parkland (Anak): 3 mL × BB × % TBSA';
+      }
+
+      totalFluid = multiplier * weightKg * burnPercentage;
+      formula = formulaText;
+
+      // Breakdown: 50% first 8h, 50% next 16h
+      breakdown = {'first8h': totalFluid * 0.5, 'next16h': totalFluid * 0.5};
     }
 
-    // Calculate total fluid requirement
-    final double totalKebutuhanCairan = kebutuhanCairanLukaBakar + iwl;
-
     return {
-      'kebutuhanCairan': kebutuhanCairanLukaBakar,
-      'iwl': iwl,
-      'totalKebutuhanCairan': totalKebutuhanCairan,
-      'ageCategory': ageCategory,
+      'totalFluid': totalFluid,
+      'phaseTitle': phaseTitle,
       'formula': formula,
+      'breakdown': breakdown,
       'weightKg': weightKg,
       'age': age,
       'burnPercentage': burnPercentage,
+      'isEWLMode': widget.isEWLMode,
     };
   }
 
@@ -181,6 +233,8 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
   Widget _buildResultSection() {
     // Calculate burn fluid using updated method
     final burnFluidData = _calculateBurnFluid();
+    final bool isEWLMode = burnFluidData['isEWLMode'];
+    final Map<String, dynamic> breakdown = burnFluidData['breakdown'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,7 +253,7 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
@@ -219,6 +273,27 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
                 'Jenis Kelamin: ${widget.gender} | % Luka Bakar: ${widget.burnPercentage}% TBSA',
                 style: const TextStyle(color: Colors.white, fontSize: 14),
               ),
+              if (isEWLMode) ...[
+                const SizedBox(height: 4),
+                Text(
+                  'Mode: Post 24 Jam (Maintenance + EWL)',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ] else ...[
+                const SizedBox(height: 4),
+                Text(
+                  'Mode: Resusitasi (Parkland)',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -229,33 +304,33 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.blue.withValues(alpha: 0.2),
+            color: Colors.blue.withOpacity(0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(Icons.info, color: Colors.white, size: 20),
                   const SizedBox(width: 8),
-                  Text(
-                    'Formula: ${burnFluidData['formula']}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                  Expanded(
+                    child: Text(
+                      'Formula:\n${burnFluidData['formula']}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Text(
-                'Kategori: ${burnFluidData['ageCategory']}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
+                'Fase: ${burnFluidData['phaseTitle']}',
+                style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
             ],
           ),
@@ -263,28 +338,53 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
 
         const SizedBox(height: 16),
 
-        // Kebutuhan Cairan Luka Bakar
-        _buildResultField(
-          label: 'Kebutuhan Cairan Luka Bakar:',
-          value: '${burnFluidData['kebutuhanCairan'].round()}',
-          subValue: 'mL',
-        ),
+        if (isEWLMode) ...[
+          // Maintenance Fluid
+          _buildResultField(
+            label: 'Maintenance:',
+            value: '${(breakdown['maintenance'] as double).round()}',
+            subValue: 'mL/24 jam',
+          ),
+          const SizedBox(height: 16),
 
-        const SizedBox(height: 16),
+          // EWL
+          _buildResultField(
+            label: 'EWL (Evaporative Water Loss):',
+            value: '${(breakdown['ewl'] as double).round()}',
+            subValue: 'mL/24 jam',
+          ),
+          const SizedBox(height: 16),
 
-        // IWL (Insensible Water Loss)
-        _buildResultField(
-          label: 'IWL Normal:',
-          value: '${burnFluidData['iwl'].round()}',
-          subValue: 'mL',
-        ),
+          // BSA Info (Small)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Text(
+              'BSA: ${(breakdown['bsa'] as double).toStringAsFixed(2)} m²',
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
+            ),
+          ),
+        ] else ...[
+          // First 8 hours
+          _buildResultField(
+            label: '8 Jam Pertama (50%):',
+            value: '${(breakdown['first8h'] as double).round()}',
+            subValue: 'mL',
+          ),
+          const SizedBox(height: 16),
 
-        const SizedBox(height: 16),
+          // Next 16 hours
+          _buildResultField(
+            label: '16 Jam Berikutnya (50%):',
+            value: '${(breakdown['next16h'] as double).round()}',
+            subValue: 'mL',
+          ),
+          const SizedBox(height: 16),
+        ],
 
         // Total Kebutuhan Cairan
         _buildResultField(
-          label: 'Total Kebutuhan Cairan:',
-          value: '${burnFluidData['totalKebutuhanCairan'].round()}',
+          label: 'Total Kebutuhan Cairan (24 Jam):',
+          value: '${(burnFluidData['totalFluid'] as double).round()}',
           subValue: 'mL',
           isHighlighted: true,
         ),
@@ -376,9 +476,10 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
                 builder: (context) => BurnFluidIntakeOutputScreen(
                   patientName: widget.patientName,
                   weightKg: burnFluidData['weightKg'],
-                  normalIWL: burnFluidData['iwl'],
+                  normalIWL:
+                      0.0, // IWL is not applicable/removed as per requirement
                   age: burnFluidData['age'],
-                  gender: widget.gender,
+                  gender: widget.weight,
                 ),
               ),
             );
@@ -429,7 +530,7 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
         setState(() {
           _selectedIndex = index;
         });
-        
+
         // Navigate based on selected index
         switch (index) {
           case 0:
