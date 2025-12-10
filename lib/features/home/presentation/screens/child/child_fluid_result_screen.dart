@@ -9,6 +9,7 @@ class ChildFluidResultScreen extends StatefulWidget {
   final double heightCm;
   final int age;
   final String gender;
+  final double? temperature;
 
   const ChildFluidResultScreen({
     super.key,
@@ -17,6 +18,7 @@ class ChildFluidResultScreen extends StatefulWidget {
     required this.heightCm,
     required this.age,
     required this.gender,
+    this.temperature,
   });
 
   @override
@@ -48,8 +50,17 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
   }
 
   // Fungsi untuk menghitung IWL anak
+  // Dengan koreksi suhu jika ada
   double _calculateChildIWL(int ageYears, double weightKg) {
-    return (30 - ageYears) * weightKg;
+    double baseIWL = (30 - ageYears) * weightKg;
+
+    if (widget.temperature != null && widget.temperature! > 37.5) {
+      // Adjustment = Base IWL * 0.1 * (Input Temperature - 37)
+      double adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+      return baseIWL + adjustment;
+    }
+
+    return baseIWL;
   }
 
   // Fungsi untuk menghitung total kebutuhan cairan
@@ -198,7 +209,10 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Jenis Kelamin: ${widget.gender}',
+                'Jenis Kelamin: ${widget.gender}' +
+                    (widget.temperature != null
+                        ? ' | Suhu: ${widget.temperature}°C'
+                        : ''),
                 style: const TextStyle(color: Colors.white, fontSize: 14),
               ),
             ],
@@ -365,7 +379,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
         setState(() {
           _selectedIndex = index;
         });
-        
+
         // Navigate based on selected index
         switch (index) {
           case 0:

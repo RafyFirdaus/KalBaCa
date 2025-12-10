@@ -21,10 +21,14 @@ class _AdultFluidCalculationScreenState
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _temperatureController = TextEditingController();
 
   // Dropdown value for gender
   String? _selectedGender;
   final List<String> _genderOptions = ['Laki-laki', 'Perempuan'];
+
+  // Switch value for temperature increase
+  bool _isTemperatureIncreased = false;
 
   @override
   void dispose() {
@@ -32,6 +36,7 @@ class _AdultFluidCalculationScreenState
     _weightController.dispose();
     _heightController.dispose();
     _ageController.dispose();
+    _temperatureController.dispose();
     super.dispose();
   }
 
@@ -222,8 +227,80 @@ class _AdultFluidCalculationScreenState
 
           // Gender Field (Dropdown)
           _buildGenderDropdown(),
+
+          const SizedBox(height: 16),
+
+          // Temperature Increase Switch
+          _buildTemperatureSwitch(),
+
+          if (_isTemperatureIncreased) ...[
+            const SizedBox(height: 16),
+            // Temperature Field
+            _buildFormField(
+              label: 'Suhu Tubuh:',
+              controller: _temperatureController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+              ],
+              suffixText: '°C',
+              validator: (value) {
+                if (_isTemperatureIncreased) {
+                  if (value == null || value.isEmpty) {
+                    return 'Suhu tubuh harus diisi';
+                  }
+                  final temp = double.tryParse(value);
+                  if (temp == null) {
+                    return 'Format suhu tidak valid';
+                  }
+                  if (temp < 30 || temp > 45) {
+                    return 'Suhu tidak wajar';
+                  }
+                }
+                return null;
+              },
+            ),
+          ],
         ],
       ),
+    );
+  }
+
+  // Temperature Switch
+  Widget _buildTemperatureSwitch() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Label
+        const SizedBox(
+          width: 120,
+          child: Text(
+            'Ada kenaikan suhu tubuh?',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+
+        // Switch
+        Switch(
+          value: _isTemperatureIncreased,
+          onChanged: (bool value) {
+            setState(() {
+              _isTemperatureIncreased = value;
+              if (!value) {
+                _temperatureController.clear();
+              }
+            });
+          },
+          activeColor: Colors.white,
+          activeTrackColor: const Color(0xFF003A8C),
+        ),
+      ],
     );
   }
 
@@ -364,6 +441,11 @@ class _AdultFluidCalculationScreenState
                     heightCm: double.parse(_heightController.text),
                     age: int.parse(_ageController.text),
                     gender: _selectedGender!,
+                    temperature:
+                        _isTemperatureIncreased &&
+                            _temperatureController.text.isNotEmpty
+                        ? double.parse(_temperatureController.text)
+                        : null,
                   ),
                 ),
               );
@@ -413,7 +495,7 @@ class _AdultFluidCalculationScreenState
         setState(() {
           _selectedIndex = index;
         });
-        
+
         // Navigate based on selected index
         switch (index) {
           case 0:
