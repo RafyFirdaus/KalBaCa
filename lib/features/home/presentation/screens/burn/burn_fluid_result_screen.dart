@@ -34,7 +34,8 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
   Map<String, dynamic> _calculateBurnFluid() {
     final double weightKg = double.parse(widget.weight);
     final double heightCm = double.parse(widget.height);
-    final int age = int.parse(widget.age);
+    // Parse age as double to support infants
+    final double age = double.parse(widget.age.replaceAll(',', '.'));
 
     // Parse burn percentage, handle comma as decimal separator
     final String burnPercentageStr = widget.burnPercentage.replaceAll(',', '.');
@@ -309,22 +310,6 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
               style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
           ),
-        ] else ...[
-          // First 8 hours
-          _buildResultField(
-            label: '8 Jam Pertama (50%):',
-            value: '${(breakdown['first8h'] as double).round()}',
-            subValue: 'mL',
-          ),
-          const SizedBox(height: 16),
-
-          // Next 16 hours
-          _buildResultField(
-            label: '16 Jam Berikutnya (50%):',
-            value: '${(breakdown['next16h'] as double).round()}',
-            subValue: 'mL',
-          ),
-          const SizedBox(height: 16),
         ],
 
         // Total Kebutuhan Cairan

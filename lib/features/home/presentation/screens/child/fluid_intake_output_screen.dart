@@ -48,13 +48,16 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
     'Cairan Oral',
     'Makanan',
     'Transfusi',
+    'NGT',
+    'Injeksi IV',
     'Lainnya',
   ];
   final List<String> _outputOptions = [
     'Urine',
     'Drainage',
     'Diare',
-    'IWL',
+    'Muntah',
+    'Pungsi',
     'Lainnya',
   ];
 
