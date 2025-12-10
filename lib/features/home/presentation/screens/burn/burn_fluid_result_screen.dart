@@ -275,24 +275,8 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
               ),
               if (isEWLMode) ...[
                 const SizedBox(height: 4),
-                Text(
-                  'Mode: Post 24 Jam (Maintenance + EWL)',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
               ] else ...[
                 const SizedBox(height: 4),
-                Text(
-                  'Mode: Resusitasi (Parkland)',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
               ],
             ],
           ),
@@ -300,48 +284,10 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
 
         const SizedBox(height: 24),
 
-        // Formula Info
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.blue.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(Icons.info, color: Colors.white, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Formula:\n${burnFluidData['formula']}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Fase: ${burnFluidData['phaseTitle']}',
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
         if (isEWLMode) ...[
           // Maintenance Fluid
           _buildResultField(
-            label: 'Maintenance:',
+            label: 'Kebutuhan Cairan:',
             value: '${(breakdown['maintenance'] as double).round()}',
             subValue: 'mL/24 jam',
           ),
