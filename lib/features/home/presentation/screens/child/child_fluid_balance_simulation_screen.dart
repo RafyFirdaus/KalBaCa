@@ -217,6 +217,23 @@ class _ChildFluidBalanceSimulationScreenState
           0.5,
         ), // Kaki kanan anak
       ),
+      // Perineum - persentase disesuaikan untuk anak (18% total)
+      ChildBodyPart(
+        name: 'Perineum',
+        distributions: [
+          ChildFluidDistribution(
+            area: 'Perineum / genitalia',
+            percentage: 1.0,
+            tbsaPercentage: 1.0,
+          ),
+        ],
+        clickableArea: const Rect.fromLTWH(
+          0.42,
+          0.55,
+          0.13,
+          0.8,
+        ), // Lebih presisi
+      ),
     ];
   }
 

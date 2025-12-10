@@ -34,8 +34,7 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
   Map<String, dynamic> _calculateBurnFluid() {
     final double weightKg = double.parse(widget.weight);
     final double heightCm = double.parse(widget.height);
-    // Parse age as double to support infants
-    final double age = double.parse(widget.age.replaceAll(',', '.'));
+    final int age = int.parse(widget.age);
 
     // Parse burn percentage, handle comma as decimal separator
     final String burnPercentageStr = widget.burnPercentage.replaceAll(',', '.');

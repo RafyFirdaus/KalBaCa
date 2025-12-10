@@ -42,19 +42,23 @@ class _BurnFluidIntakeOutputScreenState
   final TextEditingController _customOutputController = TextEditingController();
 
   // Predefined options
-  final List<String> _intakeOptions = ['Infus', 'Cairan Oral', 'Makanan', 'Transfusi', 'Lainnya'];
-  final List<String> _outputOptions = ['Urine', 'Drainage', 'Diare', 'IWL', 'Lainnya'];
-
-  @override
-  void initState() {
-    super.initState();
-    // Add IWL automatically to output items
-    _outputItems.add({
-      'type': 'IWL',
-      'value': widget.normalIWL,
-      'isReadOnly': true,
-    });
-  }
+  final List<String> _intakeOptions = [
+    'Infus',
+    'Cairan Oral',
+    'Makanan',
+    'Transfusi',
+    'NGT',
+    'Injeksi IV',
+    'Lainnya',
+  ];
+  final List<String> _outputOptions = [
+    'Urine',
+    'Drainage',
+    'Diare',
+    'Muntah',
+    'Pungsi',
+    'Lainnya',
+  ];
 
   @override
   void dispose() {
@@ -67,12 +71,18 @@ class _BurnFluidIntakeOutputScreenState
 
   // Calculate total intake
   double calculateTotalIntake() {
-    return _intakeItems.fold(0.0, (sum, item) => sum + (item['value'] as double));
+    return _intakeItems.fold(
+      0.0,
+      (sum, item) => sum + (item['value'] as double),
+    );
   }
 
   // Calculate total output
   double calculateTotalOutput() {
-    return _outputItems.fold(0.0, (sum, item) => sum + (item['value'] as double));
+    return _outputItems.fold(
+      0.0,
+      (sum, item) => sum + (item['value'] as double),
+    );
   }
 
   // Calculate fluid balance
@@ -83,7 +93,8 @@ class _BurnFluidIntakeOutputScreenState
   // Add intake item
   void _addIntakeItem() {
     if (_selectedIntakeType == 'Lainnya') {
-      if (_customIntakeController.text.trim().isNotEmpty && _intakeValueController.text.trim().isNotEmpty) {
+      if (_customIntakeController.text.trim().isNotEmpty &&
+          _intakeValueController.text.trim().isNotEmpty) {
         final value = double.tryParse(_intakeValueController.text.trim());
         if (value != null && value > 0) {
           setState(() {
@@ -97,7 +108,9 @@ class _BurnFluidIntakeOutputScreenState
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Masukkan nilai yang valid (lebih dari 0)')),
+            const SnackBar(
+              content: Text('Masukkan nilai yang valid (lebih dari 0)'),
+            ),
           );
         }
       } else {
@@ -119,13 +132,15 @@ class _BurnFluidIntakeOutputScreenState
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Masukkan nilai yang valid (lebih dari 0)')),
+            const SnackBar(
+              content: Text('Masukkan nilai yang valid (lebih dari 0)'),
+            ),
           );
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Masukkan nilai intake')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Masukkan nilai intake')));
       }
     }
   }
@@ -133,7 +148,8 @@ class _BurnFluidIntakeOutputScreenState
   // Add output item
   void _addOutputItem() {
     if (_selectedOutputType == 'Lainnya') {
-      if (_customOutputController.text.trim().isNotEmpty && _outputValueController.text.trim().isNotEmpty) {
+      if (_customOutputController.text.trim().isNotEmpty &&
+          _outputValueController.text.trim().isNotEmpty) {
         final value = double.tryParse(_outputValueController.text.trim());
         if (value != null && value > 0) {
           setState(() {
@@ -147,7 +163,9 @@ class _BurnFluidIntakeOutputScreenState
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Masukkan nilai yang valid (lebih dari 0)')),
+            const SnackBar(
+              content: Text('Masukkan nilai yang valid (lebih dari 0)'),
+            ),
           );
         }
       } else {
@@ -169,13 +187,15 @@ class _BurnFluidIntakeOutputScreenState
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Masukkan nilai yang valid (lebih dari 0)')),
+            const SnackBar(
+              content: Text('Masukkan nilai yang valid (lebih dari 0)'),
+            ),
           );
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Masukkan nilai output')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Masukkan nilai output')));
       }
     }
   }
@@ -330,7 +350,7 @@ class _BurnFluidIntakeOutputScreenState
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Dropdown and input row
         Row(
           children: [
@@ -351,7 +371,10 @@ class _BurnFluidIntakeOutputScreenState
                     items: _intakeOptions.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value, style: const TextStyle(color: Colors.black)),
+                        child: Text(
+                          value,
+                          style: const TextStyle(color: Colors.black),
+                        ),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
@@ -364,7 +387,7 @@ class _BurnFluidIntakeOutputScreenState
               ),
             ),
             const SizedBox(width: 8),
-            
+
             // Value input
             Expanded(
               flex: 1,
@@ -392,7 +415,7 @@ class _BurnFluidIntakeOutputScreenState
             ),
           ],
         ),
-        
+
         // Custom input for "Lainnya"
         if (_selectedIntakeType == 'Lainnya') ...[
           const SizedBox(height: 8),
@@ -416,9 +439,9 @@ class _BurnFluidIntakeOutputScreenState
             style: const TextStyle(color: Colors.black),
           ),
         ],
-        
+
         const SizedBox(height: 12),
-        
+
         // Add button
         SizedBox(
           width: double.infinity,
@@ -438,14 +461,18 @@ class _BurnFluidIntakeOutputScreenState
             ),
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Added items list
         if (_intakeItems.isNotEmpty) ...[
           const Text(
             "Item Intake:",
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 8),
           ..._intakeItems.asMap().entries.map((entry) {
@@ -471,7 +498,11 @@ class _BurnFluidIntakeOutputScreenState
                   if (!item['isReadOnly'])
                     GestureDetector(
                       onTap: () => _removeIntakeItem(index),
-                      child: const Icon(Icons.delete, color: Colors.white, size: 20),
+                      child: const Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                 ],
               ),
@@ -495,7 +526,7 @@ class _BurnFluidIntakeOutputScreenState
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Dropdown and input row
         Row(
           children: [
@@ -516,7 +547,10 @@ class _BurnFluidIntakeOutputScreenState
                     items: _outputOptions.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value, style: const TextStyle(color: Colors.black)),
+                        child: Text(
+                          value,
+                          style: const TextStyle(color: Colors.black),
+                        ),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
@@ -529,7 +563,7 @@ class _BurnFluidIntakeOutputScreenState
               ),
             ),
             const SizedBox(width: 8),
-            
+
             // Value input
             Expanded(
               flex: 1,
@@ -557,7 +591,7 @@ class _BurnFluidIntakeOutputScreenState
             ),
           ],
         ),
-        
+
         // Custom input for "Lainnya"
         if (_selectedOutputType == 'Lainnya') ...[
           const SizedBox(height: 8),
@@ -581,9 +615,9 @@ class _BurnFluidIntakeOutputScreenState
             style: const TextStyle(color: Colors.black),
           ),
         ],
-        
+
         const SizedBox(height: 12),
-        
+
         // Add button
         SizedBox(
           width: double.infinity,
@@ -603,14 +637,18 @@ class _BurnFluidIntakeOutputScreenState
             ),
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Added items list
         if (_outputItems.isNotEmpty) ...[
           const Text(
             "Item Output:",
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 8),
           ..._outputItems.asMap().entries.map((entry) {
@@ -636,7 +674,11 @@ class _BurnFluidIntakeOutputScreenState
                   if (!item['isReadOnly'])
                     GestureDetector(
                       onTap: () => _removeOutputItem(index),
-                      child: const Icon(Icons.delete, color: Colors.white, size: 20),
+                      child: const Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                 ],
               ),
@@ -656,8 +698,9 @@ class _BurnFluidIntakeOutputScreenState
             // Calculate totals for direct navigation to hasil balance
             double totalIntake = calculateTotalIntake();
             double totalOutput = calculateTotalOutput();
-            double targetKebutuhanCairan = widget.normalIWL * 2; // Adjust calculation as needed
-            
+            double targetKebutuhanCairan =
+                widget.normalIWL * 2; // Adjust calculation as needed
+
             // Navigate directly to burn hasil balance screen
             Navigator.push(
               context,
@@ -719,7 +762,7 @@ class _BurnFluidIntakeOutputScreenState
         setState(() {
           _selectedIndex = index;
         });
-        
+
         // Navigate based on selected index
         switch (index) {
           case 0:
