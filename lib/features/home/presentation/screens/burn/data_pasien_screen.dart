@@ -551,7 +551,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         child: const Text(
-          'Diagram',
+          'Gambar',
           style: TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
@@ -585,7 +585,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'Pilih Diagram',
+                      'Pilih Gambar',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
