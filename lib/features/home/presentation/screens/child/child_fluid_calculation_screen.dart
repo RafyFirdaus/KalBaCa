@@ -3,6 +3,30 @@ import 'package:flutter/services.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_result_screen.dart';
 
+// Custom input formatter untuk angka desimal dengan koma
+class DecimalTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Hanya izinkan angka dan satu koma atau titik
+    final regExp = RegExp(r'^\d*[.,]?\d*$');
+
+    if (regExp.hasMatch(newValue.text)) {
+      // Pastikan hanya ada satu separator
+      final commaCount = newValue.text.split(',').length - 1;
+      final dotCount = newValue.text.split('.').length - 1;
+
+      if (commaCount + dotCount <= 1) {
+        return newValue;
+      }
+    }
+
+    return oldValue;
+  }
+}
+
 class ChildFluidCalculationScreen extends StatefulWidget {
   const ChildFluidCalculationScreen({super.key});
 
@@ -349,14 +373,17 @@ class _ChildFluidCalculationScreenState
     return _buildFormField(
       label: 'Usia:',
       controller: _ageController,
-      keyboardType: TextInputType.number,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [DecimalTextInputFormatter()],
       suffixText: 'tahun',
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Usia harus diisi';
         }
-        int age = int.tryParse(value) ?? 0;
+        // Normalize decimal separator
+        final normalizedValue = value.replaceAll(',', '.');
+        double age = double.tryParse(normalizedValue) ?? -1;
+
         if (age <= 0) {
           return 'Usia harus lebih dari 0';
         }
@@ -443,7 +470,7 @@ class _ChildFluidCalculationScreenState
                     patientName: _nameController.text,
                     weightKg: double.parse(_weightController.text),
                     heightCm: double.parse(_heightController.text),
-                    age: int.parse(_ageController.text),
+                    age: double.parse(_ageController.text.replaceAll(',', '.')),
                     gender: _selectedGender!,
                     temperature:
                         _isTemperatureIncreased &&

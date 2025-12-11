@@ -7,7 +7,7 @@ class ChildFluidResultScreen extends StatefulWidget {
   final String patientName;
   final double weightKg;
   final double heightCm;
-  final int age;
+  final double age;
   final String gender;
   final double? temperature;
 
@@ -51,7 +51,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
 
   // Fungsi untuk menghitung IWL anak
   // Dengan koreksi suhu jika ada
-  double _calculateChildIWL(int ageYears, double weightKg) {
+  double _calculateChildIWL(double ageYears, double weightKg) {
     double baseIWL = (30 - ageYears) * weightKg;
 
     if (widget.temperature != null && widget.temperature! > 37.5) {
@@ -327,7 +327,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
                   patientName: widget.patientName,
                   weightKg: widget.weightKg,
                   normalIWL: _normalIWL,
-                  age: widget.age,
+                  age: widget.age.toInt(),
                   gender: widget.gender,
                 ),
               ),

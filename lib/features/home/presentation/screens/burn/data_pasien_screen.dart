@@ -12,13 +12,15 @@ class DecimalTextInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    // Hanya izinkan angka dan satu koma
-    final regExp = RegExp(r'^\d*,?\d*$');
+    // Hanya izinkan angka dan satu koma atau titik
+    final regExp = RegExp(r'^\d*[.,]?\d*$');
 
     if (regExp.hasMatch(newValue.text)) {
-      // Pastikan hanya ada satu koma
+      // Pastikan hanya ada satu separator
       final commaCount = newValue.text.split(',').length - 1;
-      if (commaCount <= 1) {
+      final dotCount = newValue.text.split('.').length - 1;
+
+      if (commaCount + dotCount <= 1) {
         return newValue;
       }
     }
@@ -151,15 +153,17 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                           controller: _usiaController,
                           label: 'Usia',
                           suffix: 'tahun',
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          inputFormatters: [DecimalTextInputFormatter()],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Usia harus diisi';
                             }
-                            final age = int.tryParse(value);
+                            // Normalize decimal separator
+                            final normalizedValue = value.replaceAll(',', '.');
+                            final age = double.tryParse(normalizedValue);
                             if (age == null || age < 0 || age > 150) {
                               return 'Usia harus antara 0-150 tahun';
                             }
