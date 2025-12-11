@@ -42,6 +42,8 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
     'Cairan Oral',
     'Makanan',
     'Transfusi',
+    'NGT',
+    'Injeksi IV',
     'Lainnya',
   ];
 
@@ -68,15 +70,13 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
     if (value <= 0) return;
 
     String type = _selectedIntakeType;
-    if (_selectedIntakeType == 'Lainnya' && _customIntakeController.text.isNotEmpty) {
+    if (_selectedIntakeType == 'Lainnya' &&
+        _customIntakeController.text.isNotEmpty) {
       type = _customIntakeController.text;
     }
 
     setState(() {
-      _intakeItems.add({
-        'type': type,
-        'value': value,
-      });
+      _intakeItems.add({'type': type, 'value': value});
       _intakeValueController.clear();
       _customIntakeController.clear();
     });

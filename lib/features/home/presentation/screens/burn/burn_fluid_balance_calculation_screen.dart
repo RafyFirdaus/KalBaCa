@@ -33,7 +33,9 @@ class _BurnFluidBalanceCalculationScreenState
     'Cairan Oral',
     'Makanan',
     'Transfusi',
-    'Lainnya'
+    'NGT',
+    'Injeksi IV',
+    'Lainnya',
   ];
   String _selectedIntakeType = 'Infus';
   final TextEditingController _intakeValueController = TextEditingController();
@@ -63,15 +65,13 @@ class _BurnFluidBalanceCalculationScreenState
     if (value <= 0) return;
 
     String type = _selectedIntakeType;
-    if (_selectedIntakeType == 'Lainnya' && _customIntakeController.text.isNotEmpty) {
+    if (_selectedIntakeType == 'Lainnya' &&
+        _customIntakeController.text.isNotEmpty) {
       type = _customIntakeController.text;
     }
 
     setState(() {
-      _intakeItems.add({
-        'type': type,
-        'value': value,
-      });
+      _intakeItems.add({'type': type, 'value': value});
       _intakeValueController.clear();
       if (_selectedIntakeType == 'Lainnya') {
         _customIntakeController.clear();
