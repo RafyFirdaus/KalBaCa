@@ -22,7 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _selectedIndex == 0 ? AppColors.primaryBlue : AppColors.white,
+      backgroundColor: _selectedIndex == 0
+          ? AppColors.primaryBlue
+          : AppColors.white,
       body: _buildCurrentPage(),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
@@ -100,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           // App Logo
-          Image.asset('assets/logo.png', width: 120, height: 120),
+          Image.asset('assets/logo.png', width: 100, height: 100),
         ],
       ),
     );

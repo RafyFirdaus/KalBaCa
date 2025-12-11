@@ -249,21 +249,6 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
           // Page Title with Home Icon
           Row(
             children: [
-              // Home Icon
-              Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  color: AppColors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
-                ),
-              ),
-
-              const SizedBox(width: 12),
-
               // Page Title
               Expanded(
                 child: Text(
