@@ -409,7 +409,7 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
                   normalIWL:
                       0.0, // IWL is not applicable/removed as per requirement
                   age: burnFluidData['age'],
-                  gender: widget.weight,
+                  gender: widget.gender,
                 ),
               ),
             );
