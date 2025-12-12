@@ -58,30 +58,24 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
       final double ewlRate = (25 + burnPercentage) * bsa;
       final double ewlTotal24h = ewlRate * 24;
 
-      // Step 3: Calculate Maintenance Fluid
+      // Step 3: Calculate Fluid Requirement (Using Parkland as per client request)
       double maintenanceTotal = 0;
       if (age >= 18) {
-        // Adult Maintenance: Weight * 30 (Based on standard maintenance for adults)
-        maintenanceTotal = weightKg * 30;
+        // Adult Parkland: 4 * Weight * BurnPercentage
+        maintenanceTotal = 4.0 * weightKg * burnPercentage;
       } else {
-        // Child Maintenance: Holliday-Segar Formula
-        if (weightKg <= 10) {
-          maintenanceTotal = weightKg * 100;
-        } else if (weightKg <= 20) {
-          maintenanceTotal = 1000 + (weightKg - 10) * 50;
-        } else {
-          maintenanceTotal = 1500 + (weightKg - 20) * 20;
-        }
+        // Child Parkland: 3 * Weight * BurnPercentage
+        maintenanceTotal = 3.0 * weightKg * burnPercentage;
       }
 
       // Step 4: Final Calculation
       totalFluid = maintenanceTotal + ewlTotal24h;
 
       formula =
-          'Total = Maintenance + EWL\n'
+          'Total = Kebutuhan Cairan (Parkland) + EWL\n'
           'BSA = √((BB × TB)/3600)\n'
           'EWL = (25 + %LB) × BSA × 24\n'
-          'Maintenance = ${age >= 18 ? 'BB × 30' : 'Holliday-Segar'}';
+          'Kebutuhan Cairan = ${age >= 18 ? '4 × BB × %LB' : '3 × BB × %LB'}';
 
       breakdown = {
         'maintenance': maintenanceTotal,

@@ -232,7 +232,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
 
         // Normal IWL Field
         _buildResultField(
-          label: 'IWL Normal:',
+          label: 'IWL :',
           value: _formatter.format(_normalIWL),
           unit: 'mL',
         ),
