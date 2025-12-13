@@ -49,17 +49,22 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
     }
   }
 
-  // Fungsi untuk menghitung IWL anak
-  // Dengan koreksi suhu jika ada
+  // Fungsi untuk menghitung Adjustment IWL anak
   double _calculateChildIWL(double ageYears, double weightKg) {
     double baseIWL = (30 - ageYears) * weightKg;
+    double adjustment = 0;
 
-    if (widget.temperature != null && widget.temperature! > 37.5) {
-      // Adjustment = Base IWL * 0.1 * (Input Temperature - 37)
-      double adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
-      return baseIWL + adjustment;
+    // Jika ada kenaikan suhu (demam), hitung adjustment
+    if (widget.temperature != null && widget.temperature! > 37) {
+      // Adjustment = Base IWL * 10% * (Input Temperature - 37)
+      adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+
+      // Jika demam, tampilkan HANYA adjustment
+      return adjustment;
     }
 
+    // Jika TIDAK ada kenaikan suhu (Normal), tampilkan Base IWL (Standard Formula)
+    // Agar tidak muncul angka 0
     return baseIWL;
   }
 
@@ -67,7 +72,17 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
   void _calculateFluidRequirements() {
     _fluidRequirement = _calculateFluidRequirement(widget.weightKg);
     _normalIWL = _calculateChildIWL(widget.age, widget.weightKg);
-    _totalFluidRequirement = _fluidRequirement + _normalIWL;
+
+    // Calculate Adjustment separately
+    double baseIWL = (30 - widget.age) * widget.weightKg;
+    double adjustment = 0;
+
+    if (widget.temperature != null && widget.temperature! > 37) {
+      adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+    }
+
+    // Total = Maintenance (_fluidRequirement) + Adjustment only
+    _totalFluidRequirement = _fluidRequirement + adjustment;
   }
 
   @override
@@ -327,6 +342,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
                   patientName: widget.patientName,
                   weightKg: widget.weightKg,
                   normalIWL: _normalIWL,
+                  fluidRequirement: _totalFluidRequirement,
                   age: widget.age.toInt(),
                   gender: widget.gender,
                 ),

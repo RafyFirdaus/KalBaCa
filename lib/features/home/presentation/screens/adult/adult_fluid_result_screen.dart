@@ -65,26 +65,45 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
     return weightKg * 30;
   }
 
-  // Fungsi untuk menghitung IWL Normal (15 x BB (kg) / 24 jam)
-  // Dengan koreksi suhu jika ada
+  // Fungsi untuk menghitung Adjustment IWL akibat kenaikan suhu
   double calculateNormalIWL(double fluidRequirement) {
     double baseIWL = 15 * widget.weightKg;
+    double adjustment = 0;
 
-    if (widget.temperature != null && widget.temperature! > 37.5) {
-      // Adjustment = Base IWL * 0.1 * (Input Temperature - 37)
-      double adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
-      return baseIWL + adjustment;
+    // Jika ada kenaikan suhu (demam), hitung adjustment
+    if (widget.temperature != null && widget.temperature! > 37) {
+      // Adjustment = Base IWL * 10% * (Input Temperature - 37)
+      adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+
+      // Jika demam, tampilkan HANYA adjustment (karena base sudah include di maintenance)
+      return adjustment;
     }
 
+    // Jika TIDAK ada kenaikan suhu (Normal), tampilkan Base IWL (Standard Formula)
+    // Agar tidak muncul angka 0 yang membingungkan
     return baseIWL;
   }
 
   // Fungsi untuk menghitung total kebutuhan cairan
+  // Total = Maintenance (fluidRequirement) + Adjustment only
   double calculateTotalFluidRequirement(
     double fluidRequirement,
     double normalIWL,
   ) {
-    return fluidRequirement + normalIWL;
+    // We need to recalculate the base IWL to separate the adjustment part
+    double baseIWL = 15 * widget.weightKg;
+    double adjustment = 0;
+
+    if (widget.temperature != null && widget.temperature! > 37) {
+      adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+    }
+
+    // Total Kebutuhan Cairan = Maintenance + Adjustment
+    // Note: The 'normalIWL' parameter passed here is the Total IWL (Base + Adjustment)
+    // calculated in calculateNormalIWL.
+    // However, the formula requested is: Maintenance + Adjustment only.
+    // Maintenance theoretically covers Base IWL.
+    return fluidRequirement + adjustment;
   }
 
   @override
@@ -344,6 +363,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
                   patientName: widget.patientName,
                   weightKg: widget.weightKg,
                   normalIWL: _normalIWL,
+                  fluidRequirement: _totalFluidRequirement,
                   age: widget.age,
                   gender: widget.gender,
                 ),

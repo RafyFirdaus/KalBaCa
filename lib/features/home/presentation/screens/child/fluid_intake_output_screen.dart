@@ -7,6 +7,7 @@ class FluidIntakeOutputScreen extends StatefulWidget {
   final String patientName;
   final double weightKg;
   final double normalIWL;
+  final double fluidRequirement;
   final int age;
   final String gender;
 
@@ -15,6 +16,7 @@ class FluidIntakeOutputScreen extends StatefulWidget {
     required this.patientName,
     required this.weightKg,
     required this.normalIWL,
+    required this.fluidRequirement,
     required this.age,
     required this.gender,
   });
@@ -672,8 +674,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
           // Calculate totals for direct navigation to hasil balance
           double totalIntake = calculateTotalIntake();
           double totalOutput = calculateTotalOutput();
-          double targetKebutuhanCairan =
-              widget.normalIWL * 2; // Adjust calculation as needed
+          double targetKebutuhanCairan = widget.fluidRequirement;
 
           // Navigate directly to child hasil balance screen
           Navigator.push(

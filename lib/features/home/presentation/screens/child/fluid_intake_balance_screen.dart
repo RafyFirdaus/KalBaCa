@@ -9,6 +9,7 @@ class FluidIntakeBalanceScreen extends StatefulWidget {
   final double weightKg;
   final int age;
   final double normalIWL;
+  final double fluidRequirement;
   final String gender;
 
   const FluidIntakeBalanceScreen({
@@ -17,6 +18,7 @@ class FluidIntakeBalanceScreen extends StatefulWidget {
     required this.weightKg,
     required this.age,
     required this.normalIWL,
+    required this.fluidRequirement,
     required this.gender,
   }) : super(key: key);
 
@@ -471,9 +473,7 @@ class _FluidIntakeBalanceScreenState extends State<FluidIntakeBalanceScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => ChildHasilBalanceScreen(
-                targetKebutuhanCairan:
-                    widget.normalIWL *
-                    2, // Sesuaikan dengan perhitungan yang sebenarnya
+                targetKebutuhanCairan: widget.fluidRequirement,
                 totalIntake: _totalIntake,
                 totalOutput:
                     widget.normalIWL, // Menggunakan normalIWL sebagai output
