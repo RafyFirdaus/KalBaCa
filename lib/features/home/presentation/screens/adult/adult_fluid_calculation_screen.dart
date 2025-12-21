@@ -179,11 +179,18 @@ class _AdultFluidCalculationScreenState
             label: 'Berat Badan:',
             controller: _weightController,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
+            ],
             suffixText: 'kg',
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Berat badan harus diisi';
+              }
+              final weight = int.tryParse(value);
+              if (weight == null || weight > 500) {
+                return 'Berat badan maks 500 kg';
               }
               return null;
             },
@@ -196,11 +203,18 @@ class _AdultFluidCalculationScreenState
             label: 'Tinggi Badan:',
             controller: _heightController,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
+            ],
             suffixText: 'cm',
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Tinggi badan harus diisi';
+              }
+              final height = int.tryParse(value);
+              if (height == null || height > 300) {
+                return 'Tinggi badan maks 300 cm';
               }
               return null;
             },
@@ -213,11 +227,18 @@ class _AdultFluidCalculationScreenState
             label: 'Usia:',
             controller: _ageController,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
+            ],
             suffixText: 'tahun',
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Usia harus diisi';
+              }
+              final age = int.tryParse(value);
+              if (age == null || age > 120) {
+                return 'Usia maks 120 tahun';
               }
               return null;
             },

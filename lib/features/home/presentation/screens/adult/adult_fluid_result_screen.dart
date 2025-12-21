@@ -71,9 +71,9 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
     double adjustment = 0;
 
     // Jika ada kenaikan suhu (demam), hitung adjustment
-    if (widget.temperature != null && widget.temperature! > 37) {
-      // Adjustment = Base IWL * 10% * (Input Temperature - 37)
-      adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+    if (widget.temperature != null && widget.temperature! > 37.5) {
+      // Adjustment = Base IWL * 10% * (Input Temperature - 37.5)
+      adjustment = baseIWL * 0.1 * (widget.temperature! - 37.5);
 
       // Jika demam, tampilkan HANYA adjustment (karena base sudah include di maintenance)
       return adjustment;
@@ -94,8 +94,8 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
     double baseIWL = 15 * widget.weightKg;
     double adjustment = 0;
 
-    if (widget.temperature != null && widget.temperature! > 37) {
-      adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+    if (widget.temperature != null && widget.temperature! > 37.5) {
+      adjustment = baseIWL * 0.1 * (widget.temperature! - 37.5);
     }
 
     // Total Kebutuhan Cairan = Maintenance + Adjustment

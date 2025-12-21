@@ -119,6 +119,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(3),
                           ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -126,7 +127,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                             }
                             final weight = int.tryParse(value);
                             if (weight == null || weight < 1 || weight > 500) {
-                              return 'Berat badan harus antara 1-500 kg';
+                              return 'Berat badan maks 500 kg';
                             }
                             return null;
                           },
@@ -139,12 +140,16 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(3),
                           ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Tinggi badan harus diisi';
                             }
-                            int.tryParse(value);
+                            final height = int.tryParse(value);
+                            if (height == null || height > 300) {
+                              return 'Tinggi badan maks 300 cm';
+                            }
                             return null;
                           },
                         ),
@@ -156,7 +161,10 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                           keyboardType: const TextInputType.numberWithOptions(
                             decimal: true,
                           ),
-                          inputFormatters: [DecimalTextInputFormatter()],
+                          inputFormatters: [
+                            DecimalTextInputFormatter(),
+                            LengthLimitingTextInputFormatter(3),
+                          ],
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Usia harus diisi';
@@ -165,7 +173,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
                             final normalizedValue = value.replaceAll(',', '.');
                             final age = double.tryParse(normalizedValue);
                             if (age == null || age < 0 || age > 150) {
-                              return 'Usia harus antara 0-150 tahun';
+                              return 'Usia maks 150 tahun';
                             }
                             return null;
                           },

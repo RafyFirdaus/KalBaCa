@@ -202,11 +202,18 @@ class _ChildFluidCalculationScreenState
             label: 'Berat Badan:',
             controller: _weightController,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
+            ],
             suffixText: 'kg',
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Berat badan harus diisi';
+              }
+              final weight = int.tryParse(value);
+              if (weight == null || weight > 500) {
+                return 'Berat badan maks 500 kg';
               }
               return null;
             },
@@ -219,11 +226,18 @@ class _ChildFluidCalculationScreenState
             label: 'Tinggi Badan:',
             controller: _heightController,
             keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
+            ],
             suffixText: 'cm',
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Tinggi badan harus diisi';
+              }
+              final height = int.tryParse(value);
+              if (height == null || height > 300) {
+                return 'Tinggi badan maks 300 cm';
               }
               return null;
             },
@@ -374,7 +388,10 @@ class _ChildFluidCalculationScreenState
       label: 'Usia:',
       controller: _ageController,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [DecimalTextInputFormatter()],
+      inputFormatters: [
+        DecimalTextInputFormatter(),
+        LengthLimitingTextInputFormatter(3),
+      ],
       suffixText: 'tahun',
       validator: (value) {
         if (value == null || value.isEmpty) {
