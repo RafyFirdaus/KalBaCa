@@ -307,13 +307,56 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
 
         // Total Kebutuhan Cairan
         _buildResultField(
-          label: 'Total Kebutuhan Cairan (24 Jam):',
+          label: 'Total Kebutuhan Cairan:',
           value: '${(burnFluidData['totalFluid'] as double).round()}',
           subValue: 'mL',
           isHighlighted: true,
         ),
 
+        if (!isEWLMode) ...[
+          const SizedBox(height: 24),
+          _buildResuscitationBreakdown(burnFluidData['totalFluid'] as double),
+        ],
+
         const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  // Fluid Resuscitation Breakdown Widget
+  Widget _buildResuscitationBreakdown(double totalFluid) {
+    final double first8h = totalFluid * 0.5;
+    final double second8h = totalFluid * 0.25;
+    final double third8h = totalFluid * 0.25;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Title Section
+        const SizedBox(height: 1),
+
+        // 8 Jam Pertama
+        _buildResultField(
+          label: '8 jam pertama:',
+          value: '${first8h.round()}',
+          subValue: 'mL (50%)',
+        ),
+        const SizedBox(height: 10),
+
+        // 8 Jam Kedua
+        _buildResultField(
+          label: '8 jam kedua:',
+          value: '${second8h.round()}',
+          subValue: 'mL (25%)',
+        ),
+        const SizedBox(height: 10),
+
+        // 8 Jam Ketiga
+        _buildResultField(
+          label: '8 jam ketiga:',
+          value: '${third8h.round()}',
+          subValue: 'mL (25%)',
+        ),
       ],
     );
   }
@@ -404,6 +447,8 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
                       0.0, // IWL is not applicable/removed as per requirement
                   age: burnFluidData['age'],
                   gender: widget.gender,
+                  targetFluid:
+                      burnFluidData['totalFluid'], // Pass totalFluid as target
                 ),
               ),
             );

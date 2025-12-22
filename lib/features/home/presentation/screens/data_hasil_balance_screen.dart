@@ -40,7 +40,7 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
       });
 
       final patients = await _balanceRepository.getBalanceResults();
-      
+
       setState(() {
         _allPatients = patients;
         _filteredPatients = patients;
@@ -107,9 +107,7 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_errorMessage != null) {
@@ -141,8 +139,8 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       child: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
+        controller: _searchController,
+        decoration: InputDecoration(
           hintText: 'Cari nama pasien...',
           prefixIcon: const Icon(Icons.search, color: Colors.grey),
           filled: true,
@@ -190,7 +188,7 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
   Widget _buildPatientCard(PatientBalanceResult patient) {
     final dateFormat = DateFormat('dd MMM yyyy');
     final balance = patient.balanceData['balance'] ?? 0.0;
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -222,7 +220,10 @@ class _DataHasilBalanceScreenState extends State<DataHasilBalanceScreen> {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: _getBalanceTypeColor(patient.balanceType),
                     borderRadius: BorderRadius.circular(12),
@@ -297,7 +298,7 @@ class PatientDetailDialog extends StatelessWidget {
     final dateFormat = DateFormat('dd MMM yyyy HH:mm');
     final balanceData = patient.balanceData;
     final balance = balanceData['balance'] ?? 0.0;
-    
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
@@ -339,8 +340,14 @@ class PatientDetailDialog extends StatelessWidget {
                     _buildDataRow('Usia', '${patient.age} tahun'),
                     _buildDataRow('Berat Badan', '${patient.weight} kg'),
                     _buildDataRow('Jenis Kelamin', patient.gender),
-                    _buildDataRow('Tipe Balance', _getBalanceTypeLabel(patient.balanceType)),
-                    _buildDataRow('Tanggal Dibuat', dateFormat.format(patient.createdAt)),
+                    _buildDataRow(
+                      'Tipe Balance',
+                      _getBalanceTypeLabel(patient.balanceType),
+                    ),
+                    _buildDataRow(
+                      'Tanggal Dibuat',
+                      dateFormat.format(patient.createdAt),
+                    ),
 
                     const SizedBox(height: 24),
 
@@ -363,12 +370,6 @@ class PatientDetailDialog extends StatelessWidget {
                         '${balanceData['totalOutput'].toStringAsFixed(0)} ml',
                       ),
                     _buildBalanceRow('Balance (+/-)', balance),
-                    
-                    if (balanceData['normalIWL'] != null)
-                      _buildDataRow(
-                        'Normal IWL',
-                        '${balanceData['normalIWL'].toStringAsFixed(0)} ml',
-                      ),
                   ],
                 ),
               ),

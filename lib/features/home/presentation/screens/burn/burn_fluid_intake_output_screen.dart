@@ -9,6 +9,7 @@ class BurnFluidIntakeOutputScreen extends StatefulWidget {
   final double normalIWL;
   final int age;
   final String gender;
+  final double? targetFluid; // Add this parameter
 
   const BurnFluidIntakeOutputScreen({
     super.key,
@@ -17,6 +18,7 @@ class BurnFluidIntakeOutputScreen extends StatefulWidget {
     required this.normalIWL,
     required this.age,
     required this.gender,
+    this.targetFluid, // Add this parameter
   });
 
   @override
@@ -699,7 +701,8 @@ class _BurnFluidIntakeOutputScreenState
             double totalIntake = calculateTotalIntake();
             double totalOutput = calculateTotalOutput();
             double targetKebutuhanCairan =
-                widget.normalIWL * 2; // Adjust calculation as needed
+                widget.targetFluid ??
+                (widget.normalIWL * 2); // Use passed target fluid or fallback
 
             // Navigate directly to burn hasil balance screen
             Navigator.push(
