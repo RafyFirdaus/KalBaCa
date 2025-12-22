@@ -2,38 +2,36 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kalbaca/core/constants/constants.dart';
 
+// Model untuk Sub-Bagian Tubuh (lebih granular)
+class SubPart {
+  final String name;
+  final double percentage;
+
+  SubPart({required this.name, required this.percentage});
+}
+
 // Data model untuk bagian tubuh dan persentase cairan
 class BodyPart {
   final String name;
-  final List<FluidDistribution> distributions;
+  final List<SubPart> subParts;
   final Rect clickableArea;
 
   BodyPart({
     required this.name,
-    required this.distributions,
+    required this.subParts,
     required this.clickableArea,
   });
-}
 
-class FluidDistribution {
-  final String area;
-  final double percentage;
-  final double tbsaPercentage; // Tambahan untuk persentase TBSA
-
-  FluidDistribution({
-    required this.area, 
-    required this.percentage,
-    required this.tbsaPercentage, // Parameter baru
-  });
+  // Helper untuk mendapatkan total percentage dari subParts
+  double get totalPercentage =>
+      subParts.fold(0, (sum, item) => sum + item.percentage);
 }
 
 class FluidBalanceSimulationScreen extends StatefulWidget {
-  final Function(double)? onPercentageSelected; // Callback parameter
+  final Function(double)? onPercentageSelected;
 
-  const FluidBalanceSimulationScreen({
-    Key? key,
-    this.onPercentageSelected, // Optional callback
-  }) : super(key: key);
+  const FluidBalanceSimulationScreen({Key? key, this.onPercentageSelected})
+    : super(key: key);
 
   @override
   State<FluidBalanceSimulationScreen> createState() =>
@@ -41,13 +39,11 @@ class FluidBalanceSimulationScreen extends StatefulWidget {
 }
 
 class _FluidBalanceSimulationScreenState
-    extends State<FluidBalanceSimulationScreen>
-    with TickerProviderStateMixin {
+    extends State<FluidBalanceSimulationScreen> {
   int _selectedIndex = 0;
-  BodyPart? _selectedBodyPart;
-  bool _showTooltip = false;
-  late AnimationController _tooltipAnimationController;
-  late Animation<double> _tooltipAnimation;
+  // Menyimpan nama SubPart yang dipilih, bukan nama BodyPart
+  final Set<String> _selectedSubParts = {};
+  double _totalTBSA = 0.0;
 
   // Data bagian tubuh dengan koordinat dan persentase cairan
   late List<BodyPart> _bodyParts;
@@ -56,181 +52,154 @@ class _FluidBalanceSimulationScreenState
   void initState() {
     super.initState();
     _initializeBodyParts();
-    _tooltipAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _tooltipAnimation = CurvedAnimation(
-      parent: _tooltipAnimationController,
-      curve: Curves.easeInOut,
-    );
-  }
-
-  @override
-  void dispose() {
-    _tooltipAnimationController.dispose();
-    super.dispose();
   }
 
   void _initializeBodyParts() {
     _bodyParts = [
-      // Kepala dan Leher - area lebih kecil dan presisi
+      // Kepala dan Leher
       BodyPart(
         name: 'Kepala dan Leher',
-        distributions: [
-          FluidDistribution(area: 'Kepala dan leher depan', percentage: 4.5, tbsaPercentage: 4.5),
-          FluidDistribution(area: 'Kepala dan leher belakang', percentage: 4.5, tbsaPercentage: 4.5),
+        subParts: [
+          SubPart(name: 'Kepala dan leher depan', percentage: 4.5),
+          SubPart(name: 'Kepala dan leher belakang', percentage: 4.5),
         ],
-        clickableArea: const Rect.fromLTWH(
-          0.4,
-          0.08,
-          0.2,
-          0.10,
-        ), // Lebih kecil dan presisi
+        clickableArea: const Rect.fromLTWH(0.43, 0.05, 0.14, 0.1),
       ),
-      // Torso - area lebih kecil, tidak overlap dengan kepala dan lengan
+      // Torso
       BodyPart(
         name: 'Torso',
-        distributions: [
-          FluidDistribution(area: 'Dada (toraks anterior)', percentage: 9.0, tbsaPercentage: 9.0),
-          FluidDistribution(area: 'Abdomen (perut anterior)', percentage: 9.0, tbsaPercentage: 9.0),
-          FluidDistribution(
-            area: 'Punggung atas (toraks posterior)',
-            percentage: 9.0,
-            tbsaPercentage: 9.0,
-          ),
-          FluidDistribution(
-            area: 'Punggung bawah (lumbal posterior)',
-            percentage: 9.0,
-            tbsaPercentage: 9.0,
-          ),
+        subParts: [
+          SubPart(name: 'Dada (toraks anterior)', percentage: 9.0),
+          SubPart(name: 'Abdomen (perut anterior)', percentage: 9.0),
+          SubPart(name: 'Punggung atas (toraks posterior)', percentage: 9.0),
+          SubPart(name: 'Punggung bawah (lumbal posterior)', percentage: 9.0),
         ],
-        clickableArea: const Rect.fromLTWH(
-          0.35,
-          0.20,
-          0.3,
-          0.20,
-        ), // Lebih kecil dan tidak overlap
+        clickableArea: const Rect.fromLTWH(0.41, 0.22, 0.18, 0.28),
       ),
-      // Lengan Kiri (dari POV user) - perbaiki orientasi
+      // Lengan Kiri (dari POV user)
       BodyPart(
         name: 'Lengan Kiri',
-        distributions: [
-          FluidDistribution(area: 'Lengan kiri depan', percentage: 4.5, tbsaPercentage: 4.5),
-          FluidDistribution(area: 'Lengan kiri belakang', percentage: 4.5, tbsaPercentage: 4.5),
+        subParts: [
+          SubPart(name: 'Lengan kiri depan', percentage: 4.5),
+          SubPart(name: 'Lengan kiri belakang', percentage: 4.5),
         ],
-        clickableArea: const Rect.fromLTWH(
-          0.1,
-          0.32,
-          0.30,
-          0.28,
-        ), // Kiri dari POV user
+        clickableArea: const Rect.fromLTWH(0.26, 0.28, 0.13, 0.32),
       ),
-      // Lengan Kanan (dari POV user) - perbaiki orientasi
+      // Lengan Kanan (dari POV user)
       BodyPart(
         name: 'Lengan Kanan',
-        distributions: [
-          FluidDistribution(area: 'Lengan kanan depan', percentage: 4.5, tbsaPercentage: 4.5),
-          FluidDistribution(area: 'Lengan kanan belakang', percentage: 4.5, tbsaPercentage: 4.5),
+        subParts: [
+          SubPart(name: 'Lengan kanan depan', percentage: 4.5),
+          SubPart(name: 'Lengan kanan belakang', percentage: 4.5),
         ],
-        clickableArea: const Rect.fromLTWH(
-          0.60,
-          0.32,
-          0.15,
-          0.28,
-        ), // Kanan dari POV user
+        clickableArea: const Rect.fromLTWH(0.61, 0.28, 0.13, 0.32),
       ),
-      // Kaki Kiri (dari POV user) - perbaiki orientasi
+      // Kaki Kiri (dari POV user)
       BodyPart(
         name: 'Kaki Kiri',
-        distributions: [
-          FluidDistribution(area: 'Kaki kiri depan', percentage: 9.0, tbsaPercentage: 9.0),
-          FluidDistribution(area: 'Kaki kiri belakang', percentage: 9.0, tbsaPercentage: 9.0),
+        subParts: [
+          SubPart(name: 'Kaki kiri depan', percentage: 9.0),
+          SubPart(name: 'Kaki kiri belakang', percentage: 9.0),
         ],
-        clickableArea: const Rect.fromLTWH(
-          0.3,
-          0.58,
-          0.15,
-          0.45,
-        ), // Kiri dari POV user
+        clickableArea: const Rect.fromLTWH(0.35, 0.6, 0.13, 0.4),
       ),
-      // Kaki Kanan (dari POV user) - perbaiki orientasi
+      // Kaki Kanan (dari POV user)
       BodyPart(
         name: 'Kaki Kanan',
-        distributions: [
-          FluidDistribution(area: 'Kaki kanan depan', percentage: 9.0, tbsaPercentage: 9.0),
-          FluidDistribution(area: 'Kaki kanan belakang', percentage: 9.0, tbsaPercentage: 9.0),
+        subParts: [
+          SubPart(name: 'Kaki kanan depan', percentage: 9.0),
+          SubPart(name: 'Kaki kanan belakang', percentage: 9.0),
         ],
-        clickableArea: const Rect.fromLTWH(
-          0.55,
-          0.58,
-          0.15,
-          0.45,
-        ), // Kanan dari POV user
+        clickableArea: const Rect.fromLTWH(0.51, 0.6, 0.13, 0.4),
       ),
-      // Perineum - area lebih presisi
+      // Perineum
       BodyPart(
         name: 'Perineum',
-        distributions: [
-          FluidDistribution(area: 'Perineum / genitalia', percentage: 1.0, tbsaPercentage: 1.0),
-        ],
-        clickableArea: const Rect.fromLTWH(
-          0.42,
-          0.49,
-          0.16,
-          0.10,
-        ), // Lebih presisi
+        subParts: [SubPart(name: 'Perineum / genitalia', percentage: 1.0)],
+        clickableArea: const Rect.fromLTWH(0.43, 0.51, 0.14, 0.07),
       ),
     ];
   }
 
   void _onBodyPartTapped(BodyPart bodyPart) {
     setState(() {
-      _selectedBodyPart = bodyPart;
-      _showTooltip = true;
+      // Cek apakah semua sub-part dari body part ini sudah dipilih
+      bool allSelected = bodyPart.subParts.every(
+        (sub) => _selectedSubParts.contains(sub.name),
+      );
+
+      if (allSelected) {
+        // Jika sudah semua dipilih, hapus semua (deselect)
+        for (var sub in bodyPart.subParts) {
+          _selectedSubParts.remove(sub.name);
+        }
+      } else {
+        // Jika belum semua dipilih, pilih semua (select all)
+        for (var sub in bodyPart.subParts) {
+          _selectedSubParts.add(sub.name);
+        }
+      }
+      _calculateTotalTBSA();
     });
-    _tooltipAnimationController.forward();
   }
 
-  void _hideTooltip() {
-    _tooltipAnimationController.reverse().then((_) {
-      if (mounted) {
-        setState(() {
-          _showTooltip = false;
-          _selectedBodyPart = null;
-        });
-      }
+  void _removeSubPart(String subPartName) {
+    setState(() {
+      _selectedSubParts.remove(subPartName);
+      _calculateTotalTBSA();
     });
+  }
+
+  void _calculateTotalTBSA() {
+    double total = 0.0;
+    for (var part in _bodyParts) {
+      for (var sub in part.subParts) {
+        if (_selectedSubParts.contains(sub.name)) {
+          total += sub.percentage;
+        }
+      }
+    }
+    setState(() {
+      _totalTBSA = total;
+    });
+  }
+
+  // Mengembalikan list SubPart yang dipilih, urut berdasarkan kemunculan di _bodyParts
+  List<SubPart> _getSelectedSubPartsOrdered() {
+    List<SubPart> selectedList = [];
+    for (var part in _bodyParts) {
+      for (var sub in part.subParts) {
+        if (_selectedSubParts.contains(sub.name)) {
+          selectedList.add(sub);
+        }
+      }
+    }
+    return selectedList;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primaryBlue,
-      body: GestureDetector(
-        onTap: () {
-          if (_showTooltip) {
-            _hideTooltip();
-          }
-        },
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 15),
-                      Expanded(child: _buildMainDiagramSection()),
-                    ],
-                  ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeaderSection(),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
+                    Expanded(child: _buildMainDiagramSection()),
+                    const SizedBox(height: 10),
+                    _buildBottomActionSection(),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -312,7 +281,7 @@ class _FluidBalanceSimulationScreenState
   Widget _buildMainDiagramSection() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -324,22 +293,14 @@ class _FluidBalanceSimulationScreenState
           ),
         ],
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          Expanded(child: _buildInteractiveDiagram()),
-          const SizedBox(height: 20), // Ruang kosong di bawah diagram dikurangi
-        ],
-      ),
+      child: _buildInteractiveDiagram(),
     );
   }
 
   Widget _buildInteractiveDiagram() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Menggunakan ruang yang tersedia dengan optimal
         final diagramWidth = constraints.maxWidth.clamp(0.0, 400.0);
-        // Menggunakan tinggi yang tersedia, dengan rasio yang sesuai
         final diagramHeight = constraints.maxHeight.clamp(0.0, double.infinity);
 
         return Container(
@@ -364,24 +325,26 @@ class _FluidBalanceSimulationScreenState
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.grey[300]!),
                       ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(height: 8),
-                          Text(
-                            'Diagram Tubuh Manusia',
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                        ],
+                      child: const Center(
+                        child: Text(
+                          'Diagram Tubuh Manusia',
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
                       ),
                     );
                   },
                 ),
               ),
+              // Highlights
+              CustomPaint(
+                size: Size(diagramWidth, diagramHeight),
+                painter: BodyPartPainter(
+                  bodyParts: _bodyParts,
+                  selectedSubParts: _selectedSubParts,
+                ),
+              ),
               // Clickable areas
               ..._buildClickableAreas(diagramWidth, diagramHeight),
-              // Tooltip
-              if (_showTooltip && _selectedBodyPart != null) _buildTooltip(),
             ],
           ),
         );
@@ -401,320 +364,136 @@ class _FluidBalanceSimulationScreenState
           onTap: () {
             _onBodyPartTapped(bodyPart);
           },
-          child: Container(
-            color: Colors.transparent, // Invisible clickable area
-          ),
+          child: Container(color: Colors.transparent),
         ),
       );
     }).toList();
   }
 
-  Widget _buildTooltip() {
-    return AnimatedBuilder(
-      animation: _tooltipAnimation,
-      builder: (context, child) {
-        return Stack(children: _buildSeparateTooltips());
-      },
-    );
-  }
+  Widget _buildBottomActionSection() {
+    final selectedSubParts = _getSelectedSubPartsOrdered();
 
-  List<Widget> _buildSeparateTooltips() {
-    final distributions = _selectedBodyPart!.distributions;
-    final screenSize = MediaQuery.of(context).size;
-    List<Widget> tooltips = [];
-
-    // Add header tooltip with body part name and close button
-    tooltips.add(_buildHeaderTooltip(screenSize));
-
-    // Add separate tooltips for each distribution
-    for (int i = 0; i < distributions.length; i++) {
-      tooltips.add(
-        _buildDistributionTooltip(
-          distributions[i],
-          i,
-          distributions.length,
-          screenSize,
-        ),
-      );
-    }
-
-    return tooltips;
-  }
-
-  Widget _buildHeaderTooltip(Size screenSize) {
-    const tooltipWidth = 140.0;
-    const tooltipHeight = 85.0;
-
-    // Perfect center positioning - horizontally and vertically centered
-    double left =
-        (screenSize.width - tooltipWidth) / 2 -
-        30; // Sedikit ke kiri untuk lebih centered
-    double top = (screenSize.height - tooltipHeight) / 2 - 500; // Lebih ke atas
-
-    // Ensure tooltip stays within screen bounds
-    if (left < 10) left = 20;
-    if (left + tooltipWidth > screenSize.width - 20) {
-      left = screenSize.width - tooltipWidth - 20;
-    }
-    if (top < 80) top = 80; // Leave space for status bar
-    if (top + tooltipHeight > screenSize.height - 200) {
-      top =
-          screenSize.height - tooltipHeight - 100; // Leave space for bottom nav
-    }
-
-    return Positioned(
-      left: left,
-      top: top,
-      child: Transform.scale(
-        scale: _tooltipAnimation.value,
-        child: Opacity(
-          opacity: _tooltipAnimation.value,
-          child: Material(
-            elevation: 8,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              width: tooltipWidth,
-              height: tooltipHeight,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                color: AppColors.primaryBlue,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Selected Parts List (Scrollable if needed, but limited height)
+          if (selectedSubParts.isNotEmpty)
+            Container(
+              constraints: const BoxConstraints(maxHeight: 120),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: selectedSubParts.length,
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 8),
+                  itemBuilder: (context, index) {
+                    final subPart = selectedSubParts[index];
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            subPart.name,
+                            style: const TextStyle(
+                              fontSize: 12, // Sedikit diperkecil agar muat
+                              color: AppColors.textDark,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              '${subPart.percentage.toStringAsFixed(1)}%',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryBlue,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () => _removeSubPart(subPart.name),
+                              child: const Icon(
+                                Icons.close,
+                                size: 16,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Text(
-                      _selectedBodyPart!.name,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(width: 2),
-                  GestureDetector(
-                    onTap: _hideTooltip,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.25),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.close,
-                        size: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
+            ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Total TBSA:',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textDark,
+                ),
+              ),
+              Text(
+                '${_totalTBSA.toStringAsFixed(1)}%',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryBlue,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                if (widget.onPercentageSelected != null) {
+                  widget.onPercentageSelected!(_totalTBSA);
+                }
+                Navigator.pop(context, _totalTBSA);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryBlue,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Selesai & Simpan',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDistributionTooltip(
-    FluidDistribution distribution,
-    int index,
-    int totalCount,
-    Size screenSize,
-  ) {
-    const tooltipWidth = 120.0;
-    const tooltipHeight = 100.0;
-    const spacing = 10.0;
-
-    // Parameter untuk mengatur batas posisi tooltip - EDIT NILAI INI UNTUK MENGATUR POSISI
-    const leftBoundary =
-        5.0; // Bisa diubah untuk mengatur seberapa jauh ke kiri tooltip bisa bergerak (negatif = keluar layar)
-    const rightBoundary = 80.0; // Batas kanan dari tepi layar
-    const topBoundary = 170.0; // Batas atas (untuk menghindari header)
-    const bottomBoundary = 10.0; // Batas bawah dari tepi layar
-
-    // Improved positioning to avoid header overlap
-    double left, top;
-    final centerX = screenSize.width / 2;
-    final centerY = screenSize.height / 2; // Move down to avoid header overlap
-
-    if (totalCount == 1) {
-      // Single tooltip: center below header with more space
-      left = centerX - (tooltipWidth / 1.3);
-      top = centerY - (tooltipHeight / 0.4);
-    } else if (totalCount == 2) {
-      // Two tooltips: left and right of center, positioned lower
-      if (index == 0) {
-        left = centerX - tooltipWidth + spacing - 100;
-        top = centerY - (tooltipHeight / 0.4);
-      } else {
-        left = centerX + tooltipWidth + spacing - 100;
-        top = centerY - (tooltipHeight / 0.4);
-      }
-    } else if (totalCount == 4) {
-      // Four tooltips: arranged around center but avoiding header area
-      switch (index) {
-        case 0: // Left
-          left = centerX - tooltipWidth + spacing - 100;
-          top = centerY - (tooltipHeight / 0.4);
-          break;
-        case 1: // Right
-          left = centerX + spacing + 20;
-          top = centerY - (tooltipHeight / 0.4);
-          break;
-        case 2: // Bottom-left
-          left = centerX - tooltipWidth + spacing - 100;
-          top = centerY - spacing - tooltipHeight / 1.1;
-          break;
-        case 3: // Bottom-right
-          left = centerX + spacing + 20;
-          top = centerY - spacing - tooltipHeight / 1.1;
-          break;
-        default:
-          left = centerX - (tooltipWidth / 2);
-          top = centerY + 40;
-      }
-    } else {
-      // More than 4: arrange in a circle around center, avoiding header area
-      final angle = (2 * 3.14159 * index) / totalCount;
-      final radius = 120.0; // Increased radius for better spacing
-      left = centerX + (radius * cos(angle)) - (tooltipWidth / 2);
-      top = centerY + (radius * sin(angle)) - (tooltipHeight / 2);
-
-      // Ensure distribution tooltips don't overlap with header area
-      if (top < centerY - 40) {
-        top = centerY + 40; // Push down if too high
-      }
-    }
-
-    // Enhanced boundary checking dengan parameter yang bisa disesuaikan
-    if (left < leftBoundary) {
-      left = leftBoundary; // Sekarang bisa negatif untuk keluar dari layar
-    }
-    if (left + tooltipWidth > screenSize.width - rightBoundary) {
-      left = screenSize.width - tooltipWidth - rightBoundary;
-    }
-    if (top < topBoundary) {
-      top = topBoundary; // Menggunakan parameter topBoundary
-    }
-    if (top + tooltipHeight > screenSize.height - bottomBoundary) {
-      top =
-          screenSize.height -
-          tooltipHeight -
-          bottomBoundary; // Menggunakan parameter bottomBoundary
-    }
-
-    return Positioned(
-      left: left,
-      top: top,
-      child: Transform.scale(
-        scale: _tooltipAnimation.value,
-        child: Opacity(
-          opacity: _tooltipAnimation.value,
-          child: GestureDetector(
-              onTap: () {
-                // Jika ada callback, panggil dengan nilai TBSA dan tutup halaman
-                if (widget.onPercentageSelected != null) {
-                  widget.onPercentageSelected!(distribution.tbsaPercentage);
-                  Navigator.pop(context, distribution.tbsaPercentage);
-                }
-              },
-              child: Material(
-                elevation: 6,
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  width: tooltipWidth,
-                  height: tooltipHeight,
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.primaryBlue.withOpacity(0.3),
-                      width: 1.5,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 10,
-                            height: 10,
-                            margin: const EdgeInsets.only(top: 3),
-                            decoration: const BoxDecoration(
-                              color: AppColors.primaryBlue,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              distribution.area,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: AppColors.textDark,
-                                fontWeight: FontWeight.w600,
-                                height: 1.3,
-                              ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryBlue.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            '${distribution.percentage}%',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryBlue,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
-        ),
+        ],
       ),
     );
   }
@@ -750,21 +529,15 @@ class _FluidBalanceSimulationScreenState
         setState(() {
           _selectedIndex = index;
         });
-        // Handle navigation based on index
         switch (index) {
           case 0:
-            // Navigate to home
             Navigator.popUntil(context, (route) => route.isFirst);
             break;
           case 1:
-            // Navigate to Data Hasil Balance via Home
             Navigator.popUntil(context, (route) => route.isFirst);
-            // The HomeScreen will handle showing DataHasilBalanceScreen when index is 1
             break;
           case 2:
-            // Navigate to Profile via Home
             Navigator.popUntil(context, (route) => route.isFirst);
-            // The HomeScreen will handle showing ProfileScreen when index is 2
             break;
         }
       },
@@ -790,5 +563,48 @@ class _FluidBalanceSimulationScreenState
         ),
       ),
     );
+  }
+}
+
+class BodyPartPainter extends CustomPainter {
+  final List<BodyPart> bodyParts;
+  final Set<String> selectedSubParts;
+
+  BodyPartPainter({required this.bodyParts, required this.selectedSubParts});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.red.withOpacity(0.4)
+      ..style = PaintingStyle.fill;
+
+    final borderPaint = Paint()
+      ..color = Colors.red
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    for (var part in bodyParts) {
+      // Cek apakah ada sub-part yang dipilih dalam body part ini
+      bool isAnySubPartSelected = part.subParts.any(
+        (sub) => selectedSubParts.contains(sub.name),
+      );
+
+      if (isAnySubPartSelected) {
+        final rect = Rect.fromLTWH(
+          part.clickableArea.left * size.width,
+          part.clickableArea.top * size.height,
+          part.clickableArea.width * size.width,
+          part.clickableArea.height * size.height,
+        );
+
+        canvas.drawRect(rect, paint);
+        canvas.drawRect(rect, borderPaint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant BodyPartPainter oldDelegate) {
+    return oldDelegate.selectedSubParts != selectedSubParts;
   }
 }
