@@ -46,11 +46,19 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
       widget.age,
       widget.gender,
     );
-    _normalIWL = calculateNormalIWL(_fluidRequirement);
-    _totalFluidRequirement = calculateTotalFluidRequirement(
-      _fluidRequirement,
-      _normalIWL,
-    );
+
+    // Calculate IWL
+    double baseIWL = calculateBaseIWL();
+    double adjustmentIWL = calculateAdjustmentIWL();
+
+    // _normalIWL variable stores Total IWL (Base + Adjustment) for passing to next screen
+    _normalIWL = baseIWL + adjustmentIWL;
+
+    // Total Fluid Requirement = Maintenance + Base IWL + Adjustment
+    // REVISI: "seharusnya total kebutuhan cairan itu adalah gabungan dari kebutuhan cairan dan iwl,
+    // dan jika toggle kenaikkan suhu di aktifkan total kebutuhan cairan berarti gabungan dari semua nilai"
+    // Artinya: Maintenance + Total IWL (Base + Adjustment)
+    _totalFluidRequirement = _fluidRequirement + baseIWL + adjustmentIWL;
   }
 
   // Fungsi untuk menghitung kebutuhan cairan berdasarkan rumus Watson
@@ -66,7 +74,9 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
   }
 
   // Fungsi untuk menghitung Adjustment IWL akibat kenaikan suhu
-  double calculateNormalIWL(double fluidRequirement) {
+  // Note: Fungsi ini mengembalikan ADJUSTMENT saja jika demam, atau 0 jika tidak.
+  // Base IWL dihitung terpisah untuk display.
+  double calculateAdjustmentIWL() {
     double baseIWL = 15 * widget.weightKg;
     double adjustment = 0;
 
@@ -74,36 +84,13 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
     if (widget.temperature != null && widget.temperature! > 37.5) {
       // Adjustment = Base IWL * 10% * (Input Temperature - 37.5)
       adjustment = baseIWL * 0.1 * (widget.temperature! - 37.5);
-
-      // Jika demam, tampilkan HANYA adjustment (karena base sudah include di maintenance)
-      return adjustment;
     }
-
-    // Jika TIDAK ada kenaikan suhu (Normal), tampilkan Base IWL (Standard Formula)
-    // Agar tidak muncul angka 0 yang membingungkan
-    return baseIWL;
+    return adjustment;
   }
 
-  // Fungsi untuk menghitung total kebutuhan cairan
-  // Total = Maintenance (fluidRequirement) + Adjustment only
-  double calculateTotalFluidRequirement(
-    double fluidRequirement,
-    double normalIWL,
-  ) {
-    // We need to recalculate the base IWL to separate the adjustment part
-    double baseIWL = 15 * widget.weightKg;
-    double adjustment = 0;
-
-    if (widget.temperature != null && widget.temperature! > 37.5) {
-      adjustment = baseIWL * 0.1 * (widget.temperature! - 37.5);
-    }
-
-    // Total Kebutuhan Cairan = Maintenance + Adjustment
-    // Note: The 'normalIWL' parameter passed here is the Total IWL (Base + Adjustment)
-    // calculated in calculateNormalIWL.
-    // However, the formula requested is: Maintenance + Adjustment only.
-    // Maintenance theoretically covers Base IWL.
-    return fluidRequirement + adjustment;
+  // Fungsi untuk menghitung Base IWL (Tanpa Adjustment)
+  double calculateBaseIWL() {
+    return 15 * widget.weightKg;
   }
 
   @override
@@ -259,18 +246,40 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
 
         // Fluid Requirement Field
         _buildResultField(
-          label: 'Kebutuhan Cairan:',
+          label: 'Kebutuhan Cairan (Maintenance):',
           value: _formatter.format(_fluidRequirement),
           unit: 'mL',
         ),
 
         const SizedBox(height: 16),
 
-        // Normal IWL Field
+        // Base IWL Field
         _buildResultField(
-          label: 'IWL :',
-          value: _formatter.format(_normalIWL),
+          label: 'IWL:',
+          value: _formatter.format(calculateBaseIWL()),
           unit: 'mL',
+        ),
+
+        // Adjustment IWL Field (Only if fever)
+        if (calculateAdjustmentIWL() > 0) ...[
+          const SizedBox(height: 16),
+          _buildResultField(
+            label: 'IWL Kenaikan Suhu:',
+            value: _formatter.format(calculateAdjustmentIWL()),
+            unit: 'mL',
+          ),
+        ],
+
+        const SizedBox(height: 16),
+
+        // Total IWL Field
+        _buildResultField(
+          label: 'Total IWL:',
+          value: _formatter.format(
+            calculateBaseIWL() + calculateAdjustmentIWL(),
+          ),
+          unit: 'mL',
+          isHighlighted: false, // Not the final result, but important
         ),
 
         const SizedBox(height: 16),

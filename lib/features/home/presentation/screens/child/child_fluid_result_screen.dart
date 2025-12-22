@@ -49,44 +49,70 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
     }
   }
 
-  // Fungsi untuk menghitung Adjustment IWL anak
-  double _calculateChildIWL(double ageYears, double weightKg) {
-    double baseIWL = (30 - ageYears) * weightKg;
-    double adjustment = 0;
-
-    // Jika ada kenaikan suhu (demam), hitung adjustment
-    if (widget.temperature != null && widget.temperature! > 37) {
-      // Adjustment = Base IWL * 10% * (Input Temperature - 37)
-      adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
-
-      // Jika demam, tampilkan HANYA adjustment
-      return adjustment;
-    }
-
-    // Jika TIDAK ada kenaikan suhu (Normal), tampilkan Base IWL (Standard Formula)
-    // Agar tidak muncul angka 0
-    return baseIWL;
-  }
+  // Fungsi untuk menghitung Adjustment IWL anak (DEPRECATED - Replaced by inline calculation)
+  // double _calculateChildIWL(double ageYears, double weightKg) {
+  //   double baseIWL = (30 - ageYears) * weightKg;
+  //   double adjustment = 0;
+  //   if (widget.temperature != null && widget.temperature! > 37) {
+  //     adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+  //     return adjustment;
+  //   }
+  //   return baseIWL;
+  // }
 
   // Fungsi untuk menghitung total kebutuhan cairan
   void _calculateFluidRequirements() {
     _fluidRequirement = _calculateFluidRequirement(widget.weightKg);
-    _normalIWL = _calculateChildIWL(widget.age, widget.weightKg);
 
-    // Calculate Adjustment separately
+    // Base IWL Calculation
     double baseIWL = (30 - widget.age) * widget.weightKg;
-    double adjustment = 0;
+    if (baseIWL < 0) baseIWL = 0; // Prevent negative IWL for older children
 
-    if (widget.temperature != null && widget.temperature! > 37) {
-      adjustment = baseIWL * 0.1 * (widget.temperature! - 37);
+    // Adjustment IWL Calculation
+    double adjustment = 0;
+    if (widget.temperature != null && widget.temperature! > 37.5) {
+      adjustment = baseIWL * 0.1 * (widget.temperature! - 37.5);
     }
 
+    // Normal IWL for display (Base only)
+    _normalIWL = baseIWL;
+
     // Total = Maintenance (_fluidRequirement) + Adjustment only
-    _totalFluidRequirement = _fluidRequirement + adjustment;
+    // REVISION: "Total kebutuhan cairan untuk anak masih belum ditambahkan IWL nya"
+    // This likely means they want Total = Maintenance + Base IWL + Adjustment?
+    // OR they mean the previous calculation ignored IWL entirely?
+    // Previously: _totalFluidRequirement = _fluidRequirement + adjustment;
+    // Analysis says: "_normalIWL (Base IWL) is calculated but ignored in the final total summation."
+    // So we should add Base IWL to the total.
+    _totalFluidRequirement = _fluidRequirement + baseIWL + adjustment;
+  }
+
+  // Fungsi untuk menghitung Adjustment IWL (Kenaikan Suhu)
+  double calculateAdjustmentIWL() {
+    double baseIWL = (30 - widget.age) * widget.weightKg;
+    if (baseIWL < 0) baseIWL = 0;
+
+    double adjustment = 0;
+    if (widget.temperature != null && widget.temperature! > 37.5) {
+      adjustment = baseIWL * 0.1 * (widget.temperature! - 37.5);
+    }
+    return adjustment;
+  }
+
+  // Fungsi untuk menghitung Base IWL (Tanpa Adjustment)
+  double calculateBaseIWL() {
+    double baseIWL = (30 - widget.age) * widget.weightKg;
+    if (baseIWL < 0) baseIWL = 0;
+    return baseIWL;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Recalculate values for display
+    double baseIWL = calculateBaseIWL();
+    double adjustmentIWL = calculateAdjustmentIWL();
+    double totalIWL = baseIWL + adjustmentIWL;
+
     return Scaffold(
       backgroundColor: const Color(0xFF0047AB), // Primary Blue as specified
       body: SafeArea(
@@ -102,7 +128,110 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
                   horizontal: AppDimensions.homePaddingHorizontal,
                   vertical: AppDimensions.homeMarginSection,
                 ),
-                child: _buildResultSection(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 24),
+
+                    // Result Title
+                    Text(
+                      'Hasil Perhitungan',
+                      style: AppTextStyles.menuText.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Patient Info
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Pasien: ${widget.patientName}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Berat: ${widget.weightKg} kg | Tinggi: ${widget.heightCm} cm | Usia: ${widget.age} tahun',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Jenis Kelamin: ${widget.gender}' +
+                                (widget.temperature != null
+                                    ? ' | Suhu: ${widget.temperature}°C'
+                                    : ''),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Fluid Requirement Field
+                    _buildResultField(
+                      label: 'Kebutuhan Cairan (Maintenance):',
+                      value: _formatter.format(_fluidRequirement),
+                      unit: 'mL',
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Base IWL Field
+                    _buildResultField(
+                      label: 'IWL:',
+                      value: _formatter.format(baseIWL),
+                      unit: 'mL',
+                    ),
+
+                    // Adjustment IWL Field (Only if fever)
+                    if (adjustmentIWL > 0) ...[
+                      const SizedBox(height: 16),
+                      _buildResultField(
+                        label: 'IWL Kenaikan Suhu:',
+                        value: _formatter.format(adjustmentIWL),
+                        unit: 'mL',
+                      ),
+                    ],
+
+                    const SizedBox(height: 16),
+
+                    // Total IWL Field
+                    _buildResultField(
+                      label: 'Total IWL:',
+                      value: _formatter.format(totalIWL),
+                      unit: 'mL',
+                      isHighlighted: false,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Total Fluid Requirement Field
+                    _buildResultField(
+                      label: 'Total Kebutuhan Cairan:',
+                      value: _formatter.format(_totalFluidRequirement),
+                      unit: 'mL',
+                      isHighlighted: true,
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -189,81 +318,6 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
   }
 
   // Result Section
-  Widget _buildResultSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 24),
-
-        // Result Title
-        Text(
-          'Hasil Perhitungan',
-          style: AppTextStyles.menuText.copyWith(fontWeight: FontWeight.bold),
-        ),
-
-        const SizedBox(height: 16),
-
-        // Patient Info
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Pasien: ${widget.patientName}',
-                style: const TextStyle(color: Colors.white, fontSize: 16),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Berat: ${widget.weightKg} kg | Tinggi: ${widget.heightCm} cm | Usia: ${widget.age} tahun',
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Jenis Kelamin: ${widget.gender}' +
-                    (widget.temperature != null
-                        ? ' | Suhu: ${widget.temperature}°C'
-                        : ''),
-                style: const TextStyle(color: Colors.white, fontSize: 14),
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 24),
-
-        // Fluid Requirement Field
-        _buildResultField(
-          label: 'Kebutuhan Cairan:',
-          value: _formatter.format(_fluidRequirement),
-          unit: 'mL',
-        ),
-
-        const SizedBox(height: 16),
-
-        // Normal IWL Field
-        _buildResultField(
-          label: 'IWL :',
-          value: _formatter.format(_normalIWL),
-          unit: 'mL',
-        ),
-
-        const SizedBox(height: 16),
-
-        // Total Fluid Requirement Field
-        _buildResultField(
-          label: 'Total Kebutuhan Cairan:',
-          value: _formatter.format(_totalFluidRequirement),
-          unit: 'mL',
-          isHighlighted: true,
-        ),
-      ],
-    );
-  }
 
   // Result Field Builder
   Widget _buildResultField({
