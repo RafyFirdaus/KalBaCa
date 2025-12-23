@@ -51,6 +51,10 @@ class _ChildFluidCalculationScreenState
   String? _selectedGender;
   final List<String> _genderOptions = ['Laki-laki', 'Perempuan'];
 
+  // Age Unit Dropdown
+  String _selectedAgeUnit = 'Tahun';
+  final List<String> _ageUnitOptions = ['Tahun', 'Bulan'];
+
   // Switch value for temperature increase
   bool _isTemperatureIncreased = false;
 
@@ -382,33 +386,139 @@ class _ChildFluidCalculationScreenState
     );
   }
 
-  // Age Field
+  // Age Field with Unit Selector
   Widget _buildAgeField() {
-    return _buildFormField(
-      label: 'Usia:',
-      controller: _ageController,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [
-        DecimalTextInputFormatter(),
-        LengthLimitingTextInputFormatter(3),
-      ],
-      suffixText: 'tahun',
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Usia harus diisi';
-        }
-        // Normalize decimal separator
-        final normalizedValue = value.replaceAll(',', '.');
-        double age = double.tryParse(normalizedValue) ?? -1;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment
+          .start, // Align to top to handle error message height
+      children: [
+        // Label
+        const SizedBox(
+          width: 120,
+          height: 48, // Align with input height
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Usia:',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
 
-        if (age <= 0) {
-          return 'Usia harus lebih dari 0';
-        }
-        if (age > 18) {
-          return 'Usia maksimal 18 tahun';
-        }
-        return null;
-      },
+        // Input Field and Dropdown
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Text Field
+              Expanded(
+                flex: 2,
+                child: TextFormField(
+                  controller: _ageController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  inputFormatters: [
+                    DecimalTextInputFormatter(),
+                    LengthLimitingTextInputFormatter(5),
+                  ],
+                  style: const TextStyle(color: Colors.black, fontSize: 14),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(8),
+                        bottomLeft: Radius.circular(8),
+                      ),
+                      borderSide: BorderSide.none,
+                    ),
+                    errorStyle: const TextStyle(
+                      color: Colors.yellow,
+                      fontSize: 12,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Usia harus diisi';
+                    }
+                    // Normalize decimal separator
+                    final normalizedValue = value.replaceAll(',', '.');
+                    double age = double.tryParse(normalizedValue) ?? -1;
+
+                    if (age <= 0) {
+                      return 'Harus > 0';
+                    }
+
+                    if (_selectedAgeUnit == 'Tahun') {
+                      if (age > 18) {
+                        return 'Maks 18 tahun';
+                      }
+                    } else {
+                      // Bulan
+                      if (age > 24) {
+                        return 'Maks 24 bulan';
+                      }
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
+              // Dropdown
+              Expanded(
+                flex: 1,
+                child: Container(
+                  height: 48, // Fixed height to match text field
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
+                    ),
+                    border: Border(
+                      left: BorderSide(color: Colors.grey, width: 0.5),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedAgeUnit,
+                      isExpanded: true,
+                      icon: const Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.black,
+                      ),
+                      style: const TextStyle(color: Colors.black, fontSize: 14),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedAgeUnit = newValue!;
+                        });
+                      },
+                      items: _ageUnitOptions.map<DropdownMenuItem<String>>((
+                        String value,
+                      ) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value, overflow: TextOverflow.ellipsis),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -480,6 +590,12 @@ class _ChildFluidCalculationScreenState
         child: GestureDetector(
           onTap: () {
             if (_formKey.currentState!.validate()) {
+              // Calculate age in years
+              double inputAge = double.parse(
+                _ageController.text.replaceAll(',', '.'),
+              );
+              // We pass inputAge as is, and let the result screen handle conversion if unit is Month
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -487,13 +603,14 @@ class _ChildFluidCalculationScreenState
                     patientName: _nameController.text,
                     weightKg: double.parse(_weightController.text),
                     heightCm: double.parse(_heightController.text),
-                    age: double.parse(_ageController.text.replaceAll(',', '.')),
+                    age: inputAge,
                     gender: _selectedGender!,
                     temperature:
                         _isTemperatureIncreased &&
                             _temperatureController.text.isNotEmpty
                         ? double.parse(_temperatureController.text)
                         : null,
+                    isMonth: _selectedAgeUnit == 'Bulan',
                   ),
                 ),
               );

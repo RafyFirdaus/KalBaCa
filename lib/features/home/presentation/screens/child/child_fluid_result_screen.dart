@@ -10,6 +10,7 @@ class ChildFluidResultScreen extends StatefulWidget {
   final double age;
   final String gender;
   final double? temperature;
+  final bool isMonth;
 
   const ChildFluidResultScreen({
     super.key,
@@ -19,6 +20,7 @@ class ChildFluidResultScreen extends StatefulWidget {
     required this.age,
     required this.gender,
     this.temperature,
+    this.isMonth = false,
   });
 
   @override
@@ -64,8 +66,14 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
   void _calculateFluidRequirements() {
     _fluidRequirement = _calculateFluidRequirement(widget.weightKg);
 
+    // Calculate age in years for IWL formula
+    double ageInYears = widget.age;
+    if (widget.isMonth) {
+      ageInYears = widget.age / 12.0;
+    }
+
     // Base IWL Calculation
-    double baseIWL = (30 - widget.age) * widget.weightKg;
+    double baseIWL = (30 - ageInYears) * widget.weightKg;
     if (baseIWL < 0) baseIWL = 0; // Prevent negative IWL for older children
 
     // Adjustment IWL Calculation
@@ -74,22 +82,23 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
       adjustment = baseIWL * 0.1 * (widget.temperature! - 37.5);
     }
 
-    // Normal IWL for display (Base only)
-    _normalIWL = baseIWL;
+    // Normal IWL for display and passing to next screen (Base + Adjustment)
+    _normalIWL = baseIWL + adjustment;
 
-    // Total = Maintenance (_fluidRequirement) + Adjustment only
-    // REVISION: "Total kebutuhan cairan untuk anak masih belum ditambahkan IWL nya"
-    // This likely means they want Total = Maintenance + Base IWL + Adjustment?
-    // OR they mean the previous calculation ignored IWL entirely?
-    // Previously: _totalFluidRequirement = _fluidRequirement + adjustment;
-    // Analysis says: "_normalIWL (Base IWL) is calculated but ignored in the final total summation."
-    // So we should add Base IWL to the total.
-    _totalFluidRequirement = _fluidRequirement + baseIWL + adjustment;
+    // Total = Maintenance (_fluidRequirement) + Total IWL (Base + Adjustment)
+    // REVISION: "Total kebutuhan cairan untuk anak adalah gabungan dari kebutuhan cairan (Maintenance) dan Total IWL"
+    _totalFluidRequirement = _fluidRequirement + _normalIWL;
   }
 
   // Fungsi untuk menghitung Adjustment IWL (Kenaikan Suhu)
   double calculateAdjustmentIWL() {
-    double baseIWL = (30 - widget.age) * widget.weightKg;
+    // Calculate age in years for IWL formula
+    double ageInYears = widget.age;
+    if (widget.isMonth) {
+      ageInYears = widget.age / 12.0;
+    }
+
+    double baseIWL = (30 - ageInYears) * widget.weightKg;
     if (baseIWL < 0) baseIWL = 0;
 
     double adjustment = 0;
@@ -101,7 +110,13 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
 
   // Fungsi untuk menghitung Base IWL (Tanpa Adjustment)
   double calculateBaseIWL() {
-    double baseIWL = (30 - widget.age) * widget.weightKg;
+    // Calculate age in years for IWL formula
+    double ageInYears = widget.age;
+    if (widget.isMonth) {
+      ageInYears = widget.age / 12.0;
+    }
+
+    double baseIWL = (30 - ageInYears) * widget.weightKg;
     if (baseIWL < 0) baseIWL = 0;
     return baseIWL;
   }
@@ -162,7 +177,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Berat: ${widget.weightKg} kg | Tinggi: ${widget.heightCm} cm | Usia: ${widget.age} tahun',
+                            'Berat: ${widget.weightKg} kg | Tinggi: ${widget.heightCm} cm | Usia: ${widget.age} ${widget.isMonth ? "bulan" : "tahun"}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,

@@ -10,6 +10,7 @@ class AdultFluidResultScreen extends StatefulWidget {
   final int age;
   final String gender;
   final double? temperature;
+  final int? iwlConstant;
 
   const AdultFluidResultScreen({
     super.key,
@@ -19,6 +20,7 @@ class AdultFluidResultScreen extends StatefulWidget {
     required this.age,
     required this.gender,
     this.temperature,
+    this.iwlConstant,
   });
 
   @override
@@ -77,7 +79,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
   // Note: Fungsi ini mengembalikan ADJUSTMENT saja jika demam, atau 0 jika tidak.
   // Base IWL dihitung terpisah untuk display.
   double calculateAdjustmentIWL() {
-    double baseIWL = 15 * widget.weightKg;
+    double baseIWL = (widget.iwlConstant ?? 15) * widget.weightKg;
     double adjustment = 0;
 
     // Jika ada kenaikan suhu (demam), hitung adjustment
@@ -90,7 +92,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
 
   // Fungsi untuk menghitung Base IWL (Tanpa Adjustment)
   double calculateBaseIWL() {
-    return 15 * widget.weightKg;
+    return (widget.iwlConstant ?? 15) * widget.weightKg;
   }
 
   @override
@@ -236,6 +238,11 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
                     (widget.temperature != null
                         ? ' | Suhu: ${widget.temperature}°C'
                         : ''),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Konstanta: ${widget.iwlConstant ?? 15}',
                 style: const TextStyle(color: Colors.white, fontSize: 14),
               ),
             ],

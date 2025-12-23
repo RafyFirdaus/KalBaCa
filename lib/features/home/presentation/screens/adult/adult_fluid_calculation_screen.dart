@@ -21,6 +21,7 @@ class _AdultFluidCalculationScreenState
   final TextEditingController _weightController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _iwlConstantController = TextEditingController();
   final TextEditingController _temperatureController = TextEditingController();
 
   // Dropdown value for gender
@@ -251,6 +252,36 @@ class _AdultFluidCalculationScreenState
 
           const SizedBox(height: 16),
 
+          // IWL Constant Field
+          _buildFormField(
+            label: 'Konstanta IWL:',
+            controller: _iwlConstantController,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(3),
+            ],
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                // Default value is handled in logic, but if user explicitly clears it, maybe we should ask for it or allow empty for default?
+                // The requirement says: "If the constant field is empty, you may set a default value of 15 or show a validation error."
+                // I will allow empty and treat as 15 in the result screen, OR fill it with default 15 initially.
+                // Let's validate range if present.
+                return null;
+              }
+              final constant = int.tryParse(value);
+              if (constant == null) {
+                return 'Harus angka';
+              }
+              if (constant < 10 || constant > 15) {
+                return 'Nilai antara 10-15';
+              }
+              return null;
+            },
+          ),
+
+          const SizedBox(height: 16),
+
           // Temperature Increase Switch
           _buildTemperatureSwitch(),
 
@@ -462,6 +493,9 @@ class _AdultFluidCalculationScreenState
                     heightCm: double.parse(_heightController.text),
                     age: int.parse(_ageController.text),
                     gender: _selectedGender!,
+                    iwlConstant: _iwlConstantController.text.isNotEmpty
+                        ? int.parse(_iwlConstantController.text)
+                        : 15,
                     temperature:
                         _isTemperatureIncreased &&
                             _temperatureController.text.isNotEmpty
