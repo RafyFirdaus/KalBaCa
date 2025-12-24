@@ -234,10 +234,7 @@ class _AdultFluidResultScreenState extends State<AdultFluidResultScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Jenis Kelamin: ${widget.gender}' +
-                    (widget.temperature != null
-                        ? ' | Suhu: ${widget.temperature}°C'
-                        : ''),
+                'Jenis Kelamin: ${widget.gender}${widget.temperature != null ? ' | Suhu: ${widget.temperature}°C' : ''}',
                 style: const TextStyle(color: Colors.white, fontSize: 14),
               ),
               const SizedBox(height: 4),
