@@ -69,13 +69,7 @@ class _DataPasienScreenState extends State<DataPasienScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF1565C0), Color(0xFF0D47A1)],
-          ),
-        ),
+        color: AppColors.primaryBlue,
         child: SafeArea(
           child: Column(
             children: [

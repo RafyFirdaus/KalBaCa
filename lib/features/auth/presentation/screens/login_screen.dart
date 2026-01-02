@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: AppDimensions.headerSpacing),
                     // App Title and Slogan
                     Text(
-                      'KalBaCa',
+                      'e-FluidCalc',
                       style: AppTextStyles.appTitle.copyWith(
                         color: AppColors.white,
                       ),

@@ -255,13 +255,17 @@ class _ChildFluidBalanceSimulationScreenState
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                  child: Icon(
+                    Icons.home,
+                    color: AppColors.primaryBlue,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Diagram Kebutuhan Cairan Anak',
+                  'Gambar Kebutuhan Cairan Anak',
                   style: AppTextStyles.pageTitle,
                 ),
               ),

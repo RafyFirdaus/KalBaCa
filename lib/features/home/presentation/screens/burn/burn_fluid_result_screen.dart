@@ -123,7 +123,7 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0047AB), // Primary Blue as specified
+      backgroundColor: AppColors.primaryBlue, // Primary Blue as specified
       body: SafeArea(
         child: Column(
           children: [
@@ -178,7 +178,7 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
                   ),
                   child: const Icon(
                     Icons.arrow_back,
-                    color: Color(0xFF0047AB),
+                    color: AppColors.primaryBlue,
                     size: 24,
                   ),
                 ),
@@ -205,7 +205,11 @@ class _BurnFluidResultScreenState extends State<BurnFluidResultScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                  child: Icon(
+                    Icons.home,
+                    color: AppColors.primaryBlue,
+                    size: 20,
+                  ),
                 ),
               ),
 

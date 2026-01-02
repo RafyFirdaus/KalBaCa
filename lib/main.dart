@@ -8,9 +8,7 @@ import 'package:kalbaca/features/home/presentation/screens/child/child_fluid_cal
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -20,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'KalBaCa',
+      title: 'e-FluidCalc',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0052CC)),
@@ -30,8 +28,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
-        '/adult-fluid-calculation': (context) => const AdultFluidCalculationScreen(),
-        '/child-fluid-calculation': (context) => const ChildFluidCalculationScreen(),
+        '/adult-fluid-calculation': (context) =>
+            const AdultFluidCalculationScreen(),
+        '/child-fluid-calculation': (context) =>
+            const ChildFluidCalculationScreen(),
       },
     );
   }

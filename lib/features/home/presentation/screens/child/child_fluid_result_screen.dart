@@ -129,7 +129,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
     double totalIWL = baseIWL + adjustmentIWL;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0047AB), // Primary Blue as specified
+      backgroundColor: AppColors.primaryBlue, // Primary Blue as specified
       body: SafeArea(
         child: Column(
           children: [
@@ -287,7 +287,7 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
                   ),
                   child: const Icon(
                     Icons.arrow_back,
-                    color: Color(0xFF0047AB),
+                    color: AppColors.primaryBlue,
                     size: 24,
                   ),
                 ),
@@ -314,7 +314,11 @@ class _ChildFluidResultScreenState extends State<ChildFluidResultScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                  child: Icon(
+                    Icons.home,
+                    color: AppColors.primaryBlue,
+                    size: 20,
+                  ),
                 ),
               ),
 

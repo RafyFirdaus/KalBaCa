@@ -257,7 +257,11 @@ class _FluidBalanceSimulationScreenState
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                  child: Icon(
+                    Icons.home,
+                    color: AppColors.primaryBlue,
+                    size: 20,
+                  ),
                 ),
               ),
 
@@ -266,7 +270,7 @@ class _FluidBalanceSimulationScreenState
               // Page Title
               Expanded(
                 child: Text(
-                  'Diagram Kebutuhan Cairan Dewasa',
+                  'Gambar Kebutuhan Cairan Dewasa',
                   style: AppTextStyles.pageTitle,
                 ),
               ),

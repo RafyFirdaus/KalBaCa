@@ -111,7 +111,7 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0047AB),
+      backgroundColor: AppColors.primaryBlue,
       body: SafeArea(
         child: Column(
           children: [
@@ -193,7 +193,7 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                  child: Icon(Icons.home, color: AppColors.primaryBlue, size: 20),
                 ),
               ),
 

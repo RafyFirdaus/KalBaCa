@@ -71,7 +71,7 @@ class _ChildFluidCalculationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0047AB), // Primary Blue as specified
+      backgroundColor: AppColors.primaryBlue, // Primary Blue as specified
       body: SafeArea(
         child: Column(
           children: [

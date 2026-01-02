@@ -61,10 +61,10 @@ class ProfileScreen extends StatelessWidget {
               Image.asset('assets/logo.png', width: 40, height: 40),
               const SizedBox(width: 12),
               const Text(
-                'Tentang KalBaCa',
+                'Tentang e-FluidCalc',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF0047AB),
+                  color: AppColors.primaryBlue,
                 ),
               ),
             ],
@@ -74,7 +74,7 @@ class ProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'KalBaCa (Kalkulator Balance Cairan) adalah aplikasi untuk membantu tenaga medis dalam menghitung kebutuhan cairan pasien.',
+                'e-FluidCalc adalah aplikasi untuk membantu tenaga medis dalam menghitung kebutuhan cairan pasien.',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
@@ -213,11 +213,11 @@ class ProfileScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         const Text(
-          'KalBaCa',
+          'e-FluidCalc',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF0047AB),
+            color: AppColors.primaryBlue,
           ),
         ),
         const SizedBox(height: 4),
@@ -302,11 +302,11 @@ class ProfileScreen extends StatelessWidget {
           Divider(color: Colors.grey[300]),
           const SizedBox(height: 16),
           const Text(
-            'KalBaCa V1.0',
+            'e-FluidCalc V1.0',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF0047AB),
+              color: AppColors.primaryBlue,
             ),
           ),
           const SizedBox(height: 4),

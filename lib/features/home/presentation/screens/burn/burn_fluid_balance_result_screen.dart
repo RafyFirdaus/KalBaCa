@@ -46,7 +46,9 @@ class _BurnFluidBalanceResultScreenState
   }
 
   Future<void> _saveBalanceResult() async {
-    if (widget.patientName == null || widget.weightKg == null || widget.age == null) {
+    if (widget.patientName == null ||
+        widget.weightKg == null ||
+        widget.age == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Data pasien tidak lengkap'),
@@ -111,7 +113,7 @@ class _BurnFluidBalanceResultScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0047AB),
+      backgroundColor: AppColors.primaryBlue,
       body: SafeArea(
         child: Column(
           children: [
@@ -166,7 +168,7 @@ class _BurnFluidBalanceResultScreenState
                   ),
                   child: const Icon(
                     Icons.arrow_back,
-                    color: Color(0xFF0047AB),
+                    color: AppColors.primaryBlue,
                     size: 24,
                   ),
                 ),
@@ -193,7 +195,11 @@ class _BurnFluidBalanceResultScreenState
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                  child: Icon(
+                    Icons.home,
+                    color: AppColors.primaryBlue,
+                    size: 20,
+                  ),
                 ),
               ),
 
@@ -319,7 +325,9 @@ class _BurnFluidBalanceResultScreenState
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Hapus Data'),
-                      content: const Text('Apakah Anda yakin ingin menghapus semua data?'),
+                      content: const Text(
+                        'Apakah Anda yakin ingin menghapus semua data?',
+                      ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -344,7 +352,10 @@ class _BurnFluidBalanceResultScreenState
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Hapus'),
             ),
@@ -356,18 +367,21 @@ class _BurnFluidBalanceResultScreenState
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
-              child: _isSaving 
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Text('Simpan'),
+              child: _isSaving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Text('Simpan'),
             ),
           ],
         ),
@@ -379,9 +393,9 @@ class _BurnFluidBalanceResultScreenState
             ElevatedButton(
               onPressed: () {
                 // Navigate back to burn balance calculation screen if parameters are available
-                if (widget.patientName != null && 
-                    widget.weightKg != null && 
-                    widget.age != null && 
+                if (widget.patientName != null &&
+                    widget.weightKg != null &&
+                    widget.age != null &&
                     widget.normalIWL != null) {
                   Navigator.push(
                     context,
@@ -400,7 +414,8 @@ class _BurnFluidBalanceResultScreenState
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const FluidBalanceSimulationScreen(),
+                      builder: (context) =>
+                          const FluidBalanceSimulationScreen(),
                     ),
                   );
                 }
@@ -411,7 +426,10 @@ class _BurnFluidBalanceResultScreenState
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Simulasi'),
             ),
@@ -447,7 +465,7 @@ class _BurnFluidBalanceResultScreenState
         setState(() {
           _selectedIndex = index;
         });
-        
+
         // Navigate based on selected index
         switch (index) {
           case 0:

@@ -233,7 +233,7 @@ class _FluidIntakeOutputScreenState extends State<FluidIntakeOutputScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0047AB), // Primary Blue
+      backgroundColor: AppColors.primaryBlue,
       body: SafeArea(
         child: Column(
           children: [

@@ -112,7 +112,7 @@ class _AdultFluidIntakeBalanceScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0047AB), // Primary Blue as specified
+      backgroundColor: AppColors.primaryBlue, // Primary Blue as specified
       body: SafeArea(
         child: Column(
           children: [
@@ -180,7 +180,7 @@ class _AdultFluidIntakeBalanceScreenState
                   ),
                   child: const Icon(
                     Icons.arrow_back,
-                    color: Color(0xFF0047AB),
+                    color: AppColors.primaryBlue,
                     size: 24,
                   ),
                 ),
@@ -207,7 +207,11 @@ class _AdultFluidIntakeBalanceScreenState
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.home, color: Color(0xFF0047AB), size: 20),
+                  child: Icon(
+                    Icons.home,
+                    color: AppColors.primaryBlue,
+                    size: 20,
+                  ),
                 ),
               ),
 
@@ -247,7 +251,7 @@ class _AdultFluidIntakeBalanceScreenState
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFF0047AB), width: 1),
+                  border: Border.all(color: AppColors.primaryBlue, width: 1),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
@@ -285,11 +289,11 @@ class _AdultFluidIntakeBalanceScreenState
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Color(0xFF0047AB)),
+                    borderSide: const BorderSide(color: AppColors.primaryBlue),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Color(0xFF0047AB)),
+                    borderSide: const BorderSide(color: AppColors.primaryBlue),
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                   hintText: "mL",
