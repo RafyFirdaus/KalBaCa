@@ -259,23 +259,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: AppDimensions.inputSpacing),
 
                       // Forgot Password Link
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            // TODO: Implement forgot password
-                          },
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: Text(
-                            'Forgot Password?',
-                            style: AppTextStyles.forgotPasswordText,
-                          ),
-                        ),
-                      ),
                       const SizedBox(height: AppDimensions.buttonSpacing),
 
                       // Login Button
@@ -343,7 +326,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const CreateAccountScreen(),
+                                builder: (context) =>
+                                    const CreateAccountScreen(),
                               ),
                             );
                           },
