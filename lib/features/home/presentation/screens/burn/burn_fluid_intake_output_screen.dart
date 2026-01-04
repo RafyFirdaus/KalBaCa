@@ -697,21 +697,14 @@ class _BurnFluidIntakeOutputScreenState
       child: ElevatedButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            // Calculate totals for direct navigation to hasil balance
-            double totalIntake = calculateTotalIntake();
-            double totalOutput = calculateTotalOutput();
-            double targetKebutuhanCairan =
-                widget.targetFluid ??
-                (widget.normalIWL * 2); // Use passed target fluid or fallback
-
             // Navigate directly to burn hasil balance screen
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => BurnFluidBalanceResultScreen(
-                  targetKebutuhanCairan: targetKebutuhanCairan,
-                  totalIntake: totalIntake,
-                  totalOutput: totalOutput,
+                  targetKebutuhanCairan: widget.targetFluid ?? 0.0,
+                  totalIntake: calculateTotalIntake(),
+                  totalOutput: calculateTotalOutput(),
                   patientName: widget.patientName,
                   weightKg: widget.weightKg,
                   age: widget.age,

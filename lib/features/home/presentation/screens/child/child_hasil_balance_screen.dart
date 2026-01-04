@@ -413,6 +413,7 @@ class _ChildHasilBalanceScreenState extends State<ChildHasilBalanceScreen> {
                       weightKg: widget.weightKg,
                       age: widget.age,
                       normalIWL: widget.normalIWL,
+                      totalOutput: widget.totalOutput,
                       fluidRequirement: widget.targetKebutuhanCairan,
                       gender: widget.gender,
                     ),

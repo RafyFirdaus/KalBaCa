@@ -10,6 +10,8 @@ class BurnFluidBalanceCalculationScreen extends StatefulWidget {
   final int age;
   final double normalIWL;
   final String gender;
+  final double fluidRequirement;
+  final double totalOutput;
 
   const BurnFluidBalanceCalculationScreen({
     Key? key,
@@ -18,6 +20,8 @@ class BurnFluidBalanceCalculationScreen extends StatefulWidget {
     required this.age,
     required this.normalIWL,
     required this.gender,
+    required this.fluidRequirement,
+    required this.totalOutput,
   }) : super(key: key);
 
   @override
@@ -95,7 +99,7 @@ class _BurnFluidBalanceCalculationScreenState
   void _calculateBalance() {
     setState(() {
       _totalIntake = _calculateTotalIntake();
-      _balance = _totalIntake - widget.normalIWL;
+      _balance = _totalIntake - widget.totalOutput;
       _isCalculated = true;
     });
   }
@@ -468,12 +472,9 @@ class _BurnFluidBalanceCalculationScreenState
             context,
             MaterialPageRoute(
               builder: (context) => BurnFluidBalanceResultScreen(
-                targetKebutuhanCairan:
-                    widget.normalIWL *
-                    2, // Sesuaikan dengan perhitungan yang sebenarnya
+                targetKebutuhanCairan: widget.fluidRequirement,
                 totalIntake: _totalIntake,
-                totalOutput:
-                    widget.normalIWL, // Menggunakan normalIWL sebagai output
+                totalOutput: widget.totalOutput,
                 patientName: widget.patientName,
                 weightKg: widget.weightKg,
                 age: widget.age,

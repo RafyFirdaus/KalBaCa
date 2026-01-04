@@ -406,6 +406,8 @@ class _BurnFluidBalanceResultScreenState
                         age: widget.age!,
                         normalIWL: widget.normalIWL!,
                         gender: widget.gender ?? 'Tidak diketahui',
+                        fluidRequirement: widget.targetKebutuhanCairan,
+                        totalOutput: widget.totalOutput,
                       ),
                     ),
                   );

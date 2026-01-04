@@ -193,7 +193,11 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: Icon(Icons.home, color: AppColors.primaryBlue, size: 20),
+                  child: Icon(
+                    Icons.home,
+                    color: AppColors.primaryBlue,
+                    size: 20,
+                  ),
                 ),
               ),
 
@@ -399,6 +403,7 @@ class _HasilBalanceScreenState extends State<HasilBalanceScreen> {
                         weightKg: widget.weightKg!,
                         age: widget.age!,
                         normalIWL: widget.normalIWL!,
+                        totalOutput: widget.totalOutput,
                         fluidRequirement: widget.targetKebutuhanCairan,
                         gender: widget.gender,
                       ),
